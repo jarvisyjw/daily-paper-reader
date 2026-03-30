@@ -53,3 +53,9 @@
 - [ ] 为非 arXiv 论文进入推荐链路增加回归测试
 - [ ] 为 docs 生成的无 PDF 降级路径增加测试
 
+
+### Personal
+- [ ] Better rule to filter out the repeated papers.
+- [ ] Accept different api-key from other platforms.
+- [ ] Add publishing to xhs (red note).
+- [ ] Add a one command transfer to my personal paper-note.

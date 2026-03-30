@@ -59,3 +59,4 @@
 - [ ] Accept different api-key from other platforms.
 - [ ] Add publishing to xhs (red note).
 - [ ] Add a one command transfer to my personal paper-note.
+- [ ] Assign paper for similar convert with similar pipeline.

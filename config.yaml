@@ -25,3 +25,65 @@ subscriptions:
     stage: A
     diff_threshold_pct: 15
   keyword_recall_mode: or
+  intent_profiles:
+    - tag: 3D视觉
+      description: 请帮我寻找3D vision，SLAM，Reconstruction相关的论文
+      enabled: true
+      paper_sources:
+        - arxiv
+      keywords:
+        - keyword: 3D vision
+          keyword_cn: 三维视觉
+          query: 3D vision techniques and applications
+        - keyword: SLAM
+          keyword_cn: 同步定位与建图
+          query: simultaneous localization and mapping
+        - keyword: reconstruction
+          keyword_cn: 三维重建
+          query: 3D reconstruction from images or sensors
+        - keyword: depth estimation
+          keyword_cn: 深度估计
+          query: depth estimation from images
+        - keyword: structure from motion
+          keyword_cn: 运动恢复结构
+          query: structure from motion algorithms
+        - keyword: neural rendering
+          keyword_cn: 神经渲染
+          query: neural rendering for 3D scenes
+      intent_queries:
+        - query: research papers on 3D vision and SLAM
+          query_cn: 关于三维视觉和SLAM的研究论文
+          enabled: true
+          source: manual
+          note: ''
+        - query: advances in 3D reconstruction techniques
+          query_cn: 三维重建技术的进展
+          enabled: true
+          source: manual
+          note: ''
+        - query: methods for simultaneous localization and mapping
+          query_cn: 同步定位与建图的方法
+          enabled: true
+          source: manual
+          note: ''
+        - query: 3D scene understanding and modeling
+          query_cn: 三维场景理解与建模
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-03-30T06:21:10.374Z'
+source_backends:
+  arxiv:
+    papers_table: arxiv_papers
+    use_vector_rpc: true
+    vector_rpc: match_arxiv_papers
+    vector_rpc_exact: match_arxiv_papers_exact
+    use_bm25_rpc: true
+    bm25_rpc: match_arxiv_papers_bm25
+    sync_table: arxiv_sync_status
+    sync_success_value: success
+    schema: public
+    kind: supabase
+    enabled: true
+    url: https://lyucdwgefyfbmaiopjbk.supabase.co
+    anon_key: sb_publishable_lX-oi64Uxyd7SIVv3_w2Uw_MTOojeKq

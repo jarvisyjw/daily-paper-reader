@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-001.webp",
+      "caption": "TABLE V: Comparison of the naive implementation and Algorithm 2.",
+      "page": 15,
+      "index": 1,
+      "width": 1076,
+      "height": 471
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-002.webp",
+      "caption": "Fig. 11: RMSE-Time joint comparison of these estimators on the Eight and Zero motion patterns. Each point represents the average RMSE and time of processing one frame on three sequences. The closer to the bottom-left corner, the better the performance.",
+      "page": 10,
+      "index": 2,
+      "width": 480,
+      "height": 357
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-003.webp",
+      "caption": "Fig. 9: (a) Aerial robot with a Realsense D430 stereo camera and a Kakute H7 flight controller (MPU6000, 200Hz) (b) Aerial robot flight trajectory shape. (c) A sample frame with tracked features in the experiment.",
+      "page": 10,
+      "index": 3,
+      "width": 520,
+      "height": 340
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-004.webp",
+      "caption": "Fig. 10: Estimated trajectories of SD-EqF (blue solid) and TEqF (red solid) on the Eight and Zero motion patterns. The ground-truth trajectories are shown in black dashed lines.",
+      "page": 10,
+      "index": 4,
+      "width": 484,
+      "height": 275
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-005.webp",
+      "caption": "Fig. 5: Estimation error (blue line) and 3-sigma bounds (red dashed line) of IMU yaw and position of 1000 Monte Carlo simulations on Udel-Gore dataset.",
+      "page": 8,
+      "index": 5,
+      "width": 444,
+      "height": 440
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-006.webp",
+      "caption": "TABLE VII: Additional computational cost of different implementations relative to the auxiliary EqF.",
+      "page": 27,
+      "index": 6,
+      "width": 1052,
+      "height": 309
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-007.webp",
+      "caption": "TABLE IV: Position (meter) and Orientation (deg) RMSE on EuRoC MAV dataset.",
+      "page": 9,
+      "index": 7,
+      "width": 510,
+      "height": 271
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-008.webp",
+      "caption": "Fig. 8: Average time of processing one camera frame on EuRoC dataset.",
+      "page": 9,
+      "index": 8,
+      "width": 486,
+      "height": 293
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-009.webp",
+      "caption": "Fig. 7: Average time of processing one camera with different number of landmarks and IMU frequency on dataset Udel-Gore. The result of ESKF is similar to that of SD-EqF and omitted to save space.",
+      "page": 9,
+      "index": 9,
+      "width": 1059,
+      "height": 210
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24130v1/fig-010.webp",
+      "caption": "TABLE VI: Comparison of the naive implementation and Algorithm 2 when ϕξ◦ or ϕ∗ ξ◦ is not bijective.",
+      "page": 16,
+      "index": 10,
+      "width": 1076,
+      "height": 913
+    }
+  ]
+}

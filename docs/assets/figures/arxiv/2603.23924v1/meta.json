@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-001.webp",
+      "caption": "Fig. 2: The overall architecture of DepthArb. The pipeline consists of two main complementary components: Attention Arbitration Modulation and Spatial Compactness Control. These regularizations are applied through a two-stage gradient guidance strategy. Early denoising steps enforce strict spatial disentanglement, while later steps relax the orthogonality constraint to synthesize natural boundaries and coherent textures.",
+      "page": 6,
+      "index": 1,
+      "width": 723,
+      "height": 456
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-002.webp",
+      "caption": "Fig. 8: Robustness across diverse artistic styles. DepthArb successfully generalizes to radically different visual domains. Our method strictly enforces complex spatial layouts without compromising stylistic fidelity.",
+      "page": 21,
+      "index": 2,
+      "width": 725,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-003.webp",
+      "caption": "Fig. 9: Example image pairs used in our user study. Participants were asked to compare DepthArb against SDXL (left) and LaRender (right). Baselines often struggle with challenging spatial relationships and fail to follow textual instructions accurately. Our method correctly interprets these constraints to synthesize highly realistic occlusions.",
+      "page": 22,
+      "index": 3,
+      "width": 625,
+      "height": 347
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-004.webp",
+      "caption": "Fig. 1: DepthArb enables robust, training-free occlusion synthesis. Under overlapping layouts, (a) baseline methods suffer from spatial interference, causing artifacts like concept mixing and illogical occlusion. (b) DepthArb resolves these conflicts through explicit attention arbitration, ensuring precise visibility control and correct object depth ordering even in complex scenes.",
+      "page": 3,
+      "index": 4,
+      "width": 712,
+      "height": 469
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-005.webp",
+      "caption": "Fig. 10: The detailed system prompt utilized for the automated ForegroundBackground Separability (FBS) evaluation.",
+      "page": 23,
+      "index": 5,
+      "width": 725,
+      "height": 608
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-006.webp",
+      "caption": "Fig. 4: DepthArb translates explicit depth values into robust occlusion relationships. The hierarchical structures illustrate the intended foreground-background ordering, which is consistently preserved across diverse semantic categories and scale variations.",
+      "page": 13,
+      "index": 6,
+      "width": 677,
+      "height": 306
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-007.webp",
+      "caption": "Table 2: Comprehensive comparison between training-free methods on OverLayBench [25]. Bold and underline denote the best and the second best results, respectively.",
+      "page": 13,
+      "index": 7,
+      "width": 697,
+      "height": 441
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-008.webp",
+      "caption": "Fig. 6: Analysis of key hyperparameters. We analyze λortho (top) and λcompact (bottom), with red values indicating default settings. We observe that excessive λortho disrupts background integrity, while extreme λcompact values lead to either blurry boundaries or unnatural background style collapse.",
+      "page": 19,
+      "index": 8,
+      "width": 721,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-009.webp",
+      "caption": "Table 1: Quantitative comparisons among the foundational SDXL model and trainingfree layout-guided baselines, three ablation variants, and our proposed DepthArb evaluated on the proposed OcclBench benchmark are presented. Bold and underline denote the best and the second best results, respectively.",
+      "page": 12,
+      "index": 9,
+      "width": 712,
+      "height": 248
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-010.webp",
+      "caption": "Fig. 3: Qualitative comparisons on representative occlusion cases. Each row corresponds to one prompt with specified object ordering, and columns show the groundtruth layout, baselines and our DepthArb, respectively.",
+      "page": 12,
+      "index": 10,
+      "width": 716,
+      "height": 567
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-011.webp",
+      "caption": "Fig. 11: Representative failure cases of DepthArb.",
+      "page": 24,
+      "index": 11,
+      "width": 725,
+      "height": 305
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23924v1/fig-012.webp",
+      "caption": "Table 3: Quantitative comparison on T2I-CompBench++. DepthArb achieves the highest performance in both layout accuracy (UniNet) and text-image alignment (CLIP Score). Bold and underline denote the best and the second best results, respectively.",
+      "page": 20,
+      "index": 12,
+      "width": 710,
+      "height": 278
+    }
+  ]
+}

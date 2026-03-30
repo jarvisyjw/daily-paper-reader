@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-001.webp",
+      "caption": "Table 1. Quantitative results on MatrixCity[12], UrbanScene[15] and GauUScene[32] dataset. The 1st , 2nd and 3rd best results are highlighted. Our method achieves state-of-the-art rendering FPS by reducing filter time tf (ms) and employing the Gaussian shrinking strategy, maintaining high-fidelity reconstruction quality competitive with the top-performing approaches.",
+      "page": 6,
+      "index": 1,
+      "width": 1036,
+      "height": 419
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-002.webp",
+      "caption": "Figure 5. Comparison of Different Shrinking Strategy on College and Modern-Building[32]. The best results are highlighted in bold. NP represents the total number of generated key-value pairs. (a) to (d) show the rendered detail: (a) vanilla 3DGS (3σ principle); (b) 3DGS with our shrinking strategy (λG = 0.2); (c) FilterGS with the 3σ principle; (d) FilterGS with λG = 0.2.",
+      "page": 7,
+      "index": 2,
+      "width": 491,
+      "height": 396
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-003.webp",
+      "caption": "Figure 2. The framework of FilterGS. (a) Given a set of images and SfM points for a large-scale scene, we first train a LoD-GS tree model. (Sec. 3.1) (b) To quantify redundancy of scene-wide Gaussian-tile pairs, we perform a pre-rendering pass over all training views. While following the standard 3DGS pipeline, this stage computes the GTC metric Ḡ and derives a shrinking threshold τ = f(Ḡ). (Sec. 3.3) (c) In the formal rendering stage, the pre-computed scaling factor τ and the tree model are processed by two specialized filters to efficiently select Gaussians for rendering. These Gaussians are adaptively scaled by τ during AABB formation, significantly reducing redundant key-value pairs before final sorting and α-blending. (Sec. 3.2)",
+      "page": 3,
+      "index": 3,
+      "width": 1029,
+      "height": 353
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-004.webp",
+      "caption": "Figure 7. Effect of λG on Key-Value Pair Pruning and Rendering Detail on Block[12] and Residence[32]. Nlow represents the number (M) of KPC< 0.01 pairs.",
+      "page": 8,
+      "index": 4,
+      "width": 498,
+      "height": 293
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-005.webp",
+      "caption": "Figure 3. Comparison of serial and parallel filtering strategies. LoG starts from level=0 and progressively applies R&C rules to filter internal nodes with oversized 2D radii and child nodes, retaining only leaves or sufficiently small internal nodes. In contrast, FilterGS simultaneously applies the R&L Filter across all levels to preserve nodes with small 2D radii and all leaf nodes, while introducing an Ancestor Filter to exclude nodes whose ancestor paths contain qualified internal nodes. This yields a key advantage: while LoG’s serial filtering requires steps proportional to tree depth (more levels, more steps), FilterGS completes parallel filtering in just two steps (No more levels, no matter levels).",
+      "page": 4,
+      "index": 5,
+      "width": 1020,
+      "height": 288
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23891v1/fig-006.webp",
+      "caption": "Figure 4. Schematic Diagram of the Progressive Relationship Between the Four Core Formulas (Eqa. 5, 6, 7, 8) of Sec. 3.3.",
+      "page": 5,
+      "index": 6,
+      "width": 481,
+      "height": 369
+    }
+  ]
+}

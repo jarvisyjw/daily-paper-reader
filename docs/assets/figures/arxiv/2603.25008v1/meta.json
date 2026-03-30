@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-001.webp",
+      "caption": "Figure 5: Comparing the view rendered of Hotdog object between methods.",
+      "page": 7,
+      "index": 1,
+      "width": 979,
+      "height": 284
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-002.webp",
+      "caption": "Figure 6: Comparing the quality of rendered images with different numbers of images between TensoRF and Few TensoRF.",
+      "page": 7,
+      "index": 2,
+      "width": 979,
+      "height": 717
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-003.webp",
+      "caption": "Figure 8: Visual comparison between methods.",
+      "page": 10,
+      "index": 3,
+      "width": 979,
+      "height": 1092
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-004.webp",
+      "caption": "Figure 1: Few TensoRF in the 3D NeRF-like Pipeline. The diagram shows where Few TensoRF fits into the core of the 3D NeRF-like reconstruction pipeline. It all begins with multiple scene images, and either COLMAP or Pose Diffusion calculates precise camera details. These ones, along with the images, train Few TensoRF. The trained Few TensoRF model then takes center stage in the final steps, ensuring a streamlined and accurate 3D model reconstruction within the NeRF-like framework. This visual guide underscores the seamless integration of Few TensoRF at the heart of the 3D NeRF-like process.",
+      "page": 3,
+      "index": 4,
+      "width": 786,
+      "height": 316
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-005.webp",
+      "caption": "Figure 2: The Few TensoRF overview. This illustration was adapted from the original TensoRF paper [3]. It highlights two significant enhancements as we move from left to right: incorporating density frequency masks and integrating appearance color frequency on each rendered voxel. Additionally, a supplementary frequency mask is applied to refine the positional encoding fed into the neural networks.",
+      "page": 4,
+      "index": 5,
+      "width": 979,
+      "height": 232
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-006.webp",
+      "caption": "Figure 3: Comparing the rendered novel views quality of TensoRF baseline across different setups. To assess TensoRF’s performance on sparse input scenarios, we retrain the default TensoRF setup on different amounts of training image inputs. Following the image order, we have the original testing image (Ground Truth), and the novel view images rendered with TensoRF after training with 10 and 3 images (TensoRF_10img and TensorRF_10img) respectively.",
+      "page": 4,
+      "index": 6,
+      "width": 786,
+      "height": 314
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-007.webp",
+      "caption": "Figure 7: Comparing 3D meshes rendered for 0300 object.",
+      "page": 9,
+      "index": 7,
+      "width": 686,
+      "height": 1220
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25008v1/fig-008.webp",
+      "caption": "Figure 4: Diagram illustrating Frequency Masking on the appearance grid Gc and view direction d.",
+      "page": 5,
+      "index": 8,
+      "width": 979,
+      "height": 462
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-001.webp",
+      "caption": "Fig. 2: Two experts vs. one generalist: (a) The prevailing monolithic architecture employs a shared backbone with task-specific heads to jointly predict camera poses and 3DGS representations in a single forward pass. (b) The two-expert architecture explicitly decomposes the process into sequential stages: a geometry expert first estimates camera poses from multi-view input images, and a dedicated appearance (posed feedforward 3DGS) expert subsequently generates 3D Gaussian representations conditioned on the predicted poses and input images.",
+      "page": 6,
+      "index": 1,
+      "width": 725,
+      "height": 265
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-002.webp",
+      "caption": "Fig. 4: Qualitative comparison on high-resolution DL3DV (960× 540).",
+      "page": 11,
+      "index": 2,
+      "width": 725,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-003.webp",
+      "caption": "Fig. 9: Qualitative comparison on RE10K dataset with 6 context views.",
+      "page": 25,
+      "index": 3,
+      "width": 725,
+      "height": 1098
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-004.webp",
+      "caption": "Fig. 10: Qualitative cross-dataset generalization results from DL3DV to ScanNet++ (224× 224 resolution, 1-2 rows: 32 context views, 3-4 rows: 64 context views, 5-6 rows: 128 context views).",
+      "page": 26,
+      "index": 4,
+      "width": 725,
+      "height": 760
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-005.webp",
+      "caption": "Fig. 7: PSNR vs. inference speed on DL3DV (224×224 resolution). 6, 12, and 24 input views from left to right. The circle sizes are proportional to the model sizes, and the numbers inside indicate the number of parameters.",
+      "page": 22,
+      "index": 5,
+      "width": 725,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-006.webp",
+      "caption": "Table 1: Novel view synthesis on DL3DV with 6, 12, and 24 input views. p and k denote the use of ground-truth poses and intrinsics. † indicates evaluation with EPA.",
+      "page": 10,
+      "index": 6,
+      "width": 725,
+      "height": 292
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-007.webp",
+      "caption": "Fig. 3: Qualitative comparison on DL3DV with varying numbers of input views.",
+      "page": 10,
+      "index": 7,
+      "width": 725,
+      "height": 289
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-008.webp",
+      "caption": "Fig. 6: Qualitative cross-dataset generalization from DL3DV to ScanNet++.",
+      "page": 14,
+      "index": 8,
+      "width": 725,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-009.webp",
+      "caption": "Table 9: Cross Dataset Generalization.",
+      "page": 23,
+      "index": 9,
+      "width": 725,
+      "height": 369
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-010.webp",
+      "caption": "Fig. 11: Qualitative comparison on high-resolution DL3DV (960 × 540, 1-2 rows: 16 context views, 3-4 rows: 32 context views, 5-6 rows: 64 context views, 7-8 rows: 128 context views).",
+      "page": 27,
+      "index": 10,
+      "width": 725,
+      "height": 685
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21064v2/fig-011.webp",
+      "caption": "Fig. 8: Qualitative comparison on DL3DV (224 × 224 resolution, 1-3 rows: 6 context views, 4-6 rows: 12 context views, 7-9 rows: 24 context views).",
+      "page": 24,
+      "index": 11,
+      "width": 725,
+      "height": 845
+    }
+  ]
+}

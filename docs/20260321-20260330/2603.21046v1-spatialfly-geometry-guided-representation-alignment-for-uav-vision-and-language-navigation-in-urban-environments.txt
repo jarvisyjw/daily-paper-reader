@@ -1,0 +1,513 @@
+Title: SpatialFly: Geometry-Guided Representation Alignment for UAV Vision-and-Language Navigation in Urban Environments
+
+URL Source: https://arxiv.org/pdf/2603.21046v1
+
+Published Time: Tue, 24 Mar 2026 01:04:39 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 1
+
+# SpatialFly: Geometry-Guided Representation Alignment for UAV Vision-and-Language Navigation in Urban Environments 
+
+Wen Jiang, Kangyao Huang, Li Wang, Wang Xu, Wei Fan, Jinyuan Liu, Shaoyu Liu, Hanfang Liang, Hongwei Duan, Bin Xu, and Xiangyang Ji, Member, IEEE 
+
+Abstract —UAVs play an important role in applications such as autonomous exploration, disaster response, and infrastructure inspection. However, UAV VLN in complex 3D environments remains challenging. A key difficulty is the structural represen-tation mismatch between 2D visual perception and the 3D trajec-tory decision space, which limits spatial reasoning. To this end, we propose SpatialFly, a geometry-guided spatial representation framework for UAV VLN. Operating on RGB observations with-out explicit 3D reconstruction, SpatialFly introduces a geometry-guided 2D representation alignment mechanism. Specifically, the geometric prior injection module injects global structural cues into 2D semantic tokens to provide scene-level geometric guidance. The geometry-aware reparameterization module then aligns 2D semantic tokens with 3D geometric tokens through cross-modal attention, followed by gated residual fusion to preserve semantic discrimination. Experimental results show that SpatialFly consistently outperforms state-of-the-art UAV VLN baselines across both seen and unseen environments, reducing NE by 4.03 m and improving SR by 1.27% over the strongest baseline on the unseen Full split. Additional trajectory-level analysis shows that SpatialFly produces trajectories with better path alignment and smoother, more stable motion. 
+
+Index Terms —Unmanned aerial vehicles, vision-and-language navigation, spatial reasoning, implicit 3D representation, RGB-only perception 
+
+This work was supported by the National Natural Science Foundation of China under Grant No. 52502496, U22B2052 and the Natural Science Foun-dation of Chongqing, China under Grant No. CSTB2025NSCQ-GPX0413, and the National High Technology Research and Development Program of China under Grant No. 2020YFC1512501. (Corresponding authors: Bin Xu and Xiangyang Ji) Wen Jiang, Li Wang, Wei Fan, Hongwei Duan, and Bin Xu are with the School of Mechanical Engineering, Beijing Institute of Technology, Beijing 100081, China. (e-mail: 3120235086@bit.edu.cn, wangli bit@bit.edu.cn,fanweixx@bit.edu.cn, 3220250437@bit.edu.cn, bitxu-bin@bit.edu.cn, Kangyao Huang is with the Department of Computer Science and Technology, Tsinghua University, Beijing 100084, China.(e-mail: huangky22@mails.tsinghua.edu.cn) Wang Xu is with Tsinghua University, Beijing 100084, China.(e-mail:xwjim812@126.com) Li Wang is also with the Chongqing Innovation Center, Beijing Institute of Technology, Chongqing 401120, China. Xiangyang Ji is with the Department of Automation, Tsinghua University, Beijing 100084, China.(e-mail: xyji@tsinghua.edu.cn) Jinyuan Liu is with the School of Software, Dalian University of Technol-ogy, Dalian 116024, China.(e-mail: jinyuanliu@dlut.edu.cn) Shaoyu Liu is with the School of Artificial Intelligence, Xidian University, Xi’an 710071, China.(e-mail: 23171110721@stu.xidian.edu.cn) Hanfang Liang is Jianghan University, Wuhan 430056, China.(e-mail: lhf.liang@gmail.com) 
+
+I. I NTRODUCTION 
+
+Unmanned aerial vehicle vision-and-language navigation (UAV VLN) requires UAVs [1]–[3] to understand natural lan-guage instructions and generate continuous flight decisions in 3D environments based on visual observations. Unlike ground robot navigation [4]–[6], while UAVs mainly rely on multi-view 2D RGB observations to perceive the environment, they must produce trajectories that satisfy geometric constraints in 3D [7], [8]. This setting introduces a structural representation mismatch between 2D perception and 3D trajectory decision making, making it difficult to maintain consistent spatial understanding and cross-view consistency [9], [10]. Therefore, although existing methods have achieved progress in ground-based or simplified scenarios, bridging the gap between 2D perception and 3D decision making remains a key challenge in UAV VLN. Most existing UAV VLN methods struggle to achieve stable spatial reasoning in complex 3D environments, mainly due to the lack of representations that bridge 2D visual perception and continuous 3D decision spaces. Early studies, such as AerialVLN [11] and AVDN [12], simplify the continuous flight process into finite decision sequences by adopting prede-fined discrete action spaces [13]. Although such discretization simplifies navigation, the reliance on fixed action sets limits generalization to unseen environments. Subsequently, some studies introduce explicit geometric modeling methods [14], [15], such as bird’s-eye-view topological [16] or semantic maps [17], to enhance global spatial perception. With the emergence of large language models (LLMs) [18], [19], semantic-level planning ability has improved, but limitations in spatial intelligence remain evident, as current vision-language models (VLMs) [20], [21] still struggle to reliably encode 3D geometric structures. Recent studies such as TravelUAV [22], AutoFly [23] and FlightGPT [24] enhance high-level semantic reasoning by leveraging large-scale vision-language models. AeroDuo [25] distributes spatial cognition through multi-UAV cooperation, while LongFly [26] improves navigation stability by incorporating historical trajectories and visual observations. While current methods enhance policy-level performance, they fail to resolve the structural mismatch between 2D perception and 3D decision spaces, leaving representation-level alignment as a critical open challenge. To bridge this gap, we identify a key challenge in UAV VLN: the mismatch between multi-view 2D perception and   
+
+> arXiv:2603.21046v1 [cs.CV] 22 Mar 2026 JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 2
+> Fig. 1. Motivation and overview of SpatialFly. UAV VLN suffers from a structural representation mismatch between multi-view 2D visual perception and continuous 3D trajectory decision making. Without explicit geometric cues, multi-view RGB observations often lead to inconsistent spatial understanding and unstable 3D path prediction. SpatialFly addresses this gap through the geometry-guided representation alignment mechanism, improving cross-view consistency and more reliable 3D trajectory prediction.
+
+continuous 3D decision making. First, existing methods lack a spatial representation that can connect 2D visual observations with 3D trajectory decisions. Second, with only 2D inputs, it is difficult to capture spatial cues such as depth, scale, and cross-view consistency. As a result, conventional 2D representations are difficult to support reliable 3D-aware reasoning for UAV navigation. To address these challenges, we propose SpatialFly, ageometry-guided framework for UAV VLN, as shown in Fig. 1. Operating on RGB observations without explicit 3D reconstruction, SpatialFly introduces a geometry-guided rep-resentation alignment mechanism. Specifically, the geometric prior injection module injects global structural cues into 2D semantic tokens to provide scene-level geometric guidance. The geometry-aware reparameterization module then aligns 2D semantic tokens with 3D geometric tokens through cross-modal attention, followed by gated residual fusion to preserve semantic discrimination. Together, these designs improve the spatial consistency of visual representations and support more reliable 3D trajectory decision making in complex environ-ments. In summary, our main contributions are as follows:  
+
+> •
+
+We propose SpatialFly, a geometry-guided spatial rep-resentation framework for UAV VLN, which mitigates the structural representation mismatch between 2D visual perception and the 3D trajectory decision space.  
+
+> •
+
+We introduce a geometry-guided 2D representation align-ment mechanism for RGB-only UAV VLN, which injects implicit 3D geometric priors into visual tokens and per-forms fine-grained cross-modal alignment and geometry-aware reparameterization to improve spatial consistency.  
+
+> •
+
+Experimental results show that SpatialFly consistently outperforms state-of-the-art UAV VLN baselines across both seen and unseen environments, reducing NE by 4.03 m and improving SR by 1.27% over the strongest baseline on the unseen Full split. The remainder of this paper is organized as follows. Sec-tion II reviews related work, including UAV VLN and implicit 3D representations for navigation. Section III presents the proposed approach, starting from the problem formulation, followed by an overview of the SpatialFly framework, the geometry-guided 2D representation alignment mechanism. Section IV describes the experimental setup and reports re-sults, including comparisons with state-of-the-art methods and ablation studies. Finally, Section V concludes the paper and discusses future directions. II. R ELATED WORK 
+
+A. UAV Vision-and-Language Navigation 
+
+We first review representative UAV VLN studies to clarify the current progress and remaining limitations in this task. UAV VLN requires UAVs to autonomously navigate in com-plex 6-DoF aerial spaces according to natural language instruc-tions. Compared with ground-based VLN [27], [28], UAVs have greater motion freedom and larger viewpoint changes, making it harder to map visual observations to the underlying 3D space. Early studies such as AerialVLN [11] simplify the navigation process by adopting discrete action spaces. However, as the task gradually expands to large-scale outdoor environments, recent benchmarks such as OpenFly [29], VLA-AN [30] and TravelUAV [22] introduce large-scale trajectory data and continuous control signals, shifting the research focus toward stable trajectory prediction in continuous 3D spaces. At the methodological level, research has gradually moved from traditional cross-modal policy learning to hierarchical decision-making frameworks driven by large language models. For example, FlightGPT [24] improves the interpretability of decision reasoning by combining reinforcement learning with chain-of-thought reasoning. CityNav [31] and related JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 3 
+
+> Fig. 2. Overall architecture of SpatialFly. Given multi-view RGB observations, the language instruction, and the UAV state, SpatialFly extracts 2D semantic tokens and implicit 3D geometric tokens. The GPI module injects global structural cues into 2D semantic tokens for scene-level geometric guidance. The GAR module then aligns 2D semantic tokens with 3D geometric tokens through cross-modal attention and gated fusion. The aligned visual representations are then integrated with language and state tokens for downstream action prediction.
+
+works leverage semantic priors from large models to enhance target understanding and path planning in open environments. Besides, AeroDuo [25] coordinates multi-altitude UAVs to de-compose global reasoning from local execution. LongFly [26] models historical observations in a temporal manner to al-leviate navigation drift. However, most methods still model navigation as a direct mapping from 2D visual sequences to a 3D action space, ignoring the structural representation mismatch between visual perception and the underlying 3D decision space. 
+
+B. Implicit 3D Representations for Navigation 
+
+We then review relevant studies on 3D spatial represen-tation, with a focus on methods that may support geometry-aware navigation. Building autonomous navigation in complex 3D environments depends on creating spatial representations, which are generally categorized as explicit or implicit. Ex-plicit methods build structured 3D maps through voxels or occupancy grids; for instance, VER [32] projects multi-view visual features into a unified voxel space to improve envi-ronmental modeling, though it requires significant memory and computing power. In contrast, implicit methods model 3D structures more compactly, with works like NeRF [33], NICE-SLAM [34], and Co-SLAM [35] using neural implicit representations to learn scene geometry, while SPAR-7M [36] shows that multi-view supervision can boost spatial reasoning from RGB input. Additionally, GeoNav [37] highlights that UAV navigation requires multi-scale reasoning to follow com-plex language goals. Therefore, a major challenge remains: how to learn cross-view consistent implicit 3D representations from RGB observations and apply them to continuous 3D flight decisions. III. M ETHOD 
+
+A. Problem Formulation 
+
+In UAV VLN, the objective is to control an unmanned aerial vehicle to navigate through a 3D environment based on a free-form natural language instruction L. The instruction describes the target location as well as relevant semantic or spatial cues. At time step t, the UAV state is represented by its 6-DoF pose 
+
+Pt = [ xt, y t, z t, φ t, θ t, ψ t], t = 0 , 1, . . . , T, (1) where (xt, y t, z t) denotes the 3D position, and (φt, θ t, ψ t)
+
+denote roll, pitch, and yaw, respectively. And we use St = Pt
+
+as the state input in this work. The UAV captures multi-view RGB images Rt providing visual observations of the surrounding environment. 
+
+Rt = {Ifront  
+
+> t
+
+, I rear  
+
+> t
+
+, I left  
+
+> t
+
+, I right  
+
+> t
+
+, I down  
+
+> t
+
+}. (2) Unlike discrete-action VLN settings, UAV VLN follows a continuous control paradigm. At each time step, the UAV JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 4
+
+predicts a waypoint increment ∆Wt, which is used to update the next waypoint Wt+1 as the immediate movement target. The episode terminates when a “Stop” action is issued or when the maximum step limit is reached. Following standard UAV VLN evaluation protocols, navigation is regarded as successful if the final predicted waypoint WT lies within 20 meters of the goal. This formulation highlights the core challenge of UAV VLN: the UAV receives only multi-view 2D RGB observa-tions, yet it must generate accurate and consistent 3D tra-jectories in complex aerial environments. Without relying on explicit 3D reconstruction, how to bridge the gap between 2D perception and 3D action remains a key unresolved problem. 
+
+B. Overview of the SpatialFly Framework 
+
+As shown in Fig. 2, we propose SpatialFly, a geometry-guided spatial representation framework for UAV VLN. Specifically, at time step t, given the language instruction L,the current UAV state St, and the multi-view observation Rt,SpatialFly first extracts two streams of features: 
+
+F 2Dt = f2D (Rt), F 3Dt, raw = f3D (Rt), (3) where f2D (·) is a 2D visual encoder for semantic feature extraction, and f3D (·) is a geometry encoder operating on multi-view RGB observations. For VGGT [38], we do not use its original prediction heads including pose, depth, and point cloud estimation. Instead, we keep only its Transformer trunk and directly use the aggregated tokens from the last layer as geometric priors. These tokens provide implicit geometric cues and cross-view structural information learned during pretraining. The geometric priors are then aligned with and injected into the 2D representations, producing geometry-enhanced fused features: 
+
+F fuse  
+
+> t
+
+= A F 2Dt , F 3Dt, raw 
+
+ , (4) where F fuse  
+
+> t
+
+keeps the same token form as F 2Dt , so it can be directly fed into the downstream navigation head without changing its interface. A(·) denotes the proposed G2RA mech-anism, which consists of a geometric prior injection stage and a geometry-aware reparameterization stage. During decision making, the downstream module combines L, F fuse  
+
+> t
+
+, and St
+
+into a prompt, and uses a large language model (Qwen2.5 3B) to obtain a hidden representation and regress the waypoint increment: 
+
+ht = LLM  Prompt( L, F fuse  
+
+> t
+
+, S t), ∆Wt = MLP( ht).
+
+(5) where the instruction tokens, projected visual tokens, and state embeddings are concatenated into a unified multimodal sequence, and the resulting hidden representation ht is used for waypoint regression. The predicted waypoint increment is then used to update the next waypoint. 
+
+C. Geometry-Guided 2D Representation Alignment Mecha-nism 
+
+We design a geometry-guided 2D representation alignment mechanism (G2RA) to reduce the mismatch between 2D se-mantic perception and 3D trajectory decision-making. Specif-ically, the geometric prior injection module injects global       
+
+> Fig. 3. Illustration of the Geometric Prior Injection (GPI) module. Implicit 3D geometric tokens are first summarized by mean pooling to obtain a global geometric representation, which is then passed through a modulation MLP to generate the FiLM parameters γand β. These modulation terms are applied to the 2D base tokens in a FiLM-like manner, and the resulting features are further combined with the original tokens through a learnable injection strength ηto produce geometry-injected representations.
+
+structural cues into 2D semantic tokens to provide scene-level geometric guidance. The geometry-aware reparameterization module then aligns 2D semantic tokens with 3D geometric to-kens through cross-modal attention, followed by gated residual fusion to preserve semantic discrimination. 
+
+1) Geometric Prior Injection Module: The geometric prior injection module (GPI) aims to inject implicit 3D geometric priors into 2D semantic tokens in a lightweight manner, so that the tokens carry global structural cues as shown in Fig. 3. Given the 2D tokens extracted by CLIP, F 2Dt ∈ RN2D ×dclip ,we first obtain the base query representations via a linear projection: 
+
+Qbase  
+
+> t
+
+= F 2Dt W base  
+
+> Q
+
+∈ RN2D ×d, (6) where W base  
+
+> Q
+
+∈ Rdclip ×d.Meanwhile, VGGT [38] (NoHead) outputs raw geometric tokens 
+
+F 3Dt, raw ∈ RN3D ×Dagg , (7) To match the 2D representation space, we project them into the shared dimension d and form the value sequence: JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 5
+
+Algorithm 1 Forward process of the GAR module  
+
+> 1:
+
+Input: Qinj  
+
+> t
+
+, Q base  
+
+> t
+
+, F 3Dt, raw  
+
+> 2:
+
+Output: F fuse  
+
+> t
+> 3: 4:
+
+Kt ← F 3Dt, raw WK + bK 
+
+> 5: 6:
+
+Vt ← F 3Dt, raw WV + bV 
+
+> 7: 8:
+
+for i = 1 to H do  
+
+> 9:
+
+qi ← Qinj  
+
+> t
+
+W qi 
+
+> 10:
+
+ki ← KtW ki 
+
+> 11:
+
+vi ← VtW vi 
+
+> 12:
+
+Ai ← softmax 
+
+ qik⊤
+
+> i
+
+√dh
+
+ 
+
+> 13:
+
+head i ← Aivi 
+
+> 14:
+
+end for  
+
+> 15: 16:
+
+F align  
+
+> t
+
+← Concat(head 1, . . . , head H )W O 
+
+> 17: 18:
+
+F fuse  
+
+> t
+
+← αF align  
+
+> t
+
++ (1 − α)Qbase  
+
+> t
+> 19: 20:
+
+return F fuse 
+
+> t
+
+Vt = F 3Dt, raw WV + bV ∈ RN3D ×d, (8) where WV ∈ RDagg ×d and bV ∈ Rd are learnable parameters. 
+
+a) Geometric summary and FiLM modulation: We apply mean pooling over the token dimension of Vt to obtain a global geometric summary: 
+
+gt = P(Vt) = 1
+
+N3DN3DX
+
+> j=1
+
+vt,j ∈ Rd, (9) and use a modulation generator Ψ( ·) to produce affine modu-lation parameters: 
+
+[γt, β t] = Ψ( gt; θΨ), γt, β t ∈ Rd, (10) where Ψ( ·) is a two-layer MLP. We apply a Sigmoid function to the scaling vector for stability: ˜γt = σ(γt).Finally, we inject the geometric priors into the 2D query tokens in a FiLM-like manner: 
+
+Qinj  
+
+> t
+
+= Qbase  
+
+> t
+
++ η  ˜γt ⊙ Qbase  
+
+> t
+
++ βt
+
+ , (11) where η is a learnable injection strength, ⊙ denotes element-wise multiplication, and ˜γt, β t are broadcast to all N2D 2D tokens. 
+
+2) Geometry-Aware Reparameterization Module (GAR): 
+
+With the global geometric constraints provided by GPI, GAR further performs fine-grained local alignment and feature repa-rameterization via cross-modal multi-head cross-attention in Algorithm 1. We first construct the key/value sequences: 
+
+Kt = F 3Dt, raw WK + bK ∈ RN3D ×d,Vt = F 3Dt, raw WV + bV ∈ RN3D ×d. (12) and feed Qinj  
+
+> t
+
+as the query sequence into the cross-attention layer. 
+
+a) Cross-modal multi-head cross-attention: Let H de-note the number of heads and dh = d/H be the head dimension. For the i-th head, we have: 
+
+qi = Qinj  
+
+> t
+
+W qi , ki = KtW ki , vi = VtW vi , (13) where W qi , W ki , W vi ∈ Rd×dh . The attention output is: 
+
+head i = softmax 
+
+ qik⊤
+
+> i
+
+√dh
+
+
+
+vi, (14) We concatenate all heads and apply an output projection to obtain the aligned representations: 
+
+F align  
+
+> t
+
+= Concat(head 1, . . . , head H )W O ∈ RN2D ×d, (15) This operation allows each 2D token to adaptively re-trieve and absorb the corresponding structural cues from the geometric tokens based on its semantic content and visual observations, resulting in a geometry-aware reparameterization in the feature space. 
+
+b) Gated residual fusion: To preserve the semantic dis-crimination ability of CLIP while injecting geometric priors, we use a gated residual connection to fuse F align  
+
+> t
+
+with the base query representations Qbase  
+
+> t
+
+:
+
+F fuse  
+
+> t
+
+= α · F align  
+
+> t
+
++ (1 − α) · Qbase  
+
+> t
+
+, α ∈ (0 , 1) . (16) where α is a learnable gating coefficient. The resulting F fuse 
+
+> t
+
+keeps the same token form as the original 2D tokens, and can be directly used as geometry-aligned 2D representations for the downstream navigation head. IV. E XPERIMENTS 
+
+A. Experimental Setup 
+
+We now describe the datasets, evaluation metrics, and implementation details used in the experiments. 
+
+1) Datasets and Experimental Environment: We conduct experiments on the OpenUAV dataset. It contains 12,149 human-operated UAV trajectories, each paired with multi-view RGB images, refined goal descriptions, and waypoint annotations. The dataset covers 89 object categories across diverse outdoor environments. We follow the official split into Train, Test Seen, Test Unseen Map, and Test Unseen Object, with Easy/Hard subsets for testing. The split in-cludes 9,152/1,410/958/629 trajectories, where Unseen Map introduces two new scenes and Unseen Object includes 13 unseen categories. All experiments are conducted using the AirSim simulator. AirSim provides a virtual environment for UAV research with physics-based flight dynamics and realistic visual rendering. 
+
+2) Evaluation Metrics: We report navigation performance using four commonly used metrics in VLN: Navigation Error (NE), Success Rate (SR), Oracle Success Rate (OSR), and Success weighted by Path Length (SPL) [39], [40]. NE mea-sures the final distance to the goal and reflects navigation accuracy. SR reports the percentage of successful episodes under a predefined success threshold. OSR evaluates whether the agent reaches the goal at any time step along the trajectory, which is less sensitive to the final stopping decision. SPL further accounts for path efficiency by weighting success with the ratio between the shortest path length and the executed path length. JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 6
+
+> Fig. 4. Quantitative comparison of different methods on the seen setting. The left y-axis denotes NE, and the right y-axis denotes SR, OSR, and SPL.
+
+3) Implementation and Training Details: Implemented in PyTorch, the system uses Qwen-2.5 3B as the language backbone and CLIP ViT-L/14 for visual features, while a VGGT [38] encoder extracts implicit 3D geometric tokens. These features are merged via the G2RA mechanism to improve spatial consistency without extra depth maps. The model predicts 3D displacements ∆Wt by optimizing a loss function Ltraj that combines L1 distance regression and co-sine similarity for direction. Training was performed on eight NVIDIA RTX 4090 GPUs using LoRA fine-tuning ( r = 36 )with frozen encoders and DeepSpeed ZeRO-2 optimization. We used the AdamW optimizer with a 5 × 10 −4 learning rate, a batch size of 8, and scheduled sampling to handle long-term navigation errors, all while utilizing BF16/FP16 mixed precision for efficiency. 
+
+B. Comparison With State-of-the-Art Methods 
+
+We conduct quantitative comparisons on the OpenUAV dataset against several representative baselines and state-of-the-art UAV VLN methods, including heuristic policies (Ran-dom and Fixed), the cross-modal attention model CMA [41] , OpenUAV-based baselines (TravelUAV and TravelUAV-DA [22]), as well as recent representative approaches such as LongFly [26] and OpenVLN [42]. We further include the general-purpose navigation foundation model NavFoM [43] for comparison. In addition, we report the performance of our base model, BS (Ours). All results are presented under the official evaluation protocol on the Full, Easy, and Hard splits. 
+
+1) Quantitative Evaluation on the OpenUAV-Seen Dataset: 
+
+As shown in Table I and Fig. 4, we report the quantitative results on the OpenUAV Test Seen set under the Full, Easy, and Hard splits. We evaluate navigation performance using four standard metrics: NE ↓, SR ↑, OSR ↑, and SPL ↑. Experiments are conducted under two data regimes, namely 25% training data (Low-Data) and 100% training data (Full-Data), to assess model generalization and stability under different data scales. 
+
+Data Efficiency under the Low-Data Setting (25%). 
+
+Considering that OpenVLN adopts a reinforcement learning training strategy and emphasizes data efficiency, we conduct comparisons under the same Low-Data setting. Results show that when using only 25% of the training data, SpatialFly still achieves consistent improvements over the best competing method. On the Full split, SpatialFly reduces NE by 12.66 m and improves SR by 2.45%. On the Easy split, NE is reduced by 17.83 m and SR increases by 3.38%. On the Hard split, NE decreases by 12.64 m with an SR improvement of 1.50%. These results show that the proposed method remains effective under limited training data and achieves stable improvements across different splits. Some metrics even approach or exceed those of earlier methods trained with the full dataset, suggest-ing that geometric priors help improve learning under low-data conditions. 
+
+Overall Performance under the Full-Data Setting (100%). LongFly [26] models the influence of past informa-tion on current decision making by incorporating historical images and trajectory points, and is a representative UAV VLN method. Under the Full-Data setting, SpatialFly achieves the best or competitive performance across the Full, Easy, and Hard splits. On the Full split, SpatialFly achieves an SR of 38.54% and an SPL of 33.43%, both higher than LongFly (SR 36.39%, SPL 31.07%). Compared with the previous best method, SpatialFly further reduces NE by 1.97 m, and improves SR by 2.15%, OSR by 2.75%, and SPL by 2.36%. On the Easy split, SpatialFly reduces NE by 3.69 m and improves SPL by 2.37% compared with the best competing method, indicating that geometry-consistent feature injection improves path efficiency and stability in relatively short and less ambiguous trajectories. On the Hard split, SpatialFly achieves an NE of 84.76, with SR reaching 37.33% and SPL reaching 33.22%. Compared with the previous best method, SR improves by 3.39% and SPL improves by 2.34%. These results show that the G2RA mechanism brings clearer and more stable gains in complex scenarios, while providing more reliable structural support for continuous spatial decision making. Although current methods have made steady progress, there is still a clear gap compared with human performance. 
+
+Improvement over the Base Model (BS). Compared with the base model BS (Ours), introducing the G2RA mechanism leads to substantial overall performance gains. Under the Full-Data setting on the Hard split, NE decreases from 127.11 to 84.76 (a reduction of 42.35), while SR improves by 21.42% and SPL improves by 18.58%. Similar improvement trends are also observed on the Full and Easy splits. These results indi-cate that G2RA reduces NE while simultaneously improving SR, OSR, and SPL. Further analysis of the improvement over BS (Imp. BS) shows that the gains on the Hard split are generally larger than those on the Easy split. For example, under the 100% data setting, the SR improvement on Hard (+21.42) is notably higher than that on Easy (+11.36). This suggests that G2RA contributes more significantly to decision making in complex scenarios. Overall, SpatialFly demonstrates stable advantages across different training data scales and difficulty splits, with more pronounced improvements in complex navigation tasks. These results validate that the G2RA mechanism alleviates the structural mismatch between 2D visual perception and the continuous 3D action space, thereby improving navigation accuracy in UAV VLN tasks. 
+
+2) Performance on the Overall Test Unseen Set: As shown in Table II and Fig. 5, on the Test Unseen Overall split, the proposed SpatialFly consistently outperforms the previous state-of-the-art method LongFly across all core metrics. JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 7         
+
+> TABLE I RESULTS ON THE TEST SEEN SET ACROSS FULL /E ASY /H ARD SPLITS USING NE ↓AND SR/OSR/SPL(%) ↑. 25% (L OW -D ATA )AND 100% (F ULL -D ATA )
+> SETTINGS ARE VISUALLY SEPARATED FOR CLARITY .
+
+Method Full Easy Hard 
+
+NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑
+
+Human 14.15 94.51 94.51 77.84 11.68 95.44 95.44 76.19 17.16 93.37 93.37 79.85 25% Training Data (Low-Data Setting) 
+
+TravelUAV [22] 132.59 11.59 24.50 10.45 85.75 14.11 30.35 12.34 181.19 8.98 18.43 8.48 OpenVLN [42] 125.97 14.39 28.03 12.94 87.96 15.22 30.64 13.31 175.54 13.32 24.62 12.55 BS(Ours) 119.12 13.12 27.08 9.50 73.77 15.96 32.45 11.21 171.20 9.85 20.91 7.55 SpatialFly (Ours) 113.31 16.84 38.36 14.58 70.13 18.60 48.15 16.12 162.90 14.82 27.02 12.81 
+
+Imp.(BS) -5.81 +3.72 +11.28 +5.08 -3.64 +2.64 +15.7 +4.91 -8.30 +4.97 +6.11 +5.26 Imp.(SOTA) -12.66 +2.45 +10.33 +1.64 -17.83 +3.38 +17.51 +2.81 -12.64 +1.50 +2.40 +0.26 
+
+100% Training Data (Full-Data Setting) 
+
+Random Action 222.20 0.14 0.21 0.07 142.07 0.26 0.39 0.13 320.12 0.00 0.00 0.00 Fixed Action 188.61 2.27 8.16 1.40 121.36 3.48 11.48 2.14 270.69 0.79 4.09 0.49 CMA [41] 135.73 8.37 18.72 7.90 84.89 11.48 24.52 10.68 197.77 4.57 11.65 4.51 TravelUAV [22] 106.28 16.10 44.26 14.30 68.78 18.84 47.61 16.39 152.04 12.76 40.16 11.76 TravelUAV-DA [22] 98.66 17.45 48.87 15.76 66.40 20.26 51.23 18.10 138.04 14.02 45.98 12.90 NavFoM [43] 93.05 29.17 49.24 25.03 58.98 32.91 53.16 27.87 143.83 23.58 43.40 20.80 LongFly [26] 60.02 36.39 65.87 31.07 38.10 38.52 71.90 31.24 85.20 33.94 58.94 30.88 BS(Ours) 85.17 22.50 44.64 19.12 48.65 28.23 54.88 23.02 127.11 15.91 32.88 14.64 
+
+SpatialFly (Ours) 58.05 38.54 68.62 33.43 34.41 39.59 74.14 33.61 84.76 37.33 62.27 33.22 
+
+Imp.(BS) -27.12 +16.04 +23.98 +14.31 -14.24 +11.36 +19.26 +10.59 -42.35 +21.42 +29.39 +18.58 Imp.(SOTA) -1.97 +2.15 +2.75 +2.36 -3.69 +1.07 +2.24 +2.37 -0.44 +3.39 +3.33 +2.34              
+
+> TABLE II RESULTS ON THE TEST UNSEEN SET ACROSS FULL /E ASY /H ARD SPLITS USING NE ↓AND SR/OSR/SPL(%) ↑;SPATIAL FLY (OURS )IS COMPARED WITH BASELINES ,AND ABSOLUTE GAINS ARE REPORTED AS IMP .(BS) AND IMP .(SOTA).
+
+Method Full Easy Hard 
+
+NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑
+
+Random Action 225.64 0.06 0.06 0.06 164.66 0.19 0.19 0.19 280.58 0.00 0.00 0.00 Fixed Action 193.30 1.76 5.36 1.09 140.33 3.19 8.08 1.88 245.96 0.85 3.08 0.55 CMA [41] 147.27 4.98 12.41 4.74 102.54 8.03 17.52 7.52 191.30 2.76 7.53 2.71 TravelUAV [22] 130.60 11.41 31.13 10.45 96.27 12.47 33.31 11.29 167.49 10.62 28.91 9.80 NavFoM [43] 118.34 15.63 30.46 14.21 89.77 16.98 32.22 15.35 155.69 14.35 27.79 13.16 LongFly [26] 91.84 24.19 43.86 20.84 69.16 22.89 43.24 18.66 112.02 25.36 44.41 22.76 BS(Ours) 106.08 13.99 27.66 12.16 75.25 16.73 32.40 14.01 133.49 11.55 23.45 10.52 
+
+SpatialFly(Ours) 87.82 25.46 44.41 21.76 64.49 25.17 44.18 20.36 108.56 25.71 44.63 23.01 
+
+Imp.(BS) -18.26 +11.47 +16.75 +9.6 -10.76 +8.44 +11.78 +6.35 -24.93 +14.16 +21.18 +12.49 Imp.(SOTA) -4.03 +1.27 +0.55 +0.92 -4.67 +2.28 +0.94 +1.70 -3.46 +0.35 +0.22 +0.25 
+
+On the Full subset, SpatialFly achieves 25.46% SR, 44.41% OSR, and 21.76% SPL. Compared with LongFly (SR: 24.19%, OSR: 43.86%, SPL: 20.84%), this corresponds to improve-ments of +1.27%, +0.55%, and +0.92%, respectively. Mean-while, the NE is reduced from 91.84 m to 87.82 m (-4.03 m). These results indicate that SpatialFly further improves navi-gation success in unseen environments. On the Easy subset, SpatialFly also maintains consistent gains. The SR reaches 25.17%, representing a +2.28% improvement over LongFly, while SPL improves by +1.70% and NE is reduced by 4.67 m. Although the Easy scenarios exhibit relatively simpler layouts, geometric consistency modeling still provides stable perfor-mance benefits. More importantly, on the more challenging Hard subset, SpatialFly achieves 25.71% SR, 44.63% OSR, and 23.01% SPL, while reducing NE by 3.46 m. Compared with methods primarily driven by semantic reasoning, incor-porating geometric priors helps alleviate cumulative spatial errors in complex environments, thereby improving final goal convergence. 
+
+3) Performance on the Test Unseen Map Set: As shown in Table III, on the Test Unseen Map split, the proposed Spa-tialFly consistently outperforms the previous state-of-the-art method LongFly across all core metrics, further demonstrat-ing its generalization capability under cross-scene structural distribution shifts. On the Full subset, SpatialFly achieves 13.57% SR, 30.38% OSR, and 11.13% SPL. Compared with LongFly (SR: 11.27%, OSR: 30.27%, SPL: 9.32%), this corresponds to improvements JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 8               
+
+> Fig. 5. Quantitative comparison on unseen overall and unseen map settings. Blue and orange bars denote the results on unseen overall and unseen map, respectively. Left and right y-axes correspond to NE and SR/OSR/SPL, respectively. TABLE III RESULTS ON THE TEST UNSEEN MAP SET ACROSS FULL /E ASY /H ARD SPLITS USING NE ↓AND SR/OSR/SPL(%) ↑;SPATIAL FLY (OURS )IS COMPARED WITH BASELINES ,AND ABSOLUTE GAINS ARE REPORTED AS IMP .(BS) AND IMP .(SOTA).
+
+Method Full Easy Hard 
+
+NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑
+
+Random Action 202.98 0.00 0.00 0.00 158.46 0.00 0.00 0.00 265.88 0.00 0.00 0.00 Fixed Action 180.47 0.52 2.61 0.39 132.89 0.89 4.28 0.67 247.72 0.00 0.25 0.00 CMA [41] 141.68 2.30 10.02 2.16 102.29 3.57 14.26 3.33 197.35 0.50 4.03 0.50 TravelUAV [22] 138.80 4.18 20.77 3.84 102.94 4.63 22.82 4.24 189.46 3.53 17.88 3.28 NavFoM [43] 125.10 6.30 18.95 5.68 102.41 6.77 20.07 6.04 170.58 5.36 15.71 4.97 LongFly [26] 108.32 11.27 30.27 9.32 78.56 12.96 34.31 10.32 148.10 9.02 24.88 7.98 BS(Ours) 112.61 7.52 20.98 6.38 79.97 10.40 25.91 8.66 156.24 3.66 14.39 3.32 
+
+SpatialFly(Ours) 104.05 13.57 30.38 11.13 72.94 16.06 34.31 12.70 145.63 10.24 25.12 9.04 
+
+Imp.(BS) -8.56 6.05 +9.40 +4.75 -7.03 +5.66 +8.40 +4.04 -10.61 +6.58 +10.73 +5.72 Imp.(SOTA) -4.27 +2.30 +0.11 +1.81 -5.62 +3.10 +0.00 +2.38 -2.47 +1.22 +0.24 +1.06 
+
+of +2.30%, +0.11%, and +1.81%, respectively. Meanwhile, NE is reduced from 108.32 m to 104.05 m (-4.27 m). On the Easy subset, the advantage becomes more evident. SpatialFly achieves 16.06% SR, improving by +3.10% over LongFly, while SPL increases by +2.38% and NE decreases by 5.62 m. The OSR remains comparable to LongFly (34.31%), sug-gesting that in relatively regular unseen environments, the proposed method enables more accurate goal convergence and improved path quality. On the more challenging Hard sub-set, SpatialFly also maintains superior performance, reaching 10.24% SR, 25.12% OSR, and 9.04% SPL. Compared with LongFly, this corresponds to gains of +1.22%, +0.24%, and +1.06%, respectively, while reducing NE by 2.47 m. These results indicate that G2RA improves navigation success and path efficiency under unseen scene layouts. In structurally complex and long-horizon scenarios, explicitly modeling geo-metric consistency helps reduce cumulative spatial errors and enhances generalization across novel scene layouts. 
+
+C. Ablation Studies 
+
+We conduct ablation studies to analyze the contribution of each component and design choice in SpatialFly. 
+
+1) Ablation on Different Components: To better understand the contribution of each component in SpatialFly, we conduct component-level ablation experiments on the Test Unseen split, as shown in Table IV. We analyze both the necessity of the semantic/geometric branches and the effectiveness of the key design choices in the proposed fusion mechanism. 
+
+Effect of Different Branches. We first evaluate whether both the semantic and geometric branches are necessary for robust UAV VLN. The results show that using only the 2D semantic branch (2D-only) or only the 3D geometric branch (3D-only) leads to clear performance degradation. On the Full split, the SR drops to 19.36% for 2D-only and 16.89% for 3D-only, compared with 25.46% achieved by the full model, while NE increases noticeably in both cases. These results suggest that a single modality is insufficient to jointly capture semantic understanding and spatial structure, and that both branches are necessary for complex navigation. 
+
+Effect of Key Design Choices. We further evaluate several key design choices in the proposed fusion module. Replacing the proposed G2RA operator with simple feature concate-nation (Concat Fusion) results in substantial performance degradation. On the Full split, SR and SPL decrease to 16.76% and 13.84%, respectively, while NE increases to 115.93 m. This indicates that naive concatenation is insufficient to model the relationship between 2D semantic and 3D geometric repre-sentations. Moreover, when keeping the G2RA fusion structure but removing geometric prior injection (No GPI), consistent performance degradation is still observed. On the Hard split, JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 9                                                                                                                    
+
+> TABLE IV COMPONENT ABLATION OF SPATIAL FLY ON THE TEST UNSEEN SPLIT (F ULL /E ASY /H ARD ). W E ANALYZE THE CONTRIBUTIONS OF THE 2D SEMANTIC BRANCH ,THE 3D GEOMETRIC BRANCH ,THE CROSS -MODAL FUSION OPERATOR ,AND THE GEOMETRIC PRIOR INJECTION . M ETRICS INCLUDE NE ↓AND
+> SR/OSR/SPL(%) ↑.
+> Variant 2D Sem. 3D Geo. Fusion Geo Inject Full Easy Hard
+> NE ↓SR ↑OSR ↑SPL ↑NE ↓SR ↑OSR ↑SPL ↑NE ↓SR ↑OSR ↑SPL ↑
+> 2D-only ✓×–×105.96 19.36 38.56 16.52 78.15 19.14 40.03 15.49 130.93 19.54 37.23 17.43 3D-only ×✓–×112.15 16.89 37.18 14.80 78.68 14.99 38.42 12.45 141.91 18.57 36.07 16.88 Concat Fusion ✓✓Concat ×115.93 16.76 34.15 13.84 81.53 15.40 35.21 11.93 146.51 17.98 33.22 15.54 No Geo Inject ✓✓G2RA ×95.66 23.44 42.34 19.43 69.29 23.03 43.11 18.08 119.11 23.81 41.67 20.64
+> SpatialFly (Full) ✓✓G2RA ✓87.82 25.46 44.41 21.76 64.49 25.17 44.18 20.36 108.56 25.71 44.63 23.01
+> TABLE V COMPARISON WITH DIFFERENT FUSION ARCHITECTURES ON THE TEST UNSEEN SPLIT (F ULL /E ASY /H ARD ). M ETRICS INCLUDE NE ↓AND
+> SR/OSR/SPL(%) ↑.
+
+Method Full Easy Hard 
+
+NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑ NE ↓ SR ↑ OSR ↑ SPL ↑
+
+Cross-Attention(Evo-0-style) [8] 100.13 22.68 41.34 18.73 71.15 21.55 40.56 16.43 125.89 23.69 42.02 20.76 Language-Guided(CLIPORT-style) [44] 92.10 23.57 42.41 20.26 69.02 22.22 40.96 18.04 112.64 24.76 43.69 22.23 Bidirectional Cross-Attention [45] 91.63 23.00 39.26 19.14 67.32 21.21 39.87 16.48 113.14 24.58 38.72 21.49 
+
+SpatialFly (Ours) 87.82 25.46 44.41 21.76 64.49 25.17 44.18 20.36 108.56 25.71 44.63 23.01 
+
+> Fig. 6. Fusion architecture variants implemented for comparison. (a) Unidirec-tional cross-attention baseline following Evo-0 [8]. (b) Language-modulated cross-attention inspired by CLIPORT [44]. (c) Bidirectional interaction mech-anism following [45]. (d) The proposed SpatialFly with G2RA.
+
+SR decreases from 25.71% to 23.81%, and NE increases from 108.56 m to 119.11 m. This suggests that GPI is particularly beneficial in complex scenarios. 
+
+2) Comparison of Fusion Architecture Designs: To evaluate the rationality and effectiveness of the G2RA design, we com-pare SpatialFly with several representative fusion architectures inspired by prior work, as illustrated in Fig. 6(a)-(d). The results are reported in Table V. These comparison models are structural reference implementations and are used only to analyze the effect of different fusion strategies. Structure (a) follows the unidirectional cross-attention mechanism adopted in Evo-0 [8] and serves as a standard cross-modal attention baseline. Structure (b) draws on the language-modulated cross-attention design in CLIPORT [44], where language features are used to regulate the cross-modal interaction process. Structure (c) follows a bidirectional in-teraction mechanism [45], enabling two-way attention flow between 2D and 3D features. Although these variants improve feature interaction to different extents, their gains remain limited, especially under more challenging settings. In con-trast, the proposed SpatialFly explicitly introduces geometry-guided constraints into the fusion process and achieves the best overall performance. On the Full split, it reaches 25.46% SR, 44.41% OSR, and 21.76% SPL, with NE reduced to 87.82 m. Overall, these results suggest that attention-based interaction or semantic modulation alone is insufficient, while explicit geometric constraints help reduce error accumulation and improve path quality. 
+
+3) Trajectory Alignment and Smoothness Analysis: Beyond the conventional navigation metrics [46], we further analyze trajectory quality from the perspectives of path alignment and motion smoothness. Specifically, NDTW measures the global similarity between the predicted trajectory and the reference route, while SDTW further incorporates task success by assigning zero to failed trajectories [47]. To evaluate motion quality, we compute the mean and variance of turning angles between consecutive trajectory segments, where lower values indicate smoother trajectory transitions and more stable flight behavior. As shown in Table VI, SpatialFly consistently outperforms LongFly in both NDTW and SDTW across the Full, Easy, and Hard splits, indicating that its predicted trajectories are more faithfully aligned with the global shape of the reference paths. The gains are particularly notable on the Hard split, where NDTW and SDTW improve by 2.57 and 1.10 points, respectively, suggesting that the proposed spatial guidance is especially beneficial in complex scenes that require stronger route-level spatial reasoning. Meanwhile, SpatialFly achieves lower smoothness mean and variance on all three splits, demonstrating reduced turning fluctuations and more stable JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 10 
+
+TABLE VI COMPARISON OF TRAJECTORY ALIGNMENT AND SMOOTHNESS METRICS ON THE TEST UNSEEN SPLIT (F ULL /E ASY /H ARD ). M ETRICS INCLUDE TRAJECTORY SMOOTHNESS VARIANCE ↓, NDTW/SDTW(%) ↑, AND TRAJECTORY SMOOTHNESS MEAN ↓. L OWER SMOOTHNESS MEAN AND VARIANCE INDICATE SMOOTHER AND MORE STABLE TRAJECTORIES .
+
+Method Full Easy Hard 
+
+Var ↓ NDTW ↑ SDTW ↑ Mean ↓ Var ↓ NDTW ↑ SDTW ↑ Mean ↓ Var ↓ NDTW ↑ SDTW ↑ Mean ↓
+
+LongFly [26] 129.39 9.31 5.57 8.34 133.29 9.09 5.31 8.62 118.11 9.51 5.81 8.25 
+
+SpatialFly (Ours) 108.11 11.20 6.50 7.37 114.10 10.20 6.04 7.49 105.21 12.08 6.91 7.32 
+
+Improvement -21.28 +1.89 +0.93 -0.97 -19.19 +1.11 +0.73 -1.13 -12.90 +2.57 +1.10 -0.93 
+
+TABLE VII SENSITIVITY ANALYSIS OF G2 RA HYPERPARAMETERS ON THE TEST 
+
+UNSEEN SPLIT . η DENOTES THE GEOMETRIC PRIOR INJECTION STRENGTH AND α DENOTES THE CROSS -MODAL FUSION WEIGHT . M ETRICS INCLUDE 
+
+NE ↓ AND SR/OSR/SPL(%) ↑.                                                                                                                 
+
+> ID ηαFull Easy
+> NE ↓SR ↑OSR ↑SPL ↑NE ↓SR ↑OSR ↑SPL ↑
+> 10.0 0.2 120.47 12.16 25.08 11.36 84.30 13.39 29.85 11.99 20.0 0.5 89.29 23.34 41.74 22.07 66.98 25.03 43.78 19.81 30.0 0.8 160.28 5.36 12.04 5.15 95.42 8.43 20.75 8.01 40.5 0.2 88.56 24.89 43.56 21.22 65.06 23.02 43.52 18.68 50.5 0.5 87.82 25.46 44.41 21.76 64.49 25.17 44.18 20.36 60.5 0.8 155.73 5.48 12.09 5.26 94.43 8.17 20.21 7.70 71.0 0.2 104.42 17.77 37.11 15.28 76.62 16.47 37.62 13.39 81.0 0.5 93.13 20.35 40.83 17.64 70.70 20.88 41.77 17.25 91.0 0.8 93.61 22.05 42.72 19.04 68.59 20.22 41.64 16.58
+> Best η⋆= 0 .5α⋆= 0 .587.82 25.46 44.41 21.76 64.49 25.17 44.18 20.36
+
+motion generation. These results show that the G2RA im-proves not only navigation success, but also the path alignment and motion quality of the predicted trajectories in continuous UAV navigation. 
+
+4) Sensitivity Analysis on η and α: To analyze the influence of the geometric prior injection strength η and the cross-modal fusion weight α, we conduct systematic experiments under different (η, α ) configurations on the Full and Easy splits. The results are presented in Fig. 7 and Table VII. From the heatmaps in Fig. 7, it can be observed that the model performance exhibits a non-linear response to variations in η and α. The best overall performance is achieved when 
+
+η = 0 .5 and α = 0 .5, where NE reaches 87.82 m, SR is 25.46%, OSR is 44.41%, and SPL is 21.76% on the Full split. The same configuration also achieves the best results on the Easy split (NE = 64.49 m, SR = 25.17%, SPL = 20.36%), indicating stable behavior across different levels of scene complexity. When η = 0 (i.e., without geometric injection), the overall performance decreases. For example, under (η = 0 , α = 0 .5) on the Full split, SR is 23.34% and SPL is 22.07%, while NE remains higher than that of the optimal setting. This suggests that without geometric constraints, spatial errors are less effectively controlled. Besides, when η = 1 .0, performance also shows degrada-tion. Under (η = 1 .0, α = 0 .2) , SR decreases to 17.77% and NE increases to 104.42 m. Even when α = 0.5, the performance remains lower than that of the η = 0 .5 setting. This indicates that excessively strong geometric injection may interfere with semantic feature representation and affect cross-modal alignment. A similar trend can be observed with respect to the fusion weight α. When α = 0 .8, performance drops 
+
+Fig. 7. Joint sensitivity analysis of the G2RA mechanism with respect to the geometric prior injection strength η and the cross-modal fusion weight α on the full split. The heatmaps report NE, SR, OSR, and SPL under different 
+
+(η, α ) configurations; the star denotes the selected best-performing setting 
+
+(η = 0 .5, α = 0 .5) .
+
+substantially under multiple configurations. For instance, under 
+
+(η = 0 .5, α = 0 .8) , SR decreases to 5.48% and NE increases to 155.73 m on the Full split, suggesting that overly large fusion weights may disrupt feature balance and reduce fusion stability. Overall, the results in Fig. 7 and Table VII indicate that 
+
+η and α exhibit a coupled effect on model performance. The model achieves optimal results under moderate geometric injection and balanced fusion weight. Insufficient geometric guidance fails to provide effective structural alignment, while overly strong injection or fusion weight may introduce bias and degrade performance. These observations demonstrate that the G2RA maintains stable and controllable behavior within a reasonable parameter range. 
+
+5) Qualitative Visualization and Analysis: We provide qualitative visualizations to further illustrate the behavior and representation properties of SpatialFly. 
+
+Navigation Behavior Visualization. As shown in Fig. 8 and Fig. 9, we provide a qualitative comparison between SpatialFly and the baseline BS on a representative language-guided target search task. The instruction requires the UAV to locate a target vehicle parked on a narrow street in a waterfront urban JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 11  
+
+> Fig. 8. First-person visual comparison of UAV navigation. Red dots indicate predicted waypoints, yellow arrows denote UAV motion directions, and red boxes mark the target. SpatialFly shows more accurate and stable target-oriented navigation than BS.
+
+environment. From the first-person perspective (Fig. 8), BS can recognize some salient semantic cues in the scene, such as the waterfront area, but its subsequent viewpoint progression and waypoint prediction are not sufficiently stable. As a result, it fails to continuously focus on the target-related region and eventually misses the goal. In contrast, SpatialFly shows more stable target-oriented behavior. It gradually adjusts its search toward the street area between buildings and finally succeeds in locating the target. The third-person trajectory visualization (Fig. 9) further shows that the trajectory generated by SpatialFly is closer to the ground-truth (GT) path, with better continuity and smoothness. By comparison, the BS trajectory exhibits larger deviations from the GT path, together with unnecessary local drifts. This suggests that SpatialFly can better utilize the spatial structure of the scene to maintain more reasonable navigation progress, rather than relying mainly on local vi-sual cues. These observations indicate that SpatialFly yields more reliable target-oriented navigation. We next visualize the image-space responses of 2D tokens before and after G2RA. 
+
+Geometry-Guided Response Visualization. To further understand why SpatialFly yields more reliable navigation behavior, we visualize the image-space responses of 2D tokens before and after G2RA, as shown in Fig. 10. These visual-izations should be interpreted as image-space token response maps rather than feature-space clustering results. Here, the response of Q before GPI can be regarded as the original 2D visual representation without G2RA. After GPI, the responses become more structured around scene layouts such as building facades, roadway regions, and structural transition areas, sug-gesting that the injected geometric priors reorganize the spatial distribution of 2D tokens. The ∆GPI maps further show that these changes mainly occur around structure-related regions rather than being uniformly distributed across the image. After GAR, many localized activations are further sup-pressed, leading to a smoother and more regularized fused representation, as also reflected by the predominantly negative regions in the ∆GAR maps. These observations indicate that GPI introduces geometric guidance into the original 2D representation, while GAR further filters redundant responses and regularizes the fused features. This leads to a more stable spatial representation for down-stream navigation and provides qualitative support for allevi-ating the structural mismatch between 2D visual perception and 3D trajectory decision-making. V. C ONCLUSION 
+
+This paper proposes SpatialFly, a geometry-guided spatial representation framework for UAV VLN in complex 3D en-vironments. To mitigate the mismatch between 2D perception and 3D decision spaces, SpatialFly injects implicit 3D geomet-ric priors into visual tokens and performs fine-grained cross-modal alignment and geometry-aware reparameterization to improve spatial consistency. Experiments on Test Seen, Test Unseen, and Test Unseen Map show consistent improvements. Compared with unidirectional, bidirectional, and language-modulated attention variants, the geometry-guided 2D repre-JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 12      
+
+> Fig. 9. Third-person trajectory visualization of UAV navigation. Red, blue, and yellow curves denote the trajectories of SpatialFly, BS, and ground truth, respectively. SpatialFly follows a trajectory closer to the ground truth than BS.
+> Fig. 10. Visualization of image-space token responses before and after G2RA in two representative urban scenes. (a) Input RGB image. (b) Original 2D token response before geometric prior injection (Q before GPI), which can be regarded as the original 2D representation without G2RA. (c) 2D token response after geometric prior injection (Q after GPI). (d) Fused response after geometry-aware reparameterization (Fused after GAR). (e) Response change introduced by GPI ( ∆GPI = Q after GPI −Q before GPI). (f) Response change introduced by GAR ( ∆GAR = Fused after GAR −Q after GPI). Warmer colors in the absolute maps indicate stronger feature responses, while red/blue in the difference maps denote enhanced/suppressed responses relative to the previous stage.
+
+sentation alignment mechanism is more robust in structurally complex cases. Ablation and sensitivity studies further support the effectiveness and stability of the proposed design. In ad-dition, trajectory-level analyses show that SpatialFly produces paths that are better aligned with reference trajectories while maintaining smoother and more stable motion behavior. Over-all, modeling geometric consistency with implicit geometric priors helps improve generalization in unseen environments. It also suggests that semantic interaction alone is not sufficient for UAV VLN, and that the geometry-guided 2D representation alignment mechanism is needed to support stable 3D decision-making. 
+
+Limitations and future work. The current framework is mainly validated in simulation environments, and its perfor-mance on real UAV platforms still needs further verification. In addition, there is still room for improvement in model lightweighting and sim-to-real transfer. The current study mainly focuses on improving the alignment between 2D visual perception and 3D trajectory decision-making, while issues such as real-time efficiency and robustness in more challenging outdoor conditions still need further study. Future work will focus on model lightweighting, real-world deployment, sim-to-real adaptation, and improving robustness in more complex environments. JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 13 
+
+REFERENCES [1] M. Dai, E. Zheng, W. Cheng, J. Chen, Z. Feng, W. Yang, Drl: An efficient heterogeneous spatial feature interaction framework for uav self-localization, Pattern Recognition 177 (2026) 113330. [2] Y. Gu, W. Chen, D. Peng, Uav-based multimodal object detection via feature enhancement and dynamic gated fusion, Pattern Recognition 172 (2026) 112722. [3] B. Dewangan, M. Srinivas, Amsf-yolo: An attention-based multi-scale feature extraction model for uav small object detection, Pattern Recog-nition 177 (2026) 113303. [4] K. He, Y. Jing, Y. Huang, Z. Lu, D. An, L. Wang, Memory-adaptive vision-and-language navigation, Pattern Recognition 153 (2024) 110511. [5] B. Mohammadi, E. Abbasnejad, Y. Qi, Q. Wu, A. Van Den Hengel, J. Q. Shi, Parameter-efficient action planning with large language models for vision-and-language navigation, Pattern Recognition 172 (2026) 112462. [6] W. Guo, Z. Wang, Y. Hu, J. Gao, History-guided prompt generation for vision-and-language navigation, IEEE Transactions on Cybernetics 56 (2) (2026) 1013–1026. [7] J. Zhang, Z. Li, S. Wang, X. Shi, Z. Wei, Q. Wu, Spatialnav: Lever-aging spatial scene graphs for zero-shot vision-and-language navigation (2026). arXiv:2601.06806. [8] T. Lin, G. Li, Y. Zhong, Y. Zou, Y. Du, J. Liu, E. Gu, B. Zhao, Evo-0: Vision-language-action model with implicit spatial understanding (2025). arXiv:2507.00416. [9] C. Wewer, B. Pogodzinski, B. Schiele, J. E. Lenssen, Spatial reasoning with denoising models (2025). arXiv:2502.21075. [10] X. Zheng, Z. Dongfang, L. Jiang, B. Zheng, Y. Guo, Z. Zhang, G. Albanese, R. Yang, M. Ma, Z. Zhang, C. Liao, D. Zhen, Y. Lyu, Y. Fu, B. Ren, L. Zhang, D. P. Paudel, N. Sebe, L. V. Gool, X. Hu, Multimodal spatial reasoning in the large model era: A survey and benchmarks (2025). arXiv:2510.25760. [11] S. Liu, H. Zhang, Y. Qi, P. Wang, Y. Zhang, Q. Wu, Aerialvln: Vision-and-language navigation for uavs, in: Proceedings of the IEEE/CVF Conf. Comput. Vis. Pattern Recognit., 2023, pp. 15384–15394. [12] Y. Fan, W. Chen, T. Jiang, C. Zhou, Y. Zhang, X. Wang, Aerial vision-and-dialog navigation, in: Findings of the Association for Computational Linguistics: ACL 2023, 2023, pp. 3043–3061. [13] B. Ye, N. Fan, Z. Fan, W. Deng, H. Chen, Q. Chen, X. Lyu, Flyaware: Inertia-aware aerial manipulation via vision-based estimation and post-grasp adaptation (2026). arXiv:2601.22686. [14] C. Deng, AeroVis3R: Geometry-Aware Vision–Language Models for 3D Reasoning over UAV Landmark Videos, Association for Computing Machinery, New York, NY, USA, 2025. [15] Y. Zhou, X. Zheng, J. Gao, Q. Shi, X. Liu, A geometric consistency constrained hierarchical global sfm for large-scale uav images, Interna-tional Journal of Applied Earth Observation and Geoinformation 146 (2026) 105075. [16] Y. Xiao, X. Chen, Y. Wang, Z. Fu, Radar–camera fusion in perspective view and bird’s eye view for 3d object detection, Sensors 25 (19) (2025). [17] T. N. Canh, A. Elibol, N. Y. Chong, X. HoangVan, Object-oriented se-mantic mapping for reliable uavs navigation (2024). arXiv:2401.08132. [18] S. Yang, Z. Shang, Y. Wang, D. Deng, H. Chen, X. Wu, Q. Cheng, Image-free multi-label image recognition via llm-powered hierarchical prompt tuning, Pattern Recognition 174 (2026) 112986. [19] A.-C. Cheng, H. Yin, Y. Fu, Q. Guo, R. Yang, J. Kautz, X. Wang, S. Liu, Spatialrgpt: Grounded spatial reasoning in vision language models (2024). arXiv:2406.01584. [20] C. Zhu, T. Wang, W. Zhang, J. Pang, X. Liu, Llava-3d: A simple yet effective pathway to empowering lmms with 3d-awareness (2025). arXiv:2409.18125. [21] H. Xu, Z. Liu, Y. Luomei, F. Xu, Aerial vision-language navigation with a unified framework for spatial, temporal and embodied reasoning (2026). arXiv:2512.08639. [22] X. Wang, D. Yang, Z. Wang, H. Kwan, J. Chen, W. Wu, H. Li, Y. Liao, S. Liu, Towards realistic uav vision-language navigation: Platform, benchmark, and methodology, arXiv preprint arXiv:2410.07087 (2024). [23] X. Sun, W. Si, W. Ni, Y. Li, D. Wu, F. Xie, R. Guan, H.-Y. Xu, H. Ding, Y. Wu, Y. Yue, Y. Huang, H. Xiong, Autofly: Vision-language-action model for uav autonomous navigation in the wild (2026). arXiv:2602.09657. [24] H. Cai, J. Dong, J. Tan, J. Deng, S. Li, Z. Gao, H. Wang, Z. Su, A. Sumalee, R. Zhong, Flightgpt: Towards generalizable and inter-pretable uav vision-and-language navigation with vision-language mod-els (2025). arXiv:2505.12835. [25] R. Wu, Y. Zhang, J. Chen, L. Huang, S. Zhang, X. Zhou, L. Wang, S. Liu, Aeroduo: Aerial duo for uav-based vision and language naviga-tion (2025). arXiv:2508.15232. [26] W. Jiang, L. Wang, K. Huang, W. Fan, J. Liu, S. Liu, H. Duan, B. Xu, X. Ji, Longfly: Long-horizon uav vision-and-language navigation with spatiotemporal context integration (2025). arXiv:2512.22010. [27] X. Yao, J. Gao, C. Xu, Navmorph: A self-evolving world model for vision-and-language navigation in continuous environments, in: Proceed-ings of the IEEE/CVF International Conference on Computer Vision, 2025, pp. 5536–5546. [28] J. Gao, X. Yao, C. Xu, Fast-slow test-time adaptation for online vision-and-language navigation, in: R. Salakhutdinov, Z. Kolter, K. Heller, A. Weller, N. Oliver, J. Scarlett, F. Berkenkamp (Eds.), Proceedings of the 41st International Conference on Machine Learning, Vol. 235 of Proceedings of Machine Learning Research, PMLR, 2024, pp. 14902– 14919. [29] Y. Gao, C. Li, Z. You, J. Liu, Z. Li, P. Chen, Q. Chen, Z. Tang, L. Wang, P. Yang, et al., Openfly: A comprehensive platform for aerial vision-language navigation, arXiv preprint arXiv:2502.18041 (2025). [30] Y. Wu, M. Zhu, X. Li, Y. Du, Y. Fan, W. Li, Z. Han, X. Zhou, F. Gao, Vla-an: An efficient and onboard vision-language-action framework for aerial navigation in complex environments (2025). arXiv:2512.15258. [31] J. Lee, T. Miyanishi, S. Kurita, K. Sakamoto, D. Azuma, Y. Matsuo, N. Inoue, Citynav: Language-goal aerial navigation dataset with geo-graphic information, arXiv preprint arXiv:2406.14240 (2024). [32] R. Liu, W. Wang, Y. Yang, Volumetric environment representation for vision-language navigation (2024). arXiv:2403.14158. [33] B. Mildenhall, P. P. Srinivasan, M. Tancik, J. T. Barron, R. Ramamoorthi, R. Ng, Nerf: Representing scenes as neural radiance fields for view synthesis, Communications of the ACM 65 (1) (2021) 99–106. [34] Z. Zhu, S. Peng, V. Larsson, Z. Cui, M. R. Oswald, A. Geiger, M. Pollefeys, Nicer-slam: Neural implicit scene encoding for rgb slam, in: 2024 International Conference on 3D Vision (3DV), IEEE, 2024, pp. 42–52. [35] H. Wang, J. Wang, L. Agapito, Co-slam: Joint coordinate and sparse parametric encodings for neural real-time slam, in: Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, 2023, pp. 13293–13302. [36] J. Zhang, Y. Chen, Y. Zhou, Y. Xu, Z. Huang, J. Mei, J. Chen, Y.-J. Yuan, X. Cai, G. Huang, et al., From flatland to space: Teaching vision-language models to perceive and reason in 3d, arXiv preprint arXiv:2503.22976 (2025). [37] H. Xu, Y. Hu, C. Gao, Z. Zhu, Y. Zhao, Q. Yin, Geonav: Empowering mllms with dual-scale geospatial reasoning for language-goal aerial navigation, Pattern Recognition 177 (2026) 113365. [38] J. Wang, M. Chen, N. Karaev, A. Vedaldi, C. Rupprecht, D. Novotny, Vggt: Visual geometry grounded transformer (2025). arXiv:2503.11651. [39] S. Feng, Z. Wang, Y. Li, R. Kong, H. Cai, S. Wang, G. H. Lee, P. Li, S. Jiang, Vpn: Visual prompt navigation (2025). arXiv:2508.01766. [40] W. Xiang, H. Zhang, T. Yang, Z. Chu, R. Chu, S. Xie, Y. Yuan, J. Sun, Z. Gu, J. Wang, X. Wu, M. Xu, Y. Yang, Nav-r2 dual-relation rea-soning for generalizable open-vocabulary object-goal navigation (2025). arXiv:2512.02400. [41] P. Anderson, Q. Wu, D. Teney, J. Bruce, M. Johnson, N. S¨ underhauf, I. Reid, S. Gould, A. Van Den Hengel, Vision-and-language navi-gation: Interpreting visually-grounded navigation instructions in real environments, in: Proceedings of the IEEE Conf. Comput. Vis. Pattern Recognit., 2018, pp. 3674–3683. [42] P. Lin, G. Sun, C. Liu, F. Li, W. Ren, Y. Cong, Openvln: Open-world aerial vision-language navigation (2025). arXiv:2511.06182. [43] J. Zhang, A. Li, Y. Qi, M. Li, J. Liu, S. Wang, H. Liu, G. Zhou, Y. Wu, X. Li, Y. Fan, W. Li, Z. Chen, F. Gao, Q. Wu, Z. Zhang, H. Wang, Embodied navigation foundation model (2025). arXiv:2509.12129. [44] M. Shridhar, L. Manuelli, D. Fox, Cliport: What and where pathways for robotic manipulation (2021). arXiv:2109.12098. [45] D.-M. Nguyen-Tran, T. Le, M. L. Nguyen, H. T. Nguyen, Bi-directional cross-attention network on Vietnamese visual question answering, in: S. Dita, A. Trillanes, R. I. Lucas (Eds.), Proceedings of the 36th Pacific Asia Conference on Language, Information and Computation, Association for Computational Linguistics, Manila, Philippines, 2022, pp. 834–841. [46] D. Zhang, P. Chen, X. Xia, X. Su, R. Zhen, J. Xiao, S. Yang, Apex: A decoupled memory-based explorer for asynchronous aerial object goal navigation (2026). arXiv:2602.00551. [47] S. Wang, C. Liang, Y. Gao, E. Yu, S. Li, J. Li, H. Wang, Cityseeker: How do VLMs explore embodied urban navigation with implicit hu-JOURNAL OF L ATEX CLASS FILES, VOL. 14, NO. 8, AUGUST 2021 14 
+
+man needs?, in: The Fourteenth International Conference on Learning Representations, 2026.

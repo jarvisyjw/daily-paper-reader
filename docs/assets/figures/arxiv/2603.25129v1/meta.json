@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-001.webp",
+      "caption": "Fig. 3: Comparison of training paradigms in pose-free NVS. (a) Training with the context-only strategy, adopted in [15], leads to a lack of direct supervision for novel viewpoints. (b) The context-target strategy, following [13], results in spatial misalignment. (c) Our SCPA corrects the inherent spatial drift, enabling the network to learn both structurally consistent 3D geometry and robust novel view synthesis.",
+      "page": 6,
+      "index": 1,
+      "width": 652,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-002.webp",
+      "caption": "Table 1: Quantitative comparison of NVS performance on the RE10K dataset [54] under various input-view settings. Bold indicates the best performance. OOM indicates out-of-memory inference error.",
+      "page": 11,
+      "index": 2,
+      "width": 704,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-003.webp",
+      "caption": "Fig. 5: Qualitative comparison of NVS performance on RE10K dataset [54].",
+      "page": 11,
+      "index": 3,
+      "width": 717,
+      "height": 320
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-004.webp",
+      "caption": "Table 6: Pose-free point map estimation on 7-Scenes [33] dataset.",
+      "page": 18,
+      "index": 4,
+      "width": 672,
+      "height": 216
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-005.webp",
+      "caption": "Table 4: Ablation study on our SCPA and ROM. NVS performance comparison on the RE10K dataset under 12 input views.",
+      "page": 13,
+      "index": 5,
+      "width": 704,
+      "height": 221
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-006.webp",
+      "caption": "Fig. 10: Qualitative comparison of NVS performance on DL3DV dataset [21].",
+      "page": 19,
+      "index": 6,
+      "width": 716,
+      "height": 540
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-007.webp",
+      "caption": "Table 2: Quantitative comparison of NVS performance on the DL3DV dataset [21] under various input-view settings.",
+      "page": 12,
+      "index": 7,
+      "width": 704,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-008.webp",
+      "caption": "Fig. 6: Qualitative comparison of NVS performance on DL3DV dataset [21].",
+      "page": 12,
+      "index": 8,
+      "width": 715,
+      "height": 267
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-009.webp",
+      "caption": "Fig. 2: Overview of our AirSplat training pipeline. During training of a Gaussian head of a 3DVFM, the encoder and its pose head are frozen. Our SCPA module corrects the predicted target pose to align the rendered target views to the GT target views. Our ROM module gathers the geometric feedback from the teacher model, and based on the feedback, it enhances the multi-view consistency of the predicted 3D primitives.",
+      "page": 5,
+      "index": 9,
+      "width": 725,
+      "height": 275
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-010.webp",
+      "caption": "Fig. 8: Our strategy for partitioning input context sequences to compute the teacher’s geometric errors.",
+      "page": 16,
+      "index": 10,
+      "width": 652,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25129v1/fig-011.webp",
+      "caption": "Fig. 9: Pose-Geometry Discrepancy. To validate that this structural misalignment is not confined to a specific baseline, we visualize the consistent spatial drift across distinct models and diverse scenes: (a) DepthAnything3 [20] evaluated on the DL3DV dataset [21], and (b) SPFSplat [13] on the RE10K dataset [54].",
+      "page": 16,
+      "index": 11,
+      "width": 719,
+      "height": 247
+    }
+  ]
+}

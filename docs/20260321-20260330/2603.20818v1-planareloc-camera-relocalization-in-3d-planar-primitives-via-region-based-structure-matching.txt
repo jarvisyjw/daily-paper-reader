@@ -1,0 +1,656 @@
+Title: PlanaReLoc: Camera Relocalization in 3D Planar Primitives via Region-Based Structure Matching
+
+URL Source: https://arxiv.org/pdf/2603.20818v1
+
+Published Time: Tue, 24 Mar 2026 00:54:42 GMT
+
+Number of Pages: 20
+
+Markdown Content:
+# PlanaReLoc: Camera Relocalization in 3D Planar Primitives via Region-Based Structure Matching 
+
+## Hanqiao Ye 1,2 Yuzhou Liu 1,2 Yangdong Liu 2* Shuhan Shen 1,2*
+
+> 1
+
+## School of Artificial Intelligence, University of Chinese Academy of Sciences 
+
+> 2
+
+## Institute of Automation, Chinese Academy of Sciences 
+
+{yehanqiao2022, liuyuzhou2021, yandong.liu }@ia.ac.cn; shshen@nlpr.ia.ac.cn 
+
+Figure 1. Overview. (a-c) Existing structure-based camera relocalization approaches that establish point correspondences on top of various map representations. (d) We propose a plane-centric paradigm that establishes cross-modal plane correspondences against the compact plane-based 3D maps , enabling lightweight and efficient 6-DoF camera relocalization in structured indoor environments. 
+
+## Abstract 
+
+While structure-based relocalizers have long strived for point correspondences when establishing or regressing query-map associations, in this paper, we pioneer the use of planar primitives and 3D planar maps for lightweight 6-DoF camera relocalization in structured environments. Pla-nar primitives, beyond being fundamental entities in pro-jective geometry, also serve as region-based representa-tions that encapsulate both structural and semantic rich-ness. This motivates us to introduce PlanaReLoc , a stream-
+
+> *Corresponding authors.
+
+lined “plane-centric” paradigm where a deep matcher as-sociates planar primitives across the query image and the map within a learned unified embedding space, after which the 6-DoF pose is solved and refined under a robust frame-work. Through comprehensive experiments on the Scan-Net and 12Scenes datasets across hundreds of scenes, our method demonstrates the superiority of planar primitives in facilitating reliable cross-modal structural correspon-dences and achieving effective camera relocalization with-out requiring realistically textured/colored maps, pose pri-ors, or per-scene training. The code and data are available at https://github.com/3dv-casia/PlanaReLoc. 
+
+1
+
+> arXiv:2603.20818v1 [cs.CV] 21 Mar 2026
+
+## 1. Introduction 
+
+Camera relocalization, the task of estimating the 6-DoF camera pose from a query image w.r.t. a known 3D environ-ment, underpins real-time applications such as augmented reality (AR) [12, 134] and robot navigation [56, 124]. One prevalent family of approaches, known as the structure-based methods, establishes point correspondences between the query image and a pre-built scene represen-tation which anchors landmarks in the coordinate space, and then solves for the camera pose within a robust esti-mation framework such as PnP-RANSAC [28, 29]. Classic structure-based systems [14, 44, 93], as shown in Fig. 1a, rely on Structure-from-Motion (SfM) techniques [99] to tri-angulate sparse 3D keypoints from posed reference images, where each point is associated with a visual descriptor for local feature matching. While leading to top accuracy, the SfM maps are costly to build and maintain, and image re-trieval [4, 113] or intricate search strategies [69, 96, 97] are often required to narrow down matching candidates. Mean-while, as illustrated in Fig. 1b, MeshLoc [81] shows that modern point features can match real photos against non-photorealistic renderings of textured meshes, thereby elim-inating the need to store visual descriptors in the map rep-resentation. That said, the performance degrades consider-ably as the fidelity of scene appearance and geometry de-creases [1, 82]. There also exist prior arts that utilize bear-ing vectors to match 2D pixels with sparse keypoints with-out relying on visual descriptors [13, 122, 136, 140]. How-ever, when applied to point clouds captured by depth sen-sors or LiDAR scans (Fig. 1c), image-to-point cloud regis-tration methods [57, 78, 118] struggle to generalize [3] and often fail to robustly predict cross-modal pixel–point corre-spondences across the entire scene. Among various geometric entities that go beyond points, 
+
+planar primitives offer notable simplicity and compactness in representing physical surfaces. Consequently, 3D maps composed of planar primitives, i.e ., 3D planar maps , are no-tably lean and well-suited for real-world applications such as AR [5, 6] and robotics [7, 102, 137]. This has fur-ther given rise to extensive research on constructing such maps from diverse sources, including not only multi-view reconstruction [38, 111, 125, 128, 130], but also raw point clouds [76, 132], as well as other modalities such as scene layouts [22, 139]. Therefore, in this paper, we depart from prior structure-based methods that focus on point corre-spondences and instead capitalize on the ubiquity of pla-nar surfaces in indoor environments, investigating 3D pla-nar maps as a compact, versatile, and accessible form of scene representation toward 6-DoF camera relocalization. As illustrated in Fig. 1d, we build upon the tradi-tional feature-matching pipeline and propose a novel plane-centric paradigm that establishes plane correspondences against untextured 3D planar maps. We first extract plane segments from the query image and estimate their pa-rameters by exploiting general-purpose monocular mod-els. Then, by aggregating region-of-interest features and modeling interactions between cross-modal plane embed-dings, we show that planar primitives enable direct struc-ture matching, eliminating the need for matching on virtual renderings. Finally, we introduce a robust framework with post-refinement that estimates the 6-DoF camera pose by leveraging established plane matches and their parameters. We summarize our contributions as follows: • Given the region-based representation and favorable geo-metric properties, we place a premium on planar primi-tives and investigate the use of 3D planar maps for leaner camera relocalization in structured environments. • We propose PlanaReLoc , a novel plane-centric paradigm for relocalization that matches cross-modal planar regions and estimates the 6-DoF poses, eliminating the need for realistic map textures, pose priors or per-scene training. • As shown by experiments, the proposed pipeline, even with minimal specialized design, demonstrates the supe-riority of planar primitives in supporting reliable cross-modal matching and effective camera relocalization. 
+
+## 2. Related Work 
+
+Structure-Based Camera Relocalizers typically establish query-map associations via feature matching [14, 44, 69, 93, 98, 108] or coordinate regression [10, 11, 25, 45, 104], followed by robust pose estimation [28, 29, 54]. Most of them focus on establishing point correspondences, while some also explore line segments as complementary primi-tives [42, 66, 70, 83, 88]. Beyond ad hoc maps constructed from posed reference images, more general scene represen-tations have been explored for this task, including textured meshes [81], NeRF [77, 131, 141], and 3DGS [43, 84, 119]. While visual appearance heavily dominates the association process in these methods, some alternatives attempt to di-rectly register images to point clouds without visual cues [3, 57, 78, 118], yet they struggle to produce stable cross-modal correspondences across the entire scene. Other methods ex-plore higher-level maps like floorplans [15, 30, 41, 71] and LoD models [1, 47, 72], which, however, often rely on pose priors or exhaustive render-and-compare strategies. 
+
+Plane-Based 3D Representation centers on planar prim-itives as its fundamental building blocks, benefiting from their compact form and prevalence in structured environ-ments. The classic task of monocular plane recovery shows that precise and semantically well-aligned planar primitives can be inferred by jointly predicting 2D segmentations and their corresponding plane parameters [64, 65, 133]. Such compactness is also demonstrated in organizing room-scale multiview reconstructions [18, 68, 111, 128, 130] or Li-DAR scans [76, 79, 105] into piecewise planar represen-2(a) Query-side: 2D plane embedding. (c) Matching. (b) Map-side: 3D plane embedding.    
+
+> Figure 2. Overview of the planar primitive embedding (Sec. 3.1) and matching (Sec. 3.2) pipeline between the query and the
+> map. (a) The query image is first reconstructed into a set of 3D planar primitives via a frozen monocular plane recovery module, with each primitive further encoded into a plane embedding by aggregating visual features within its corresponding 2D segment. (b) Each map primitive is encoded by an object encoder and a scene encoder, capturing both its shape and pose features. (c) The two sets of embeddings are fed into a stack of transformer layers to produce a soft assignment matrix, from which plane correspondences are inferred.
+
+tations, i.e ., 3D planar maps. More closely related, sev-eral methods estimate relative poses by exploiting plane correspondences [89, 90, 102, 126], which exhibit robust-ness under challenging scenarios such as extreme viewpoint changes [2, 46, 63, 101, 110]. Motivated by these works, we further explore planar primitives for camera relocalization. 
+
+## 3. Method 
+
+Our goal is to study how planes can enable a lean relocal-ization pipeline. In light of this, we introduce PlanaReLoc, which estimates the 6-DoF pose of a query image Iq w.r.t. a scene mapped as a collection of piecewise planar surfaces 
+
+M = {Πmi }Nm
+
+> i=1
+
+. Each map primitive Πmi is defined by its plane parameters πm and a bounding shape Ωm.Our three-stage pipeline starts by establishing plane cor-respondences between the query and the map (Secs. 3.1 and 3.2), then it performs robust pose estimation (Sec. 3.3), and finally concludes with post-refinement (Sec. 3.4). 
+
+3.1. Front-End: Planar Primitive Embedding 
+
+To bridge the modality gap between the query image Iq and the 3D planar map M, our front-end module first rebuilds Iq
+
+into a set of planar primitives, and then projects all primi-tives, from both Iq and M, into their respective embedding spaces for subsequent matching, as depicted in Fig. 2. 
+
+Monocular Plane Recovery. Recovering 3D planes from a single query image is a joint task involving class-agnostic instance segmentation and metric-scale plane parameter es-timation, which has been significantly advanced by end-to-end learning frameworks [64, 65, 67, 100, 109, 129, 133]. While these off-the-shelf models are trained on large-scale datasets and can distinguish two adjacent yet coplanar se-mantic entities, e.g ., a closed door and its surrounding wall, we opt for a purely geometric module, i.e ., sequentially fitting planes on the predicted geometry, based on the ob-servation that the strong geometric priors provided by vi-sion foundation models [8, 49, 120, 121, 123] are suffi-cient to achieve good performance. The output, denoted as Q = {Πqi | i = 1 , · · · , N q }, comprises a collection of query primitives, each with predicted metric plane parame-ters πq and a binary 2D segment mask Ωq ∈ 1H×W rep-resenting the shape. Here we clarify that the metric scale, though error-prone, caters to the crucial initial “guess” for pose estimation, which will be elaborated in Sec. 3.3. 
+
+2D Plane Embeddings. Encoding an instance-level 2D representation is essentially aggregating patch-level visual features within its Region of Interest (RoI). RoI-Align [36] followed by a fully connected layer as in [58] is a com-mon practice. However, akin to prior works [52, 103, 135], we find that a simple average pooling performs well. As shown in Fig. 2a, the query image is first patchified by a pretrained encoder and reshaped into a feature map. Then, we resize the 2D segments {Ωqi } accordingly and apply av-erage pooling within each segment to aggregate features, yielding query-side 2D plane embeddings {f qi ∈ Rc}Nq
+
+> i=1
+
+.
+
+3D Plane Embeddings. The input map is untextured , i.e ., 3a structure-only scene representation. Therefore, a map primitive Πm is fully described by its shape Ωm and plane parameters πm. This calls for two separate 3D encoders, namely, an object encoder and a scene encoder, to respec-tively capture the shape and spatial pose characteristics of each Πm, as illustrated in Fig. 2b. The object encoder takes batched map primitives Πm ∈ RNm×L×3 as input for shape embeddings, where each primitive is centralized and represented as a uniformly sampled point cloud of length L.Meanwhile, the scene encoder processes the entire scene to produce point-wise features, from which we aggregate RoI features for each Πm, i.e ., features of points belonging to 
+
+Πm, into a pose-aware spatial embedding via max pooling. Embeddings from both encoders are fused via an α-weighted sum, with α a learnable parameter. The resulting embeddings {f mi ∈ Rc}Nm 
+
+> i=1
+
+are expected to encode both the shape and spatial pose for each map primitive. 
+
+3.2. Matching Planar Primitives Like Points 
+
+Constructing the contrastive loss [17, 20, 51, 115] is a com-mon approach to learn a discriminative embedding space for matching, particularly for instance-level and cross-modal features [58, 75, 87, 91, 92]. However, we observe that planar primitives, despite their region-based form and la-tent semantics, are essentially class-agnostic geometric en-tities that exhibit recurring patterns, potentially leading to detrimental hard negatives.Instead, we maximize the log-likelihood of assignment matrices, adopting a scheme simi-lar to those used in matching points [61, 83, 86, 94, 107]. 
+
+Architecture. Embeddings from both sides, {f qi } and 
+
+{f mi }, are fed into a stack of N identical transformer lay-ers [116] that process the two sets without distinction, as illustrated in Fig. 2c. Each layer is a succession of one self-and one cross-attention unit, which together refine the rep-resentation of each primitive in the context of all the others. 
+
+Positional Embedding. To reinforce the sense of relative pose when reasoning over different entities, we retrofit the self-attention score between two unimodal planes as aij =
+
+q⊤ 
+
+> i
+
+RoPE (nj −ni) kj , where qi and kj denote the query and key vectors projected from the plane embeddings fi and fj ,respectively. The rotary encoding [106] RoPE (·) constructs a c × c positional embedding from two plane normals ni
+
+and nj , representing the relative rotation between these two planes while remaining equivariant w.r.t. the camera pose. Following [59, 61], the c-dimensional embedding space is partitioned into c/ 2 2D subspaces, each being rotated by an angle computed as the inner product with a learnable basis vector bk ∈ R3, where k ∈ [1 , c/ 2] :
+
+RoPE (n) = 
+
+ 
+
+> R(b⊤
+> 1n)
+
+... R(b⊤
+
+> c/ 2n)
+
+ , R(θ) =   cos θ − sin θ   
+
+> sin θcos θ
+
+ .
+
+(1) 
+
+Correspondences. Following [61], the soft assignment ma-trix A ∈ RNq ×Nm is formulated as the combination of both matchability scores and similarity: 
+
+Aij = σqi σmj Softmax   
+
+> k∈[1 ,N q]
+
+(Skj )i Softmax  
+
+> k∈[1 ,N m]
+
+(Sik )j . (2) The matchability score σi for plane i, signifying its likelihood of contributing to a correspondence, is pre-dicted by a learnable sigmoid-activated linear layer: σi =Sigmoid(Linear( fi)) ∈ [0 , 1] . The pairwise similarity Sij 
+
+between the query embedding f qi , i ∈ [1 , N q ] and the map embedding f mj , j ∈ [1 , N m] is computed as: Sij =Linear( f qi ) · Linear( f mj ).
+
+Finally, a pair of cross-modal primitives (Π qi , Πmj ) con-stitutes a correspondence if (1) both planes are predicted as matchable and (2) the similarity score Sij stands out in both the i-th row and j-th column. More formally, correspon-dence predictions are selected from A by enforcing a confi-dence threshold τ and the Mutual Nearest Neighbor (MNN) criterion: M = {(i, j ) | ∀ (i, j ) ∈ MNN (A), Aij > τ }.
+
+Supervision. We precompute the projections of map prim-itives into the training queries using ground-truth camera poses. This enables on-the-fly generation of matching la-bels M∗ during training. Specifically, for each recovered query primitive Πqi , its ground-truth correspondence is de-fined as the map primitive whose 2D projection Ωm→qj has the highest Intersection-over-Union (IoU) overlap with the query segment Ωqi . Note that, for the sake of simplicity and due to the inherent ambiguity and uncertainty in defin-ing plane shapes, we avoid the use of the bipartite match-ing strategy as in [19, 67, 100], allowing for one-to-many plane correspondences, i.e ., one map primitive may corre-sponds to multiple query primitives. This is often the case when planes detected in the query are over-segmented due to occlusions and surface discontinuities. Moreover, planar primitives with a mask IoU lower than τ ∗ are labeled as un-matchable and indexed by Uq ⊆ [1 , N q ] and Um ⊆ [1 , N m].The training objective is to minimize the negative log-likelihood of the assignment and unmatchable predictions:               
+
+> Lmatch =−
+> 1
+> |M ∗|
+> X
+> (i,j )∈M ∗
+> log Aij +12|U q|
+> X
+> i∈U q
+> log( 1−σqi) + 12|U m|
+> X
+> j∈U m
+> log(1 −σmj)
+> 
+> .
+> (3)
+
+To speed up training, we impose Lmatch at each of the N
+
+layers to deeply supervise the overall learning as in [61]. 
+
+3.3. Pose Estimation from Plane Correspondences 
+
+In addition to the region-based representation that deliv-ers effective feature aggregation for cross-modal 2D–3D matching, the planar primitives also serve as fundamental parametric entities in projective geometry [34], allowing for straightforward pose estimation from correspondences. 4Problem Formulation. We define the camera pose P := [R | t] ∈ SE(3) as a rigid transformation composed of a rotation R ∈ SO(3) and a translation t ∈ R3, mapping coordinates from the camera space to the map space. Es-timating P can be formulated as a registration problem over the set of putative plane correspondences {(Π qi , Πmj ) |
+
+(i, j ) ∈ M} , where each plane is associated with param-eters π = [n⊤, d ]⊤ defined in its respective coordinate space. However, it should be noted that the predicted corre-spondences may contain outliers, and the monocular front-end is inevitably noisy, leading to inaccurate plane parame-ters {πqi } for the query primitives. 
+
+Robust Estimation. First, in 3D projective space, points and planes form a dual pair [34, 90]. Given the point trans-formation xm = Px q , a plane transforms as: 
+
+πm ∼
+
+ R t0⊤ 1
+
+−⊤ 
+
+| {z }
+
+> P−⊤
+
+πq ∼
+
+ R 0
+
+−t⊤R 1
+
+
+
+πq , (4) where ∼ denotes equality up to a non-zero scale. Equa-tion (4) indicates that the plane normal is rotated by R in-dependently of t, whereas the plane offset depends on both 
+
+R and t. This yields: 
+
+nm = Rn q , (5) 
+
+dm = dq − t⊤Rn q = dq − t⊤nm. (6) Based on the above relations and [39], we first derive a minimal solver that uniquely determines the camera rota-tion R from two pairs of plane correspondences with non-parallel normals. Next, we apply RANSAC [28] to ran-domly sample minimal sets of such two pairs of correspon-dences, generate rotation hypotheses, and select the hypoth-esis with the most inliers. The largest inlier set is denoted as cM, from which we estimate the initial camera rotation 
+
+R0 using the Kabsch algorithm [48]. The solution for translation t in Eq. (6), however, re-quires at least three non-parallel pairs of correspondences. Given the correspondences in cM, we estimate the initial translation t0 alongside the scale factor s in the following weighted least squares problem, which compensates for the metric ambiguity in the monocular front-end: 
+
+t0, s ∗ = arg min 
+
+> t,s
+
+X 
+
+> (i,j )∈cM
+
+ωi(t⊤nmj − dmj + sd qi )2. (7) The weight ωi, indicating the reliability of Πqi , is measured by the size of its 2D segment Ωi based on the intuition that larger planes are typically better recovered and matched. 
+
+3.4. Primitive-Based Pose Refinement 
+
+In the visual localization literature, an initialized camera pose can be further refined through various render-and-        
+
+> Figure 3. Pose refinement via per-primitive depth alignment.
+> Given the optimization variables—the offset seed δiand Ttr —the query primitive Πqiis warped onto the depth rendering Dvia Eq. (8). Then, the depth alignment error is computed in Eq. (9).
+
+compare strategies, depending on the specific map represen-tation, such as the NeRF/3DGS-based [16, 60, 62, 138] and LoD/Floorplan-based [15, 33, 40, 41, 47, 142] approaches. In this work, we draw inspiration from per-primitive pho-tometric alignment proposed by [74], and show how planar primitives can be exploited for effective pose refinement. 
+
+Problem Formulation. As illustrated in Fig. 3, the core idea of primitive-based pose refinement is to estimate a transformation Ttr that refines the initial pose P0 towards a more accurate pose P∗, while jointly optimizing the noisy plane parameters πqi for query primitives so that they bet-ter align with the depth map D rendered at P0. More specifically, since the query normals {nqi } are generally re-liable, we keep them fixed during optimization. In contrast, the offsets {dqi } are more prone to errors hypothetically up to a-priori unknown scales . We therefore introduce offset seeds {δi} as optimization variables to compensate for this. 
+
+Per-Primitive Depth Alignment. First, given the camera intrinsics K, the offset-seeded depth segment of a query primitive Πqi is computed from its predicted plane parame-ters πqi and 2D segment Ωqi , as δi · Di(πqi , Ωqi ; K). Then, we warp δiDi onto the depth rendering D as follows: 
+
+ˆΠqi [u], ˆDi[u] = ρ  Ttr ρ−1(u, δ iDi) , (8) where the pixel u ∈ Ωqi with offset-seeded depth value 
+
+δiDi[u] is unprojected by ρ−1(·), transformed by Ttr , and subsequently projected onto D via ρ(·). Next, the depth residual is defined as the difference between the projection depth ˆDi[u] and the rendered depth at the warped pixel lo-cation ˆΠqi [u]. Averaging residuals over all pixels u ∈ Ωqi
+
+yields the per-primitive depth alignment error: 
+
+r(δi, Ttr ; Π qi , D) = 1
+
+|Ωqi |
+
+X
+
+> u∈Ωqi
+
+(D[ ˆΠqi [u]] − ˆDi[u]) 2. (9) 5Table 1. Relocalization results on ScanNet. For each method, a “ ✓” denotes the use of auxiliary map truncation, coarse pose initialization, or realistic map appearance. We report rotation and translation errors, along with pose recalls—the ratio of successfully localized queries across thresholds. Top-3 results are highlighted as the first , second , and third . We also provide the average runtime per query.                                                                                                                                                    
+
+> Map trunc. Coarse init. Map ap-pearance
+> ∆R(°) ↓∆t(m) ↓Pose Recall (%) ↑Time (s/iter) Mean Med. Mean Med. (0.2 m, 10°) (0.5 m, 15°) (1.0 m, 30°)
+> Coarse Init. ✓32.7 28.7 1.00 0.94 0.4 5.3 33.9 -I2P  GeoTransformer [86] 53.7 42.1 1.93 1.80 17.0 26.4 29.0 ∼0.4 GeoTransformer-T [86] ✓45.2 26.5 1.42 1.06 24.6 38.8 42.9 ∼0.3 FreeReg [118] ✓36.9 29.4 1.06 0.96 0.8 6.4 33.1 ∼14.2 Free-FreeReg [118] ✓40.7 27.2 2.14 1.41 13.7 26.3 36.2 ∼11.1 MeshLoc  SP + LG [24, 61] ✓✓58.9 43.3 1.38 1.19 11.7 19.5 32.0 ∼0.3 LoFTR [107] ✓✓44.4 14.2 0.86 0.51 33.5 46.6 58.0 ∼0.4 MASt3R [55] ✓✓46.0 12.2 1.02 0.43 35.4 49.5 57.6 ∼0.7 MatchAnything [37] ✓35.7 19.9 1.23 0.74 20.0 35.7 52.1 ∼0.9 NOPE-SAC [110] ✓✓28.7 15.9 0.90 0.77 3.3 21.2 54.6 ∼0.4 Plana3R [63] ✓✓26.8 12.9 0.92 0.52 17.9 37.6 57.1 ∼0.4 Ours  W/o post-refinement 17.3 3.9 0.65 0.27 37.1 69.8 79.8 ∼0.1
+> Full proposed 17.2 3.8 0.60 0.20 48.5 73.1 81.8 ∼0.5
+
+We aggregate the per-primitive depth alignment errors across all offset-seeded Πq ∈ Q, and minimize the resulting depth cost Edepth via gradient descent to jointly refine the camera pose P∗ = T∗ 
+
+> tr
+
+× P0 and the offset seeds {δ∗ 
+
+> i
+
+}:
+
+T∗
+
+> tr
+
+, {δ∗ 
+
+> i
+
+} = arg min 
+
+> Ttr ,{δi}
+
+1
+
+Nq
+
+X 
+
+> (Π qi,δ i)
+
+r(δi, Ttr ; Π qi , D)
+
+| {z }
+
+> Edepth
+
+. (10) 
+
+## 4. Experiments 
+
+Datasets. For our task, we curated a dataset from Scan-Net [23] following the split in [110]. Building on the scripts provided by [65, 110], we extended annotations for each query-map pair with ground-truth camera pose and 2D–3D plane matches. The resulting dataset contains 45 802/7735 query-map pairs from 1210/303 scenes for training/testing. We also prepared 1023 pairs from the 12Scenes [114] dataset for out-of-the-box evaluation. Similarly, maps in this dataset are generated by sequentially fitting planes to the provided dense reconstructions and are further simpli-fied for comparable compactness to that of ScanNet. 
+
+Baselines. We adapt several existing systems as baselines to compare against our plane-centric method in achieving lean camera relocalization with no visual cues or pose priors: • Oracle coarse initialization ( Coarse Init. ): an initial pose is coarsely estimated via heuristic rules based on the plane parameters of 20 map primitives, comprising all ground-truth matches and primitives nearest to the ground truth pose. The heuristic initialization rules ensure an average visual overlap of over 30 % w.r.t. the ground truth poses. • Image-to-point cloud registration (I2P): the map is uni-formly sampled into points at a resolution of 2.5 cm, and the pose is estimated via either (1) GeoTransformer [86], which establishes 3D–3D point correspondences between the map and the metric-scale geometry of the query image recovered by [121], or (2) FreeReg [118], which directly establishes pixel–point (2D–3D) correspondences. • MeshLoc [81, 82]: we employ diverse keypoint extractors and matchers to establish pixel–pixel correspondences between the query and the synthetic rendering from the map given the coarse initialization, and then lift them to pixel–point correspondences for pose estimation. 
+
+Implementation Details. Our method is implemented on top of the Detectron2 framework [127]. We instantiate the plane recovery module by combining MoGe-2 [121] for monocular geometry estimation and an efficient sequential RANSAC implementation by [125] for plane fitting. To re-duce cost, a lightweight CNN-based upsampler is employed to neatly fuse multi-scale features from the ViT [27] en-coder of MoGe-2 into a feature map of size H/ 8 × W/ 8. Both the object and scene encoders for 3D embeddings are instantiated with PointNet [85]. The dimensionality c of 2D/3D embeddings is set to 384. The matching module consists of N = 4 layers, and each attention unit has 4 heads. When pose estimation degenerates due to insufficient in-liers, we apply the same heuristic strategy as Coarse Init. 
+
+to obtain a final output from the predicted correspondences. 
+
+4.1. Relocalization Accuracy 
+
+As shown in Tab. 1, we first present the overall cam-era relocalization performance of all methods on Scan-Net. We report the mean/median rotation and translation errors, along with pose recalls across three thresholds, fol-lowing [101, 110]. To obtain more meaningful results for our baselines, we apply map truncation (Map trunc.), ei-ther by restricting the map to a subset of plane primi-6Table 2. Matching evaluation with IoU score ≥ 0.3. Point correspondences are first lifted to plane matches via majority voting. # TP and # GT denote the total number of true positives and ground-truth correspondences, respectively. • indicates reliance on visual appearance. 
+
+Feature type ScanNet 12Scenes Prec. ↑ Rec. ↑ F1 ↑ AP ↑ # TP # GT Prec. ↑ Rec. ↑ F1 ↑ AP ↑ # TP # GT GeoTransformer-T [86] Point 30.8 22.8 26.2 38.5 13 026 57 253 20.3 16.8 18.4 28.0 1565 9319 FreeReg [118] Point 21.7 19.2 20.4 34.1 7837 40 857 20.2 14.1 16.6 21.5 1077 7647 MASt3R [55] Point • 61.7 45.0 52.0 84.1 18 372 40 857 59.8 42.9 50.0 81.6 3283 7647 MatchAnything [37] Point 42.1 48.2 45.0 67.7 19 698 40 857 51.2 56.1 53.5 77.2 4289 7647 NOPE-SAC [110] Plane • 51.4 35.4 41.9 79.1 14 462 40 857 43.8 22.0 29.3 71.4 1684 7647 Ours Plane 67.6 61.3 64.3 91.8 36 893 60 191 63.9 54.2 58.6 87.8 5184 9572 
+
+Table 3. Relocalization results on 12Scenes. 
+
+Med. Err. ↓ Pose Recall (%) ↑    
+
+> ∆R(°) ∆t(m) (0.2 m, 10°) (0.5 m, 15°) (1.0 m, 30°)
+
+Coarse Init. 22.5 0.47 0.5 18.0 69.8 GeoTr.-T [86] 33.2 0.80 22.2 37.8 43.5 FreeReg [118] 23.7 0.49 1.7 17.5 64.2 SP + LG [24, 61] 43.9 0.96 10.4 17.4 34.0 LoFTR [107] 31.4 0.62 31.9 40.2 48.8 MASt3R [55] 12.0 0.30 45.2 51.9 59.0 MatchAny. [37] 7.9 0.20 46.9 63.4 77.6 NOPE-SAC [110] 17.7 0.54 2.9 25.9 67.2 
+
+W/o refine. 4.8 0.28 34.9 66.7 79.9 Full 4.7 0.19 50.6 70.8 80.6 
+
+tives ( Coarse Init. ) or by cropping structures far from the ground-truth pose ( GeoTransformer-T and Free-FreeReg ). For the MeshLoc series, Coarse Init. is required to provide an initial pose, and most methods further rely on map ap-pearance for colored renderings during matching. Setting aside the post-refinement module introduced in Sec. 3.4, Tab. 1 shows that PlanaReLoc is the only method that (1) achieves top performance across all evaluation met-rics (2) while not relying on any pose priors or map appear-ance. Notably, post-refinement further improves accuracy with affordable runtime overhead. In the cross-dataset ex-periments on 12Scenes, as reported in Tab. 3, several meth-ods perform reasonably well, due to the more reliable pose initialization and higher map rendering fidelity. Meanwhile, PlanaReLoc remains competitive, given its complete inde-pendence from any auxiliary inputs. The consistent perfor-mance advantage of our method across datasets suggests its effectiveness and highlights the potential benefits of exploit-ing planar primitives for camera relocalization. 
+
+4.2. Matching Performance 
+
+Next, we analyze the matching performance of various ap-proaches using Precision, Recall, F-score and Average Pre-cision (AP). A predicted plane correspondence is counted as a true positive if the recovered query primitive is matched to its ground-truth map primitive and the mask IoU of their 2D projections is ≥ 0.3. For point-based methods, point matches are first lifted to plane-level through majority vot-ing, i.e ., each ground-truth query primitive is assigned to the map primitive where the majority of its point matches fall into. Then, we calculate the IoU score of such plane match as the ratio of the majority count to the total number of point matches within the union of their 2D projections. The results are presented in Tab. 2. I2P methods struggle to establish correct point correspondences across modali-ties, especially when 3D structures cover large areas and degenerate into piecewise planar representations. In con-trast, without depending on visual appearance, PlanaReLoc achieves competitive or even superior cross-modal 2D–3D matching performance compared to MeshLoc variants that perform 2D–2D matching. This suggests the advantage of planar primitives, as a form of region-based representation, in supporting purely structure-based matching. F1 ↑ Pose Recall ↑                       
+
+> Ours (w/o refine.) 64.3 37.1
+> ,→w/o scn. enc. 44.0 17.2
+> ,→w/o obj. enc. 51.7 27.8
+> ,→w/o pos. emb. 60.1 33.9
+> ,→w/o robust est. 64.3 29.5
+> ,→w/o scale opt. 64.3 36.2
+
+Table 4. Ablation study. 0 0.2 0.4 0.6 0.8 0.6 0.7 0.8 0.9                
+
+> f=0.9 f=0.8 f=0.7
+> Recall Precision
+> NOPE‑SAC ꞉ 74.8
+> MASt3R ꞉ 78.8
+> Ours (full) ꞉86.8
+> ↪w/o pos. emb. 85.3
+> ↪w/o obj. enc. 80.9
+> ↪w/o scn. enc. 76.6
+
+Figure 4. PR curves. 
+
+4.3. Analysis 
+
+Ablating Components. We conduct ablations on ScanNet, with results in Tab. 4. Both the scene and object encoders significantly contribute to the map primitive embeddings. Meanwhile, the absence of positional embedding incurs a noticeable drop in matching performance. Figure 4 displays the matching Precision–Recall (PR) curves w.r.t. IoU ≥0.5 and lists the average precision in the legend. Estimating poses robustly by filtering outliers with RANSAC is crucial for accuracy, while the joint optimization of the metric scale further improves the results. Moreover, as a plug-and-play module, the monocular plane recovery front-end can be in-stantiated with alternatives, with results detailed in Tab. 5. 74 8 12 15 15+ 05e‑2 0.1 0.15     
+
+> Number of planes Density
+> 020 40 60 80
+> Accuracy (%)  ↑
+> # T otal # T 3T1T2T3
+
+(a) Pose recall. 4 8 12 15 15+     
+
+> 510 20 30
+> Number of planes
+> Rot.  Error (°)  ↓
+> 0.25 0.50 0.75 1.00
+> Trans.  Error (m)  ↓
+> ∆R∆tmean med.
+
+(b) Pose error. 4 8 12 15 15+ 00.5 1     
+
+> Number of planes Density
+> 40 60 80
+> Performance (%)  ↑
+> # GT # TP P.R. F1
+
+(c) Matching performance. 
+
+Figure 5. Impact of plane richness. Results with post-refinement. Three thresholds from coarse to fine are referred to as: T 1, T 2, and T 3.
+
+(a) Input: map & query (b) Monocular plane recovery (c) Plane correspondences (d) Poses (viewpoint 1 & 2) 
+
+Figure 6. Qualitative examples. (c) Plane correspondences are color-coded, with true positives outlined in green and false ones in red. (d) Camera poses relocalized by different methods are compared from two viewpoints. Legend: the ground truth, PlanaReLoc(Ours), 
+
+GeoTransformer-T, Coarse Init. , MASt3R, NOPE-SAC. See the appendix for additional visualizations on both datasets. Table 5. Results ( w/o refine.) with plane recovery alternatives on ScanNet. MoGe-2+RANSAC is used in our default pipeline. 
+
+F1(%) ↑ Med. Err. ↓ Time (ms/iter) ∆R(°) ∆t(m) 
+
+PlaneTR [109] 65.8 6.2 0.42 ∼ 52.7 PlaneRecTR [100] 63.6 4.9 0.31 ∼ 58.0 ZeroPlane [67] 66.0 4.0 0.41 ∼ 293.7 Plana3R [63] 61.4 3.7 0.28 ∼ 2781.8 
+
+MoGe-2 [121] +RANSAC 64.3 3.9 0.27 ∼ 59.9 GT.Depth +RANSAC 77.1 0.3 0.03 ∼ 48.6 GT.Depth+GT.Mask 88.6 0.0 0.00 ∼ 42.8 
+
+Impact of Plane Richness. Intuitively, informative obser-vations facilitate relocalization. Here, we investigate how the richness/diversity of observed planar primitives affects relocalization performance. For simplicity, we approximate the plane richness of each query image by the number of its annotated plane segments. Then, we bin the test queries from ScanNet into groups according to their ground-truth plane counts. Next, as plotted in Fig. 5, we analyze (a) pose recalls, (b) pose errors, and (c) matching performance within each group. The results indicate that richer plane observations generally lead to improved relocalization, es-pecially when the plane count is below 12. However, as plane richness continues to increase, the performance gain becomes negligible, presumably due to the degraded plane recovery, as planes in richer observations tend to be less salient and harder to recover and match accurately. Such at-tribution is further supported by the drop in matching recall at the tail of the curve (see in Fig. 5c). 
+
+Qualitative Examples. Figure 6 presents two cases from ScanNet, including intermediate outputs and final poses es-timated by our method and compared baselines. 
+
+## 5. Conclusion 
+
+In this paper, we have introduced PlanaReLoc , a light-weight alternative for camera relocalization that exploits planar primitives in structured environments. We adhered to two core principles while designing our method: (1) a simple yet effective matching network, coupled with a plug-and-play monocular plane recovery module that excavates structural cues from query images; (2) a robust pose estima-tion framework with post-refinement to filter out matching outliers and mitigate imperfections in the monocular front-end. This streamlined paradigm supports extensive eval-uation across over hundreds of structured indoor scenes, which clearly highlights the strong potential of planar prim-itives for cross-modal structural associations and pose esti-mation in the task of 6-DoF camera relocalization. 86. Acknowledgements 
+
+This work was supported in part by the Beijing Natural Science Foundation (No. L223003), the National Natural Science Foundation of China (No. U22B2055, 62273345, 62402495) and the Key R&D Project in Henan Province (No. 231111210300). 
+
+## Appendix 
+
+The appendix further provides the following supplementary materials in support of the main paper: • details on dataset preparation (Section A); • auxiliary settings for baseline methods, including map truncation and the oracle coarse initialization (Section B); • comprehensive implementation details for PlanaReLoc, including the network architecture, training scheme, and the pose estimation and post refining process (Section C); • additional analysis and visualizations (Section D); • discussion of limitations and future work (Section E). 
+
+## A. Dataset Preparation 
+
+In this section, we provide details on the preparation of our experimental datasets. Both the data and the preparation code will be made publicly available. 
+
+3D Planar Maps for both the ScanNet and 12Scenes datasets are extracted from their official dense recon-structions using the sequential RANSAC [28] plane-fitting scripts provided by [65, 128]. Specifically, maps from the ScanNet are extracted under the guidance of semantic anno-tations: (1) mesh vertices are first grouped by their semantic instance labels, and plane fitting is performed within each instance that belongs to plane-supporting categories ( e.g ., walls, floors, and tables); (2) vertices identified as inliers supporting a primitive are then projected onto their corre-sponding plane, while preserving their internal connectiv-ity; (3) adjacent planar primitives within the same cate-gory are merged to produce a set of complete and seman-tically aware planes. Lastly, primitives with an area smaller than 0.01 m 2 are discarded. Non-planar vertices and edges connecting distinct primitives are also removed. Mean-while, each primitive is associated with its planar param-eters π := [ n⊤, d ]⊤, where the plane normal n is oriented consistently with the original surface normal. In contrast, for the 12Scenes dataset, map primitives are extracted directly using sequential RANSAC without aux-iliary semantic annotations and are not further merged, re-sulting in potentially fragmented and irregular configura-tions. To ensure a level of compactness comparable to that of ScanNet, each map primitive in 12Scenes is further op-timized using the Isotropic Explicit Remeshing method im-plemented in MeshLab [21]. To obtain colored maps for baselines that require realis-55 115 175 235 280+ 2510 15 20 25    
+
+> # Planar Primitives (per map) Percentage (%)
+> 234
+> log 10  (Storage [kB] )
+> # Maps in total # Maps for testing Colored Simplified
+
+Figure 7. Statistics of 1513 3D planar maps constructed from ScanNet. Left y-axis: distribution of 3D planar maps grouped by their number of planar primitives. Right y-axis: average storage footprint of the colored and simplified map versions in each bin. 
+
+tic map appearance in our main experiments ( see Tab. 1), we preserve all plane-supporting vertices along with their original colors. Conversely, when visual appearance is not required, the map can be further compressed by retaining only a few key vertices per primitive to represent its spa-tial extent, using geometry simplification techniques such as the quadric-based edge collapse [31] or cascaded poly-gon union [32]. Figure 7 groups the constructed 3D planar maps from ScanNet by the total number of planar primi-tives. For each bin, it reports the proportion of maps (left y-axis) and the average storage footprint of both the colored and the simplified map versions (right y-axis). The simpli-fied maps occupy an average of 154.3 KiB, which is approx-imately 3.2% of the size of their colored counterparts. 
+
+Query Images are sampled from the original RGB-D se-quences at regular intervals: every 20 and 30 frames for the ScanNet train and test splits, respectively, and every 5 frames for the 12Scenes test split. Following the proto-col of [110], each sampled frame is then verified using its ground-truth camera pose and depth. Frames that fail this consistency check are discarded to ensure precise alignment between the query and the corresponding map. Moreover, frames capturing fewer than three map primitives are ex-cluded to guarantee adequate plane observations and geo-metric constraints for viable pose estimation. 
+
+## B. Auxiliary Settings for Baseline Methods 
+
+Map Truncation (Map Trunc.) is employed to crop struc-tures far from the ground-truth pose for the image-to-point cloud registration baselines, i.e ., GeoTransformer [86] and 
+
+Free-FreeReg [118], which may struggle to operate stably on the full-scene maps ( see Tab. 1). Specifically, given the ground-truth pose and depth map, we define a refer-ence point as the 3D point on the principal ray located at the mean scene depth. Then, we retain only the structures 90.1 0.3 0.5 0.7 0.9 0246          
+
+> (a) Visual overlap between the GT pose and the truncated map Density
+> 0.1 0.3 0.5 0.7 0.9 012
+> (b) Visual overlap between the GT pose and the Coarse Init.
+> Density
+> 0510 15 00.5 11.5
+> (c) Number of covisible planes between the GT pose and the Coarse Init.
+> Density  (x 0.1)
+> ScanNetv2 12Scenes
+
+Figure 8. Visual overlap analysis for the map truncation in (a) and the oracle coarse initialization strategy in (b) and (c). 
+
+within a 3 m-sized axis-aligned bounding box centered at the reference point. As illustrated in Fig. 8a, the strategy yields an average 2D–3D overlap exceeding 60 %, as mea-sured by the protocol from [86]. 
+
+Oracle Coarse Initialization (Coarse Init.) is used to pro-vide a 6-DoF reference pose for the baselines that rely on map renderings ( see Tab. 1). Specifically, we construct a sub-map containing 20 primitives by first including all vis-ible ones and then supplementing with nearest ones to the reference point defined above. To obtain a reference ro-tation, we first compute the mean normal vector of these primitives. The camera’s viewing direction is then aligned with the opposite of this average normal vector, towards the map, while its up vector is fixed to the global up direction 
+
+(0 , 0, 1) ⊤. The reference translation is computed by shift-ing the center of each primitive by 2 meters along its normal direction and then taking the mean of the resulting shifted centers. Figures 8b and c show the distributions of visual overlap (as defined by [95]) and the number of covisible planes resulting from these heuristic rules, respectively. In summary, our oracle initialization heuristics achieve an av-erage visual overlap of 34.7 % ( ∼5.3 covisible planes) on ScanNet and 51.6 % ( ∼7.0 covisible planes) on 12Scenes. This provides reasonable viewpoints for rendering synthetic images used in matching. 
+
+More Details. For MeshLoc methods, following the pro-tocol of [81, 82], we render synthetic views using only the model’s base vertex color, without computing any lighting effects, and use PoseLib [54] as the robust pose estimator for all point-matching approaches. For all methods, we ap-ply a final clamping step to ensure that the estimated poses lie within the bounds of the scene maps. 
+
+## C. Implementation Details for PlanaReLoc 
+
+2D Plane Embeddings. As shown in Fig. 9, instead of employing an independent image backbone, we augment MoGe-2 [121], the monocular geometry estimation model for plane recovery, with an additional head comprising lightweight convolutional layers to extract dense features for 2D plane embeddings. This design allows the model to leverage powerful visual representations learned on large-scale datasets, thereby improving accuracy while maintain-ing efficiency during both training and inference. Further ablation studies of this design choice can be found in Sec. D. The query images are first resized to a resolution of 640 
+
+× 480 and fed into MoGe-2 to obtain an estimated metric depth map, which is subsequently downsampled to match the size of the feature map (80 × 60). The RANSAC mod-ule [28, 125] operates on the downsampled depth map di-rectly, as higher resolution yields little performance im-provement but incurs extra computational overhead. During plane extraction, a point is considered an inlier of a plane hypothesis if both (1) its distance residual to the plane is less than 10 cm and (2) their normal similarity, measured by the dot product, exceeds 0.9. The module iteratively ex-tracts planes from the depth map, until either 16 primitives have been extracted or the number of inliers falls below 1 % of the total number of pixels in the depth map. 
+
+3D Plane Embeddings. Both the object and scene encoders are instantiated using PointNet [85], operating on point clouds sampled from the map primitives. For each map primitive, we uniformly sample L=1024 points, which are then centralized, batched, and fed into the object encoder. For the scene encoder, we first retain 16 points per primi-tive to ensure each primitive will be represented. Additional points are then randomly sampled from the entire map until the total number of points reaches 16 × 1024=16 384 (based on the assumption of a maximum of 1024 map primitives). 
+
+Training Scheme. Our model, which consists of the front-end encoders ( see Sec. 3.1) and the matching network ( see 
+
+Sec. 3.2), is trained on the ScanNet training split by min-imizing the loss defined in Eq. (3). We train the model 10 Figure 9. Architecture of the front-end network on the query side. We retrofit the monocular geometry estimation model MoGe-2 [121] with an additional head to encode dense features for 2D plane embedding. 
+
+with a batch size of 16, distributed across 2 NVIDIA A800 GPUs, for 90 000 iterations, equivalent to approximately 31 epochs. The overall training scheme consists of two stages: (1) during the initial 45k iterations, we use the ground-truth primitives augmented with noise to replace the online monocular plane recovery for improved training efficiency; (2) in the remaining 45k iterations, we switch to the full pipeline, enabling online plane recovery. For both stages, we employ the AdamW optimizer [73] with an initial learn-ing rate of 1 × 10 −4 . The learning rate is decreased by a fac-tor of 0.1 at 24k and 36k iterations using a multi-step sched-uler. Throughout training, we apply data augmentation to both the query images (random resizing and cropping) and the maps (random rotation and scaling). The entire training process completes in about 12 h. 
+
+Estimating Camera Translation , as introduced in Eq. (7), involves the joint optimization of the metric scale factor s:
+
+t0, s ∗ = arg min 
+
+> t,s
+
+X 
+
+> (i,j )∈cM
+
+ωi(t⊤nmj − dmj + sd qi )2.
+
+The initial translation t0 and the optimal s∗ can be solved efficiently by rewriting the above equation as a standard linear least-squares problem: (1) for each correspondence 
+
+(i, j ) ∈ cM, we construct a linear equation by setting the row vector to a := [( nmj )⊤, d qi ] and the target to b := 
+
+dmj ; (2) stacking all correspondences yields a linear system 
+
+Ax ≈ b, with the variable vector x := [ t⊤ 
+
+> 0
+
+, s ]⊤ ∈ R4, the data matrix A ∈ R| cM|× 4, and the target b ∈ R| cM| ; (3) we introduce the diagonal weight matrix W = diag (√ωi)
+
+and formulate the final weighted linear least-squares prob-lem as 
+
+x∗ = arg min 
+
+> x
+
+∥W (Ax − b)∥22, (11) which can be efficiently solved in closed form using SciPy [117]. The degeneracy rate, i.e ., the percentage of cases where the number of correspondences with non-parallel normals is less than 3 , is empirically observed to be less than 2 %. 
+
+Pose Refinement. We optimize for the relative transfor-mation T∗ 
+
+> tr
+
+alongside the offset seeds {δ∗ 
+
+> i
+
+} by minimizing the depth alignment cost Edepth defined in Eq. (10). The optimization is performed using the Adam optimizer [53], following the practice in [74]. Specifically, the optimization variable Ttr is converted into a differentiable 6-dimensional vector via LieTorch [112] and then optimized for 200 itera-tions with a learning rate of 1 × 10 −3 . The offset seeds {δi}
+
+are initialized to one and optimized with a learning rate of 1 × 10 −4 . For efficiency, in each iteration we compute 
+
+Edepth on a multinomial sample of 4096 pixels from the 2D plane segments, rather than capitalizing on every pixel. 
+
+## D. Additional Experimental Results 
+
+Cumulative Accuracy Curves. Figure 10 presents the cu-mulative accuracy curves w.r.t. translation and rotation er-rors on both ScanNet and 12Scenes datasets. Our method achieves solid performance on both datasets, with particu-larly favorable results in camera rotation, which may bene-fit from the reliable normal priors predicted by the powerful monocular model. In contrast, estimating camera transla-tion is largely affected by depth inaccuracy, a limitation that can be mitigated through the post-refinement procedure in-troduced in Sec. 3.4. 
+
+Ablating 2D Encoder Variants. We compare different designs of the query-side encoder. In addition to our de-fault design depicted in Fig. 9, we also evaluate three al-ternative configurations: (1) training a dedicated ResNet-50 [35] from scratch; (2) employing the official pretrained DINOv2-Vit-L/14 [80] as a frozen backbone; (3) a vari-ant of (2) augmented with the same learnable convolutional 11 0 0.2 0.4 0.6 0.8 1020 40 60 80               
+
+> Proportion (%)
+> 010 20 30 020 40 60 80
+> 00.2 0.4 0.6 0.8 1020 40 60 80
+> Translation Error (m) Proportion (%)
+> 010 20 30 020 40 60 80
+> Rotation Error (°)
+> Ours (full) MatchAny. Geo Tr.‑T
+
+↪ w/o refine. NOPE‑SAC MASt3R 
+
+> ScanNetv2 12Scenes
+
+Figure 10. Camera relocalization results on ScanNet and 12Scenes datasets. We plot cumulative accuracy curves that show the proportion of correctly localized frames as a function of vary-ing translation and rotation error thresholds. Table 6. Ablation study on 2D encoder variants. Experiments are conducted on ScanNet with no post-refinement. 
+
+Plane Matching (%) ↑ Pose Recall ↑
+
+Time (ms/iter) Prec. Rec. F1
+
+(1) ResNet50 [35] 62.3 56.9 59.5 34.2 ∼ 63.9 (2) DINOv2 [80] 65.5 59.6 62.4 35.5 ∼ 95.0  
+
+> ,→
+
+(3) w/ Conv. head 66.3 60.3 63.1 36.2 ∼ 97.1 Ours 67.6 61.3 64.3 37.1 ∼ 59.9 
+
+head as in our default design to better adapt the features to our task. As reported in Tab. 6, the results suggest that the DINOv2 ViT encoder fine-tuned by MoGe-2 [121] pos-sesses enhanced geometric and structural perception, con-tributing to the slight performance improvement over the official frozen DINOv2 features. Moreover, the reuse of vi-sual representations from the pretrained backbone for 2D plane embedding provides good computational efficiency. Collectively, these results highlight the effectiveness of our architectural design. 
+
+Impact of the Query Primitive Size. We analyze how plane matching performance varies w.r.t. the size of prim-itives observed in query images. Specifically, all detected query primitives on ScanNet are collected and categorized into bins according to their pixel areas. We then com-pute the matching precision for each bin, defined as the proportion of correctly matched primitives. As shown in 0.05 0.25 0.45 0.65 0.8+ 
+
+> 1
+> 3
+> 5
+> 7
+
+Primitive size (ratio to the image area)    
+
+> Density
+> 55
+> 65
+> 75
+> 85
+> 95 Matchability (%)  ↑
+> # Total # TP Precision
+
+Figure 11. Impact of the Query Primitive Size on Matching Performance. Left y-axis: the size distribution of all detected query primitives, where size is defined as the percentage of the image area occupied. Right y-axis: the matching precision for each size bin. 
+
+Fig. 11, our purely geometric plane recovery method tends to over-segment planar regions due to occlusions and noise. Consequently, a large number of small plane segments are produced, typically covering less than 10 % of the image and exhibiting low matching reliability. Moreover, the Mu-tual Nearest Neighbor (MNN) matching strategy, which im-poses a one-to-one correspondence constraint, also leads to lower matching precision in these small planar primitives. Meanwhile, performance drops significantly for extremely large planes that occupy more than 80 % of the image area. As noted in our main paper, this likely stems from the re-duced plane richness and the consequent lack of discrim-inative patterns. In contrast, the remaining medium-sized query primitives strike a good balance between salience and discriminativeness, achieving a remarkable matching preci-sion of over 90 % on average. 
+
+Evaluation on 7Scenes. To better position the task and the PlanaReLoc method within the broader visual localization literature, we additionally include a cross-dataset evaluation on the standard 7Scenes dataset [104] to compare against more representative methods and assess the performance gap. Specifically, we construct planar maps using the depth scans from the 7Scenes train split, and evaluate PlanaReLoc on the test split. The results are reported in Tab. 7. While maintaining a compact map representation and exhibiting consistent cross-dataset performance, we acknowledge that PlanaReLoc still lags behind state-of-the-art visual local-ization methods that fully leverage thousands of reference images which provides rich visual cues and pose priors. 
+
+Additional Qualitative Results. More visualizations of in-termediate outputs and relocalization results on 12Scenes and ScanNet are shown in Fig. 12 and Fig. 13, respectively. 12 Table 7. Camera relocalization results on the 7Scenes dataset. We report median position and rotation errors in centimeters (cm) and degrees (°), respectively. We summarize the map type, map size, the time needed for mapping, and whether mapping and localization rely on visual appearance or pose priors ( e.g ., image retrieval). Results of other methods are taken from the literature. 
+
+Methods Map Type Map Size ↓
+
+Mapping Time ↓
+
+Visual Cues Pose Prior Chess Fire Heads Office Pumpkin Kitchen Stairs Avg. ↓
+
+(cm/°)  
+
+> PoseNet17 [50]
+
+Network 50 MB 4 h–24 h ✓ 13/4.5 27/11.3 17/13.0 19/5.6 26/4.8 23/5.4 35/12.4 23/8.1  
+
+> HLoc(SP+SG) [93]
+
+SfM points ∼2 GB ∼ 1.5 h ✓ ✓ 2/0.8 2/0.9 1/0.8 3/0.9 5/1.3 4/1.4 5/1.5 3/1.1  
+
+> GoMatch(SP) [140]
+
+SfM points ∼56 MB ∼ 1.5 h ✓ 4/1.6 12/3.7 5/3.4 7/1.8 8/5.7 14/3.0 58/13.1 18/4.6  
+
+> ACE [11]
+
+Network 5 MB 5 min ✓ 0.6/0.2 0.8/0.3 0.5/0.3 1/0.3 1/0.2 0.8/0.2 3/0.8 1/0.3  
+
+> Reloc3r [26]
+
+Ref. images ∼1.6 GB 7 s ✓ ✓ 3/0.9 3/0.8 1/1.0 4/0.9 6/1.1 4/1.3 7/1.3 4/1.0  
+
+> STDLoc [43]
+
+3DGS ∼0.8 GB ∼ 2 h ✓ 0.5/0.2 0.6/0.2 0.4/0.3 1/0.2 1/0.2 0.6/0.2 1/0.4 0.8/0.2  
+
+> Ours
+
+Planes 0.4 MB 2 min 26/3.7 19/3.8 32/3.7 19/3.6 27/2.6 43/3.3 61/6.2 32/3.9    
+
+> (a) Input: map & query (b) Monocular plane recovery (c) Plane correspondences (d) Poses (viewpoint 1 & 2)
+
+Figure 12. Qualitative examples on 12Scenes. Correspondences in (c) are color-coded, with true positives outlined in green and false ones in red. Legend for different relocalizers in (d): the ground truth, PlanaReLoc(Ours), GeoTransformer-T, Coarse Init. , MASt3R, NOPE-SAC. 
+
+13 (a) Input: map & query (b) Monocular plane recovery (c) Plane correspondences (d) Poses (viewpoint 1 & 2) 
+
+Figure 13. More qualitative examples on ScanNet. Correspondences in (c) are color-coded, with true positives outlined in green and false ones in red. Legend for different relocalizers in (d): the ground truth, PlanaReLoc(Ours), GeoTransformer-T, 
+
+Coarse Init. , MASt3R, NOPE-SAC. 
+
+14 E. Limitations and Future Work 
+
+Limitations A key bottleneck of our method lies in the monocular plane recovery module, given its critical role in providing 2D plane proposals and geometric priors for sub-sequent matching and pose estimation. Despite significant progress in this area, unreliable predictions from this mod-ule under challenging scenarios can still lead to catastrophic failures, even with our robust pose estimation and refine-ment pipeline designed to mitigate errors. Another issue arises in environments with a limited level of detail or exhibiting highly repetitive structures, or when the query image captures only weak structural hints ( see 
+
+Fig. 14). This limitation is also indicated by Tab. 5 in the main paper: even when provided with ground-truth monoc-ular plane recoveries, PlanaReLoc may still fail to establish enough correct matches in certain cases. Furthermore, in large multi-room scenarios ( see Fig. 15), PlanaReLoc’s performance is constrained by the increasing structural ambiguities and the fixed point budget that the scene encoder consumes. Increasing the point budget or processing subdivided regions in parallel yield limited per-formance improvements, but at the cost of substantial mem-ory and computational overhead. Finally, PlanaReLoc is currently better suited to indoor settings and is not trained or validated in outdoor environ-ments, where the plane distribution may differ significantly. 
+
+Future Work. Although PlanaReLoc demonstrates strong performance in cross-modal 2D–3D matching and enables a plane-centric paradigm for room-level 6-DoF camera relo-calization, scaling it up to larger and more complex scenes demands improved scene understanding and structural dis-ambiguation. This could be addressed by enhancing struc-
+
+Figure 14. A representative case where PlanaReLoc under-performs. Despite four out of six primitives being correctly matched (colored in green), the pose estimation framework fails to reject matching outliers (colored in orange) due to the perfectly repeated pattern (compare the query image with the colored ren-dering from the predicted pose). 1 2 3 4 6 12 020 40 60 80       
+
+> Pose recall (%)
+> 1234612 020 40 60
+> Integration size(# of scenes) Matching performance (%)
+> (1.0 m, 30°)
+> (0.5 m, 15°)
+> (0.2 m, 10°)
+> Precision
+> Recall
+> F1‑score
+
+Figure 15. Relocalization results on Integrated Rooms. Follow-ing [9], we arrange scenes in 12Scenes inside a 2D grid with a cell size of 5 m and integrate varying numbers of adjacent scenes to form larger maps. As the integration size increases, PlanaReLoc’s performance degrades due to increased ambiguities and the scene encoder’s limited capacity for larger maps. 
+
+tural feature encoding, incorporating plane semantics, and adopting a coarse-to-fine strategy. Moreover, exploring an end-to-end approach that jointly tackles structural matching and pose estimation could further improve robustness and accuracy. Lastly, extending the method to sequential inputs offers another promising direction for practical use. 
+
+## References 
+
+[1] Jiro Abe, Gaku Nakano, and Kazumine Ogura. NormalLoc: Visual localization on textureless 3D models using surface normals. In ICCV , 2025. 2 [2] Samir Agarwala, Linyi Jin, Chris Rockwell, and David F. Fouhey. PlaneFormers: From sparse view planes to 3D re-construction. In ECCV . 2022. 3 [3] Pei An, Jiaqi Yang, Muyao Peng, You Yang, Qiong Liu, Xiaolin Wu, and Liangliang Nan. MinCD-PnP: Learning 2D-3D correspondences with approximate blind PnP. In 
+
+ICCV , 2025. 2 [4] Relja Arandjelovi´ c, Petr Gronat, Akihiko Torii, Tomas Pa-jdla, and Josef Sivic. NetVLAD: CNN architecture for weakly supervised place recognition. In CVPR . 2016. 2 [5] ARCore. Fundamental Concepts: Environmental Un-derstanding. In Google for Developer: Augmented Reality Essentials , Accessed: 2025-10-23. Avail-able at https://developers.google.com/ar/ develop/fundamentals . 2 [6] ARKit. Placing content on detected planes. In Ap-ple Developer Documentation , Accessed: 2025-10-23. 
+
+15 Available at https : / / developer . apple . com / documentation/visionos/placing-content-on-detected-planes . 2 [7] Hriday Bavle, Jose Luis Sanchez-Lopez, Muhammad Sha-heer, Javier Civera, and Holger Voos. Situational graphs for robot navigation in structured indoor environments. IEEE Robotics Autom. Lett. , 7(4):9107–9114, 2022. 2 [8] Alexey Bochkovskiy, Ama¨ el Delaunoy, Hugo Germain, Marcel Santos, Yichao Zhou, Stephan Richter, and Vladlen Koltun. Depth pro: Sharp monocular metric depth in less than a second. In ICLR , 2025. 3 [9] Eric Brachmann and Carsten Rother. Expert Sample Con-sensus Applied to Camera Re-Localization. In ICCV . 2019. 15 [10] Eric Brachmann, Alexander Krull, Sebastian Nowozin, Jamie Shotton, Frank Michel, Stefan Gumhold, and Carsten Rother. DSAC — differentiable RANSAC for camera lo-calization. In CVPR , 2016. 2 [11] Eric Brachmann, Tommaso Cavallari, and Victor Adrian Prisacariu. Accelerated coordinate encoding: Learning to relocalize in minutes using RGB and poses. In CVPR . 2023. 2, 13 [12] Jan Brejcha, Michal Luk´ aˇ c, Yannick Hold-Geoffroy, Oliver Wang, and Martin ˇ Cad´ ık. LandscapeAR: Large Scale Out-door Augmented Reality by Matching Photographs with Terrain Models Using Learned Descriptors. In ECCV .2020. 2 [13] Dylan Campbell, Liu Liu, and Stephen Gould. Solving the blind perspective-n-point problem end-to-end with robust differentiable geometric optimization. In ECCV . 2020. 2 [14] Federico Camposeco, Andrea Cohen, Marc Pollefeys, and Torsten Sattler. Hybrid scene compression for visual local-ization. In CVPR , 2019. 2 [15] Changan Chen, Rui Wang, Christoph Vogel, and Marc Pollefeys. F3Loc: Fusion and Filtering for Floorplan Lo-calization. In CVPR . 2024. 2, 5 [16] Shuai Chen, Yash Bhalgat, Xing Hui Li, Jia Wang Bian, Ke Jie Li, Zirui Wang, and Victor Adrian Prisacariu. Re-finement for Absolute Pose Regression with Neural Feature Synthesis. In CVPR . 2024. 5 [17] Ting Chen, Simon Kornblith, Mohammad Norouzi, and Ge-offrey Hinton. A simple framework for contrastive learning of visual representations. In ICML . 2020. 4 [18] Zheng Chen, Qingan Yan, Huangying Zhan, Changjiang Cai, Xiangyu Xu, Yuzhong Huang, Weihan Wang, Ziyue Feng, Lantao Liu, and Yi Xu. PlanarNeRF: Online Learn-ing of Planar Primitives with Neural Radiance Fields. In 
+
+ICRA . 2025. 2 [19] Bowen Cheng, Ishan Misra, Alexander G. Schwing, Alexander Kirillov, and Rohit Girdhar. Masked-attention Mask Transformer for Universal Image Segmentation. In 
+
+CVPR . 2022. 4 [20] Sumit Chopra, Raia Hadsell, and Yann LeCun. Learning a similarity metric discriminatively, with application to face verification. In CVPR , 2005. 4 [21] Paolo Cignoni, Marco Callieri, Massimiliano Corsini, Mat-teo Dellepiane, Fabio Ganovelli, and Guido Ranzuglia. MeshLab: An open-source mesh processing tool. In Eu-rographics Italian Chapter Conference . 2008. 9 [22] Steve Cruz, Will Hutchcroft, Yuguang Li, Naji Khosravan, Ivaylo Boyadzhiev, and Sing Bing Kang. Zillow indoor dataset: Annotated floor plans with 360 ◦ panoramas and 3D room layouts. In CVPR , 2021. 2 [23] Angela Dai, Angel X. Chang, Manolis Savva, Maciej Hal-ber, Thomas Funkhouser, and Matthias Nießner. ScanNet: Richly-annotated 3D reconstructions of indoor scenes. In 
+
+CVPR , 2017. 6 [24] Daniel DeTone, Tomasz Malisiewicz, and Andrew Rabi-novich. SuperPoint: Self-supervised interest point detec-tion and description. In CVPRW . 2018. 6, 7 [25] Siyan Dong, Shuzhe Wang, Yixin Zhuang, Juho Kannala, Marc Pollefeys, and Baoquan Chen. Visual Localization via Few-Shot Scene Region Classification. In 3DV . 2022. 2 [26] Siyan Dong, Shuzhe Wang, Shaohui Liu, Lulu Cai, Qing-nan Fan, Juho Kannala, and Yanchao Yang. Reloc3r: Large-Scale Training of Relative Camera Pose Regression for Generalizable, Fast, and Accurate Visual Localization. In CVPR . 2025. 13 [27] Alexey Dosovitskiy, Lucas Beyer, Alexander Kolesnikov, Dirk Weissenborn, Xiaohua Zhai, Thomas Unterthiner, Mostafa Dehghani, Matthias Minderer, Georg Heigold, Sylvain Gelly, Jakob Uszkoreit, and Neil Houlsby. An Im-age is Worth 16x16 Words: Transformers for Image Recog-nition at Scale. In ICLR . 2021. 6 [28] Martin A. Fischler and Robert C. Bolles. Random sample consensus: A paradigm for model fitting with applications to image analysis and automated cartography. Communica-tions of The Acm , 24(6):381–395, 1981. 2, 5, 9, 10 [29] Xiaoshan Gao, Xiaorong Hou, Jianliang Tang, and Hangfei Cheng. Complete solution classification for the perspective-three-point problem. IEEE Trans. Pattern Anal. Mach. In-tell. , 25(8):930–943, 2003. 2 [30] Niklas Gard, Anna Hilsmann, and Peter Eisert. SPVLoc: Semantic Panoramic Viewport Matching for 6D Camera Localization in Unseen Environments. In ECCV . 2024. 2 [31] Michael Garland and Paul S. Heckbert. Surface simplifi-cation using quadric error metrics. In SIGGRAPH . 1997. 9[32] GEOS contributors. GEOS computational geometry library. 2025. Available at https://libgeos.org/ . 9 [33] Yuval Grader and Hadar Averbuch-Elor. Supercharging floorplan localization with semantic rays. In ICCV , 2025. 5 [34] Richard Hartley and Andrew Zisserman. Projective Geom-etry and Transformations of 3D. In Multiple View Geometry in Computer Vision, 2nd . 2003. 4, 5 [35] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In CVPR ,2016. 11, 12 [36] Kaiming He, Georgia Gkioxari, Piotr Doll´ ar, and Ross Gir-shick. Mask r-CNN. In ICCV , 2017. 3 [37] Xingyi He, Hao Yu, Sida Peng, Dongli Tan, Zehong Shen, Hujun Bao, and Xiaowei Zhou. MatchAnything: Univer-sal Cross-Modality Image Matching with Large-Scale Pre-Training, arXiv preprint arXiv:2501.07556 , 2025. Avail-
+
+16 able at http://arxiv.org/abs/2501.07556 . 6, 7[38] Yuze He, Wang Zhao, Shaohui Liu, Yubin Hu, Yushi Bai, Yu-Hui Wen, and Yong-Jin Liu. AlphaTablets: A Generic Plane Representation for 3D Planar Reconstruction from Monocular Videos. In NeurIPS . 2024. 2 [39] Berthold KP Horn. Closed-form solution of absolute orien-tation using unit quaternions. Journal of the optical society of America A , 4(4):629–642, 1987. 5 [40] Henry Howard-Jenkins and Victor Adrian Prisacariu. Lalaloc++: Global floor plan comprehension for layout lo-calisation in unvisited environments. In ECCV . 2022. 5 [41] Henry Howard-Jenkins, Jose-Raul Ruiz-Sarmiento, and Victor Adrian Prisacariu. Lalaloc: Latent layout localisa-tion in dynamic, unvisited environments. In ICCV , 2021. 2, 5[42] Petr Hruby, Timothy Duff, and Marc Pollefeys. Efficient solution of point-line absolute pose. In CVPR , 2024. 2 [43] Zhiwei Huang, Hailin Yu, Yichun Shentu, Jin Yuan, and Guofeng Zhang. From sparse to dense: Camera relocal-ization with scene-specific detector from Feature Gaussian Splatting. In CVPR , 2025. 2, 13 [44] Martin Humenberger, Yohann Cabon, Nicolas Guerin, Julien Morat, Vincent Leroy, J´ erˆ ome Revaud, Philippe Re-role, No´ e Pion, Cesar de Souza, and Gabriela Csurka. Ro-bust Image Retrieval-based Visual Localization using Kap-ture, arXiv preprint arXiv:2007.13867 , 2022. Available at 
+
+http://arxiv.org/abs/2007.13867 . 2 [45] Xudong Jiang, Fangjinhua Wang, Silvano Galliani, Christoph Vogel, and Marc Pollefeys. R-SCoRe: Revis-iting Scene Coordinate Regression for Robust Large-Scale Visual Localization. In CVPR . 2025. 2 [46] Linyi Jin, Shengyi Qian, Andrew Owens, and David F. Fouhey. Planar surface reconstruction from sparse views. In ICCV . 2021. 3 [47] Long Wang Juelin Zhu, Shen Yan and Maojun Zhang. LoD-loc: Visual localization using LoD 3D map with neural wireframe alignment. In NeurIPS , 2024. 2, 5 [48] Wolfgang Kabsch. A solution for the best rotation to relate two sets of vectors. Foundations of Crystallography , 32(5): 922–923, 1976. 5 [49] Bingxin Ke, Anton Obukhov, Shengyu Huang, Nando Met-zger, Rodrigo Caye Daudt, and Konrad Schindler. Re-purposing diffusion-based image generators for monocular depth estimation. In CVPR , 2024. 3 [50] Alex Kendall and Roberto Cipolla. Geometric Loss Func-tions for Camera Pose Regression with Deep Learning. In 
+
+2017 IEEE Conference on Computer Vision and Pattern Recognition . 2017. 13 [51] Prannay Khosla, Piotr Teterwak, Chen Wang, Aaron Sarna, Yonglong Tian, Phillip Isola, Aaron Maschinot, Ce Liu, and Dilip Krishnan. Supervised contrastive learning. In 
+
+NeurIPS , 2020. 4 [52] Savya Khosla, Sethuraman T V, Alexander Schwing, and Derek Hoiem. RELOCATE: A simple training-free base-line for visual query localization using region-based repre-sentations. In CVPR , 2025. 3 [53] Diederik P. Kingma and Jimmy Ba. Adam: A Method for Stochastic Optimization. In ICLR . 2015. 11 [54] Viktor Larsson and contributors. PoseLib - minimal solvers for camera pose estimation, 2020. Available at https: //github.com/vlarsson/PoseLib . 2, 10 [55] Vincent Leroy, Yohann Cabon, and J´ erˆ ome Revaud. Grounding Image Matching in 3D with MASt3R. In ECCV .2024. 6, 7 [56] Jiajie Li, Boyang Sun, Luca Di Giammarino, Hermann Blum, and Marc Pollefeys. ActLoc: Learning to Local-ize on the Move via Active Viewpoint Selection. In CoRL .2025. 2 [57] Minhao Li, Zheng Qin, Zhirui Gao, Renjiao Yi, Chenyang Zhu, Yulan Guo, and Kai Xu. 2D3D-MATR: 2D-3D Match-ing Transformer for Detection-free Registration between Images and Point Clouds. In ICCV . 2023. 2 [58] Siyuan Li, Lei Ke, Martin Danelljan, Luigi Piccinelli, Mat-tia Seg` u, Luc Van Gool, and Fisher Yu. Matching anything by segmenting anything. In CVPR . 2024. 3, 4 [59] Yang Li, Si Si, Gang Li, Cho-Jui Hsieh, and Samy Bengio. Learnable fourier features for multi-dimensional spatial po-sitional encoding. In NeurIPS . 2021. 4 [60] Chen Hsuan Lin, Wei Chiu Ma, Antonio Torralba, and Simon Lucey. BARF: Bundle-adjusting neural radiance fields. In ICCV . 2021. 5 [61] Philipp Lindenberger, Paul-Edouard Sarlin, and Marc Pollefeys. LightGlue: Local feature matching at light speed. In ICCV . 2023. 4, 6, 7 [62] Changkun Liu, Shuai Chen, Yash Sanjay Bhalgat, Siyan HU, Ming Cheng, Zirui Wang, Victor Adrian Prisacariu, and Tristan Braud. GS-CPR: Efficient camera pose refine-ment via 3D gaussian splatting. In ICLR , 2025. 5 [63] Changkun Liu, Bin Tan, Zeran Ke, Shangzhan Zhang, Ji-achen Liu, Ming Qian, Nan Xue, Yujun Shen, and Tristan Braud. PLANA3R: Zero-shot Metric Planar 3D Recon-struction via Feed-Forward Planar Splatting. In NeurIPS .2025. 3, 6, 8 [64] Chen Liu, Jimei Yang, Duygu Ceylan, Ersin Yumer, and Yasutaka Furukawa. PlaneNet: Piece-wise planar recon-struction from a single RGB image. In CVPR , 2018. 2, 3[65] Chen Liu, Kihwan Kim, Jinwei Gu, Yasutaka Furukawa, and Jan Kautz. PlaneRCNN: 3D plane detection and re-construction from a single image. In CVPR . 2019. 2, 3, 6, 9[66] Hongmin Liu, Chengyang Cao, Hanqiao Ye, Hainan Cui, Wei Gao, Xing Wang, and Shuhan Shen. Lightweight struc-tured line map based visual localization. IEEE Robotics and Automation Letters , 9(6):5182–5189, 2024. 2 [67] Jiachen Liu, Rui Yu, Sili Chen, Sharon X. Huang, and Hengkai Guo. Towards In-the-wild 3D Plane Reconstruc-tion from a Single Image. In CVPR . 2025. 3, 4, 8 [68] Jiacheng Liu, Pan Ji, Nitin Bansal, Changjiang Cai, Qin-gan Yan, Xiaolei Huang, and Yi Xu. PlaneMVS: 3D plane reconstruction from multi-view stereo. In CVPR , 2022. 2 [69] Liu Liu, Hongdong Li, and Yuchao Dai. Efficient global 2d-3d matching for camera localization in a large-scale 3d map. In ICCV , 2017. 2 
+
+17 [70] Shaohui Liu, Yifan Yu, R´ emi Pautrat, Marc Pollefeys, and Viktor Larsson. 3D line mapping revisited. In CVPR . 2023. 2[71] Yuzhou Liu, Lingjie Zhu, Xiaodong Ma, Hanqiao Ye, Xi-ang Gao, Xianwei Zheng, and Shuhan Shen. PolyRoom: Room-aware transformer for floorplan reconstruction. In 
+
+ECCV . 2024. 2 [72] Yuzhou Liu, Lingjie Zhu, Hanqiao Ye, Shangfeng Huang, Xiang Gao, Xianwei Zheng, and Shuhan Shen. BWFormer: Building wireframe reconstruction from airborne LiDAR point cloud with transformer. In CVPR , 2025. 2 [73] Ilya Loshchilov and Frank Hutter. Decoupled weight decay regularization. In ICLR , 2019. 11 [74] Kirill Mazur, Gwangbin Bae, and Andrew J. Davison. Su-perPrimitive: Scene Reconstruction at a Primitive Level. In 
+
+CVPR , 2024. 5, 11 [75] Yang Miao, Francis Engelmann, Olga Vysotska, Federico Tombari, Marc Pollefeys, and D´ aniel B´ ela Bar´ ath. Scene-GraphLoc: Cross-Modal Coarse Visual Localization on 3D Scene Graphs. In ECCV . 2024. 4 [76] Aron Monszpart, Nicolas Mellado, Gabriel J. Brostow, and Niloy J. Mitra. RAPter: Rebuilding man-made scenes with regular arrangements of planes. ACM Trans. Graph. , 34(4), 2015. 2 [77] Arthur Moreau, Nathan Piasco, Moussab Bennehar, Dzmitry Tsishkou, Bogdan Stanciulescu, and Arnaud de La Fortelle. CROSSFIRE: Camera relocalization on self-supervised features from an implicit representation. In 
+
+ICCV . 2023. 2 [78] Juncheng Mu, Chengwei Ren, Weixiang Zhang, Liang Pan, Xiao-Ping Zhang, and Yue Gao. Diff 2I2P: Differentiable Image-to-Point Cloud Registration with Diffusion Prior. In 
+
+ICCV . 2025. 2 [79] Liangliang Nan and Peter Wonka. PolyFit: Polygonal sur-face reconstruction from point clouds. In ICCV . 2017. 2 [80] Maxime Oquab, Timoth´ ee Darcet, Th´ eo Moutakanni, Huy Vo, Marc Szafraniec, Vasil Khalidov, Pierre Fernandez, Daniel Haziza, Francisco Massa, Alaaeldin El-Nouby, Mahmoud Assran, Nicolas Ballas, Wojciech Galuba, Rus-sell Howes, Po-Yao Huang, Shang-Wen Li, Ishan Misra, Michael Rabbat, Vasu Sharma, Gabriel Synnaeve, Hu Xu, Herv´ e Jegou, Julien Mairal, Patrick Labatut, Armand Joulin, and Piotr Bojanowski. DINOv2: Learning Robust Visual Features without Supervision. TMLR , pp. 2835– 8856, 2024. 11, 12 [81] Vojtech Panek, Zuzana Kukelova, and Torsten Sattler. MeshLoc: Mesh-based visual localization. In ECCV , 2022. 2, 6, 10 [82] Vojtech Panek, Zuzana Kukelova, and Torsten Sattler. Vi-sual Localization using Imperfect 3D Models from the In-ternet. In ICCV . 2023. 2, 6, 10 [83] R´ emi Pautrat, Iago Su´ arez, Yifan Yu, Marc Pollefeys, and Viktor Larsson. GlueStick: Robust Image Matching by Sticking Points and Lines Together. In ICCV . 2023. 2, 4 [84] Maxime Pietrantoni, Gabriela Csurka, and Torsten Sattler. Gaussian Splatting Feature Fields for Privacy-Preserving Visual Localization. In CVPR . 2025. 2 [85] Charles R. Qi, Hao Su, Kaichun Mo, and Leonidas J. Guibas. PointNet: Deep Learning on Point Sets for 3D Classification and Segmentation. In CVPR . 2017. 6, 10 [86] Zheng Qin, Hao Yu, Changjian Wang, Yulan Guo, Yuxing Peng, Slobodan Ilic, Dewen Hu, and Kai Xu. GeoTrans-former: Fast and Robust Point Cloud Registration with Ge-ometric Transformer. IEEE Trans. Pattern Anal. Mach. In-tell. , 45(8):9806–9821, 2023. 4, 6, 7, 9, 10 [87] Alec Radford, Jong Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh, Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark, Gretchen Krueger, and Ilya Sutskever. Learning Transferable Visual Models From Natural Language Supervision. In ICML .2021. 4 [88] Srikumar Ramalingam, Sofien Bouaziz, and Peter F. Sturm. Pose estimation using both points and lines for geo-localization. In ICRA , 2011. 2 [89] Carolina Raposo, Miguel Lourenc ¸o, Michel Antunes, and Joao Pedro Barreto. Plane-based odometry using an RGB-d camera. In BMVC , 2013. 3 [90] Carolina Raposo, Michel Antunes, and Jo˜ ao P. Barreto. Piecewise-planar StereoScan: Sequential structure and mo-tion using plane primitives. IEEE Trans. Pattern Anal. Mach. Intell. , 40(8):1918–1931, 2017. 3, 5 [91] Sayan Deb Sarkar, Ondrej Miksik, Marc Pollefeys, Daniel Barath, and Iro Armeni. SGAligner: 3D Scene Alignment with Scene Graphs. In 2023 IEEE/CVF International Con-ference on Computer Vision (ICCV) . 2023. 4 [92] Sayan Deb Sarkar, Ondrej Miksik, Marc Pollefeys, Daniel Barath, and Iro Armeni. CrossOver: 3D scene cross-modal alignment. In CVPR , 2025. 4 [93] Paul-Edouard Sarlin, Cesar Cadena, Roland Siegwart, and Marcin Dymczyk. From Coarse to Fine: Robust Hierarchi-cal Localization at Large Scale. In CVPR . 2019. 2, 13 [94] Paul-Edouard Sarlin, Daniel DeTone, Tomasz Malisiewicz, and Andrew Rabinovich. SuperGlue: Learning Feature Matching With Graph Neural Networks. In CVPR . 2020. 4[95] Paul-Edouard Sarlin, Mihai Dusmanu, Johannes L. Sch¨ onberger, Pablo Speciale, Lukas Gruber, Viktor Lars-son, Ondrej Miksik, and Marc Pollefeys. LaMAR: Bench-marking Localization and Mapping for Augmented Reality. In ECCV . 2022. 10 [96] Torsten Sattler, Bastian Leibe, and Leif Kobbelt. Improving image-based localization by active correspondence search. In ECCV . 2012. 2 [97] Torsten Sattler, Bastian Leibe, and Leif Kobbelt. Efficient & effective prioritized matching for large-scale image-based localization. IEEE Trans. Pattern Anal. Mach. Intell. ,39(9):1744–1756, 2016. 2 [98] Johannes L. Sch¨ onberger, Marc Pollefeys, Andreas Geiger, and Torsten Sattler. Semantic Visual Localization. In 
+
+CVPR . 2018. 2 [99] Johannes Lutz Sch¨ onberger and Jan-Michael Frahm. Structure-from-motion revisited. In CVPR , 2016. 2 [100] Jingjia Shi, Shuaifeng Zhi, and Kai Xu. PlaneRecTR: Uni-fied Query Learning for 3D Plane Recovery from a Single View. In ICCV , 2023. 3, 4, 8 
+
+18 [101] Jingjia Shi, Shuaifeng Zhi, and Kai Xu. PlaneRecTR++: Unified Query Learning for Joint 3D Planar Reconstruction and Pose Estimation. IEEE Trans. Pattern Anal. Mach. In-tell. , 2025. 3, 6 [102] Yifei Shi, Kai Xu, Matthias Niessner, Szymon Rusinkiewicz, and Thomas Funkhouser. PlaneMatch: Patch Coplanarity Prediction for Robust RGB-D Recon-struction. In ECCV . 2018. 2, 3 [103] Michal Shlapentokh-Rothman, Ansel Blume, Yao Xiao, Yuqun Wu, Sethuraman T. V, Heyi Tao, Jae Yong Lee, Wil-fredo Torres, Yu-Xiong Wang, and Derek Hoiem. Region-Based Representations Revisited. In CVPR . 2024. 3 [104] Jamie Shotton, Ben Glocker, Christopher Zach, Shahram Izadi, Antonio Criminisi, and Andrew Fitzgibbon. Scene coordinate regression forests for camera relocalization in RGB-d images. In CVPR , 2013. 2, 12 [105] Christiane Sommer, Yumin Sun, Leonidas Guibas, Daniel Cremers, and Tolga Birdal. From Planes to Corners: Multi-Purpose Primitive Detection in Unorganized 3D Point Clouds. IEEE Robot. Autom. Lett. , 5(2):1764–1771, 2020. 2[106] Jianlin Su, Yu Lu, Shengfeng Pan, Ahmed Murtadha, Bo Wen, and Yunfeng Liu. RoFormer: Enhanced Trans-former with Rotary Position Embedding. Neurocomput. ,2024. 4 [107] Jiaming Sun, Zehong Shen, Yuang Wang, Hujun Bao, and Xiaowei Zhou. LoFTR: Detector-Free Local Feature Matching with Transformers. In CVPR . 2021. 4, 6, 7 [108] Hajime Taira, Masatoshi Okutomi, Torsten Sattler, Mircea Cimpoi, Marc Pollefeys, Josef Sivic, Tomas Pajdla, and Ak-ihiko Torii. InLoc: Indoor Visual Localization with Dense Matching and View Synthesis. In CVPR . 2018. 2 [109] Bin Tan, Nan Xue, Song Bai, Tianfu Wu, and Gui-Song Xia. PlaneTR: Structure-Guided Transformers for 3D Plane Recovery. In ICCV , 2021. 3, 8 [110] Bin Tan, Nan Xue, Tianfu Wu, and Gui-Song Xia. NOPE-SAC: Neural one-plane RANSAC for sparse-view planar 3D reconstruction. IEEE Trans. Pattern Anal. Mach. Intell. ,45(12):15233–15248, 2023. 3, 6, 7, 9 [111] Bin Tan, Rui Yu, Yujun Shen, and Nan Xue. PlanarSplat-ting: Accurate Planar Surface Reconstruction in 3 Minutes. In CVPR . 2025. 2 [112] Zachary Teed and Jia Deng. Tangent space backpropagation for 3D transformation groups. In CVPR , 2021. 11 [113] Akihiko Torii, Relja Arandjelovic, Josef Sivic, Masatoshi Okutomi, and Tomas Pajdla. 24/7 place recognition by view synthesis. In CVPR , 2015. 2 [114] Julien Valentin, Angela Dai, Matthias Nießner, Pushmeet Kohli, Philip Torr, Shahram Izadi, and Cem Keskin. Learn-ing to navigate the energy landscape. In 3DV . 2016. 6 [115] Aaron van den Oord, Yazhe Li, and Oriol Vinyals. Repre-sentation learning with contrastive predictive coding, arXiv preprint arXiv:1807.03748 , 2019. Available at https: //arxiv.org/abs/1807.03748 . 4 [116] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. Attention is all you need. In Advances in Neural Information Processing Systems . 2017. 4 [117] Pauli Virtanen, Ralf Gommers, Travis E. Oliphant, Matt Haberland, Tyler Reddy, David Cournapeau, Evgeni Burovski, Pearu Peterson, Warren Weckesser, Jonathan Bright, St´ efan J. van der Walt, Matthew Brett, Joshua Wil-son, K. Jarrod Millman, Nikolay Mayorov, Andrew R. J. Nelson, Eric Jones, Robert Kern, Eric Larson, C. J. Carey, ˙Ilhan Polat, Yu Feng, Eric W. Moore, Jake VanderPlas, De-nis Laxalde, Josef Perktold, Robert Cimrman, Ian Henrik-sen, E. A. Quintero, Charles R. Harris, Anne M. Archibald, Antˆ onio H. Ribeiro, Fabian Pedregosa, and Paul van Mul-bregt. SciPy 1.0: Fundamental algorithms for scientific computing in Python. Nature Methods , 17(3):261–272, 2020. 11 [118] Haiping Wang, Yuan Liu, Bing Wang, Yujing Sun, Zhen Dong, Wenping Wang, and Bisheng Yang. FreeReg: Image-to-Point Cloud Registration Leveraging Pretrained Diffu-sion Models and Monocular Depth Estimators. In ICLR ,2024. 2, 6, 7, 9 [119] Junyi Wang, Yuze Wang, Wantong Duan, Meng Wang, and Yue Qi. 3D gaussian splatting based scene-independent re-localization with unidirectional and bidirectional feature fu-sion. In NeurIPS , 2025. 2 [120] Ruicheng Wang, Sicheng Xu, Cassie Dai, Jianfeng Xiang, Yu Deng, Xin Tong, and Jiaolong Yang. MoGe: Unlock-ing Accurate Monocular Geometry Estimation for Open-Domain Images with Optimal Training Supervision. In 
+
+CVPR . 2025. 3 [121] Ruicheng Wang, Sicheng Xu, Yue Dong, Yu Deng, Jian-feng Xiang, Zelong Lv, Guangzhong Sun, Xin Tong, and Jiaolong Yang. MoGe-2: Accurate Monocular Geometry with Metric Scale and Sharp Details. In NeurIPS . 2025. 3, 6, 8, 10, 11, 12 [122] Shuzhe Wang, Juho Kannala, and Daniel Barath. DGC-GNN: Leveraging Geometry and Color Cues for Visual Descriptor-Free 2D-3D Matching. In CVPR . 2024. 2 [123] Shuzhe Wang, Vincent Leroy, Yohann Cabon, Boris Chidlovskii, and Jerome Revaud. DUSt3R: Geometric 3D Vision Made Easy. In CVPR . 2024. 3 [124] Yuanze Wang, Yichao Yan, Dianxi Shi, Wenhan Zhu, Jian-qiang Xia, Tan Jeff, Songchang Jin, Ke Gao, Xiaobo Li, and Xiaokang Yang. NeRF-IBVS: Visual servo based on NeRF for visual localization and navigation. In NeurIPS . 2023. 2 [125] Jamie Watson, Filippo Aleotti, Mohamed Sayed, Zawar Qureshi, Oisin Mac Aodha, Gabriel Brostow, Michael Fir-man, and Sara Vicente. AirPlanes: Accurate plane estima-tion via 3D-consistent embeddings. In CVPR , 2024. 2, 6, 10 [126] Jan Wietrzykowski and Piotr Skrzypczy´ nski. PlaneLoc: Probabilistic global localization in 3-D using local planar features. Robotics and Autonomous Systems , 113:160–173, 2019. 3 [127] Yuxin Wu, Alexander Kirillov, Francisco Massa, Wan-Yen Lo, and Ross Girshick. Detectron2, 2019. Available at https://github.com/facebookresearch/ detectron2 . 6 [128] Yiming Xie, Matheus Gadelha, Fengting Yang, Xiaowei Zhou, and Huaizu Jiang. PlanarRecon: Realtime 3D 
+
+19 Plane Detection and Reconstruction from Posed Monocu-lar Videos. In CVPR , 2022. 2, 9 [129] Fengting Yang and Zihan Zhou. Recovering 3D planes from a single image via convolutional neural networks. In ECCV ,2018. 3 [130] Hanqiao Ye, Yuzhou Liu, Yangdong Liu, and Shuhan Shen. NeuralPlane: Structured 3D reconstruction in planar primi-tives with neural fields. In ICLR , 2025. 2 [131] Lin Yen-Chen, Pete Florence, Jonathan T. Barron, Alberto Rodriguez, Phillip Isola, and Tsung-Yi Lin. iNeRF: Invert-ing Neural Radiance Fields for Pose Estimation. In 2021 IEEE/RSJ International Conference on Intelligent Robots and Systems . 2021. 2 [132] Mulin Yu and Florent Lafarge. Finding good configurations of planar primitives in unorganized point clouds. In CVPR .2022. 2 [133] Zehao Yu, Jia Zheng, Dongze Lian, Zihan Zhou, and Shenghua Gao. Single-image piece-wise planar 3D recon-struction via associative embedding. In CVPR . 2019. 2, 3[134] Hongjia Zhai, Xiyu Zhang, Boming Zhao, Hai Li, Yijia He, Zhaopeng Cui, Hujun Bao, and Guofeng Zhang. Splat-Loc: 3D gaussian splatting-based visual localization for augmented reality. IEEE Trans. Vis. Comput. Graph. , 31 (5):3591–3601, 2024. 2 [135] Juexiao Zhang, Gao Zhu, Sihang Li, Xinhao Liu, Haorui Song, Xinran Tang, and Chen Feng. Multiview Scene Graph. In NeurIPS . 2024. 3 [136] Yejun Zhang, Shuzhe Wang, and Juho Kannala. A2-GNN: Angle-Annular GNN for Visual Descriptor-free Camera Relocalization. In 3DV . 2025. 2 [137] Yidi Zhang, Fulin Tang, and Yihong Wu. CornerVINS: Ac-curate localization and layout mapping for structural en-vironments leveraging hierarchical geometric representa-tions. IEEE Trans. Robot. , 41:3500–3517, 2025. 2 [138] Boming Zhao, Luwei Yang, Mao Mao, Hujun Bao, and Zhaopeng Cui. PNeRFLoc: Visual Localization with Point-based Neural Radiance Fields. In AAAI . 2024. 5 [139] Jia Zheng, Junfei Zhang, Jing Li, Rui Tang, Shenghua Gao, and Zihan Zhou. Structured3D: A Large Photo-realistic Dataset for Structured 3D Modeling. In ECCV . 2020. 2 [140] Qun Jie Zhou, S´ ergio Agostinho, Aljoˇ sa Oˇ sep, and Laura Leal-Taix´ e. Is geometry enough For Matching In Visual localization? In ECCV . 2022. 2, 13 [141] Qunjie Zhou, Maxim Maximov, Or Litany, and Laura Leal-Taix´ e. The NeRFect Match: Exploring NeRF Features for Visual Localization. In ECCV . 2024. 2 [142] Juelin Zhu, Shuaibang Peng, Long Wang, Hanlin Tan, Yu Liu, Maojun Zhang, and Shen Yan. LoD-loc v2: Aerial visual localization over low level-of-detail city models us-ing explicit silhouette alignment. In ICCV , 2025. 5 
+
+20

@@ -1,0 +1,118 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-001.webp",
+      "caption": "Fig. 2: Analysis of the Photometric Loss Components: The luminance term of D-SSIM is highly dependent on the illumination; in this example, the luminance error is reduced by a factor of 9× by considering the appearance embedding.",
+      "page": 6,
+      "index": 1,
+      "width": 702,
+      "height": 184
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-002.webp",
+      "caption": "Table 3: Ablation Study for our Method: We analyze the effects of our individual contribution on both the Tanks & Temples [29] and the ScanNet++ dataset [67]. As we can see, all our proposed components result in notable improvements.",
+      "page": 11,
+      "index": 2,
+      "width": 698,
+      "height": 180
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-003.webp",
+      "caption": "Fig. 8: ScanNet++ dataset [67]: We show example images from our selected scenes, with the number of images per-scene inset. All selected scenes contain challenging reflections (e.g . 5a269ba6fe, fb564c935d), textureless areas, and motion blur.",
+      "page": 21,
+      "index": 3,
+      "width": 694,
+      "height": 316
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-004.webp",
+      "caption": "Table 7: Full Geometry Reconstruction results for the DTU dataset [21], where we report the Chamfer distance (lower is better). Our method attains the lowest average Chamfer distance for all methods designed to extract unbounded meshes.",
+      "page": 30,
+      "index": 4,
+      "width": 702,
+      "height": 214
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-005.webp",
+      "caption": "Fig. 3: Confidence-Driven Gaussian Splatting: We show rendered images from our trained method, accompanied by the rendered confidence maps Ĉ. The confidence maps effectively isolate reflective surfaces, thin foliage, or rarely observed areas (such as the roof for Barn). Importantly, the low-confidence regions are still well-reconstructed.",
+      "page": 7,
+      "index": 5,
+      "width": 689,
+      "height": 258
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-006.webp",
+      "caption": "Fig. 11: Novel View Mesh Rendering Comparison with Unbounded Methods. Our method consistently preserves geometry and intricate topological details that MiLo [17] smooths over or misrepresents.",
+      "page": 29,
+      "index": 6,
+      "width": 621,
+      "height": 1000
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-007.webp",
+      "caption": "Fig. 14: Effect of our SSIM-decoupled Appearance Module: We show rendered images from two spatially close camera poses. As can be seen, the illumination for Ours is more consistent; this is caused by our improved appearance module.",
+      "page": 33,
+      "index": 7,
+      "width": 725,
+      "height": 423
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-008.webp",
+      "caption": "Fig. 10: Novel View Mesh Rendering Comparison with Bounded Methods.",
+      "page": 28,
+      "index": 8,
+      "width": 621,
+      "height": 1038
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-009.webp",
+      "caption": "Fig. 13: Effect of our proposed Variance Losses: We visualize the first-hit, lasthit and fully alpha-blended colors and normals. As can be seen, our variance losses constrain spurious geometry and lead to smoother normal maps.",
+      "page": 32,
+      "index": 9,
+      "width": 706,
+      "height": 558
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-010.webp",
+      "caption": "Fig. 5: Qualitative Mesh Comparison: Our approach produces more detailed meshes with fewer artifacts than other unbounded methods [17, 50]. Additionally, it achieves higher completeness and finer detail than bounded extraction works [4, 75].",
+      "page": 12,
+      "index": 10,
+      "width": 681,
+      "height": 677
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-011.webp",
+      "caption": "Fig. 9: Completeness Comparison: Due to gaps in the ground-truth point clouds, our more complete meshes are penalized in precision, compared to the bounded meshes from PGSR [4] (black points denote low precision). This highlights the fundamental disadvantage unbounded methods face for this benchmark.",
+      "page": 27,
+      "index": 11,
+      "width": 706,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-012.webp",
+      "caption": "Table 8: Novel View Synthesis Ablation for the Mip-NeRF 360 dataset [1], where we report PSNR, SSIM and LPIPS. Notably, adding Lconf does not negatively impact image quality metrics overall. Results with † were taken from [17,50,75].",
+      "page": 31,
+      "index": 12,
+      "width": 698,
+      "height": 259
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-013.webp",
+      "caption": "Fig. 12: Confidence Evaluation: Our learned confidence directly correlates with the error maps, demonstrating that it can detect under-reconstructed regions.",
+      "page": 31,
+      "index": 13,
+      "width": 706,
+      "height": 335
+    },
+    {
+      "url": "assets/figures/arxiv/2603.24725v1/fig-014.webp",
+      "caption": "Table 5: Extended Ablation Studies for the Tanks & Temples dataset [29]. We investigate the impact of our confidence-steered densification, our choice of using Lconf from iteration 500, and verify our chosen hyperparameters.",
+      "page": 20,
+      "index": 14,
+      "width": 702,
+      "height": 229
+    }
+  ]
+}

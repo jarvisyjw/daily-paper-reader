@@ -1,0 +1,134 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-001.webp",
+      "caption": "Table 1. Relocalization results on ScanNet. For each method, a “✓” denotes the use of auxiliary map truncation, coarse pose initialization, or realistic map appearance. We report rotation and translation errors, along with pose recalls—the ratio of successfully localized queries",
+      "page": 6,
+      "index": 1,
+      "width": 1027,
+      "height": 417
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-002.webp",
+      "caption": "Figure 9. Architecture of the front-end network on the query side. We retrofit the monocular geometry estimation model MoGe-2 [121] with an additional head to encode dense features for 2D plane embedding.",
+      "page": 11,
+      "index": 2,
+      "width": 994,
+      "height": 320
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-003.webp",
+      "caption": "Figure 15. Relocalization results on Integrated Rooms. Following [9], we arrange scenes in 12Scenes inside a 2D grid with a cell size of 5 m and integrate varying numbers of adjacent scenes to form larger maps. As the integration size increases, PlanaReLoc’s performance degrades due to increased ambiguities and the scene encoder’s limited capacity for larger maps.",
+      "page": 15,
+      "index": 3,
+      "width": 448,
+      "height": 453
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-004.webp",
+      "caption": "Figure 14. A representative case where PlanaReLoc underperforms. Despite four out of six primitives being correctly matched (colored in green), the pose estimation framework fails to reject matching outliers (colored in orange) due to the perfectly repeated pattern (compare the query image with the colored rendering from the predicted pose).",
+      "page": 15,
+      "index": 4,
+      "width": 487,
+      "height": 300
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-005.webp",
+      "caption": "Table 3. Relocalization results on 12Scenes.",
+      "page": 7,
+      "index": 5,
+      "width": 488,
+      "height": 291
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-006.webp",
+      "caption": "Table 2. Matching evaluation with IoU score≥ 0.3. Point correspondences are first lifted to plane matches via majority voting. # TP and # GT denote the total number of true positives and ground-truth correspondences, respectively. • indicates reliance on visual appearance.",
+      "page": 7,
+      "index": 6,
+      "width": 1027,
+      "height": 216
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-007.webp",
+      "caption": "Figure 8. Visual overlap analysis for the map truncation in (a) and the oracle coarse initialization strategy in (b) and (c).",
+      "page": 10,
+      "index": 7,
+      "width": 484,
+      "height": 708
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-008.webp",
+      "caption": "Figure 13. More qualitative examples on ScanNet. Correspondences in (c) are color-coded, with true positives outlined in green and",
+      "page": 14,
+      "index": 8,
+      "width": 1026,
+      "height": 1199
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-009.webp",
+      "caption": "Figure 2. Overview of the planar primitive embedding (Sec. 3.1) and matching (Sec. 3.2) pipeline between the query and the",
+      "page": 3,
+      "index": 9,
+      "width": 1032,
+      "height": 457
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-010.webp",
+      "caption": "Table 7. Camera relocalization results on the 7Scenes dataset. We report median position and rotation errors in centimeters (cm) and degrees (°), respectively. We summarize the map type, map size, the time needed for mapping, and whether mapping and localization rely on visual appearance or pose priors (e.g., image retrieval). Results of other methods are taken from the literature.",
+      "page": 13,
+      "index": 10,
+      "width": 1029,
+      "height": 1125
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-011.webp",
+      "caption": "Figure 5. Impact of plane richness. Results with post-refinement. Three thresholds from coarse to fine are referred to as: T1, T2, and T3.",
+      "page": 8,
+      "index": 11,
+      "width": 1021,
+      "height": 270
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-012.webp",
+      "caption": "Figure 6. Qualitative examples. (c) Plane correspondences are color-coded, with true positives outlined in green and false ones in red. (d)",
+      "page": 8,
+      "index": 12,
+      "width": 1024,
+      "height": 261
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-013.webp",
+      "caption": "Figure 11. Impact of the Query Primitive Size on Matching Performance. Left y-axis: the size distribution of all detected query primitives, where size is defined as the percentage of the image area occupied. Right y-axis: the matching precision for each size bin.",
+      "page": 12,
+      "index": 13,
+      "width": 466,
+      "height": 304
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-014.webp",
+      "caption": "Figure 10. Camera relocalization results on ScanNet and 12Scenes datasets. We plot cumulative accuracy curves that show the proportion of correctly localized frames as a function of varying translation and rotation error thresholds.",
+      "page": 12,
+      "index": 14,
+      "width": 482,
+      "height": 542
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-015.webp",
+      "caption": "Figure 7. Statistics of 1513 3D planar maps constructed from ScanNet. Left y-axis: distribution of 3D planar maps grouped by their number of planar primitives. Right y-axis: average storage footprint of the colored and simplified map versions in each bin.",
+      "page": 9,
+      "index": 15,
+      "width": 471,
+      "height": 278
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20818v1/fig-016.webp",
+      "caption": "Figure 3. Pose refinement via per-primitive depth alignment. Given the optimization variables—the offset seed δi and Ttr—the query primitive Πq i is warped onto the depth rendering D via Eq. (8). Then, the depth alignment error is computed in Eq. (9).",
+      "page": 5,
+      "index": 16,
+      "width": 496,
+      "height": 327
+    }
+  ]
+}

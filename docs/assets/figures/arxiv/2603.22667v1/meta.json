@@ -1,0 +1,142 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-001.webp",
+      "caption": "Table 1. Key hyper-parameters of the compared exploration baselines. We report only parameters needed to interpret evaluation and discussion (representation/uncertainty modelling, candidate-set size and scoring trade-offs, and replanning triggers).",
+      "page": 11,
+      "index": 1,
+      "width": 1031,
+      "height": 625
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-002.webp",
+      "caption": "Figure 9. Comparison of five exploration methods in the sparse Harbour Basin scenario (left: final exploration trajectory over the occupancy grid map; right: estimated SLAM trajectory and map).",
+      "page": 15,
+      "index": 2,
+      "width": 825,
+      "height": 1364
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-003.webp",
+      "caption": "Figure 17. Global exploration trajectory within the 1000 m × 1000 m environment (Part II). The path extends into the Docker Basin, where the USV maps the detailed boundaries and docked vessels.",
+      "page": 21,
+      "index": 3,
+      "width": 877,
+      "height": 775
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-004.webp",
+      "caption": "Figure 1. Illustration of the WAM-V (c) in the 210m× 500m Harbour Basin scene (b). The VRVM map (a) and corresponding LiDAR SLAM point cloud (d) are shown. The USV is depicted in red, with the trajectory history in green. White cells indicate observed space, and gray cells denote unobserved space. Ellipses represent the covariance associated with each virtual landmark.",
+      "page": 2,
+      "index": 4,
+      "width": 1031,
+      "height": 754
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-005.webp",
+      "caption": "Figure 18. Global exploration trajectory within the 1000 m × 1000 m environment (Part III). The mission concludes in the Harbour Basin after the USV navigates through a narrow waterway.",
+      "page": 22,
+      "index": 5,
+      "width": 877,
+      "height": 760
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-006.webp",
+      "caption": "Figure 6. Overview of the simulated maritime environment with corresponding real-world scene taken as reference. Detailed insets illustrate the Docker Basin and Harbour Basin with annotated spatial dimensions.",
+      "page": 10,
+      "index": 6,
+      "width": 1031,
+      "height": 497
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-007.webp",
+      "caption": "Figure 8. Effect of the mapping weight λmap on exploration behaviour in the square-sized Harbour Basin scene. Each row fixes λmap ∈ {1, 5, 15}, while columns show planning steps 5, 10, 20, and 30.",
+      "page": 14,
+      "index": 7,
+      "width": 1031,
+      "height": 919
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-008.webp",
+      "caption": "Figure 12. Map error (RMSE) and union-normalised map coverage over time in Harbour Basin scenes with sparse, moderate, and dense structure using various methods. Each subplot compares Frontier, FSMI, NBV, the Uniform Virtual Map (UVM), and the proposed VRVM. The results shown here correspond to the experimental trials illustrated in Figs. 9, 10 and 11.",
+      "page": 18,
+      "index": 8,
+      "width": 1031,
+      "height": 545
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-009.webp",
+      "caption": "Figure 13. Performance comparison of UVM and VRVM in the port-area scene on desktop host machine and Raspberry Pi platforms. The top row presents Resident Set Size (RSS) memory usage relative to a 450 MB budget, while the bottom row displays planning step gap intervals against a 10 s failure threshold.",
+      "page": 18,
+      "index": 9,
+      "width": 1031,
+      "height": 426
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-010.webp",
+      "caption": "Figure 4. Visualization of a portion of the variable-resolution virtual map hierarchy over a quadtree. A correspondence between the leaf and branch cells in the quadtree and their physical surface regions is shown.",
+      "page": 8,
+      "index": 10,
+      "width": 504,
+      "height": 535
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-011.webp",
+      "caption": "Figure 14. Change in peak resident set size (RSS) over time for VRVM, the Uniform Virtual Map, and an OctoMap-based occupancy grid map across four independent runs in the Harbour Basin scene.",
+      "page": 19,
+      "index": 11,
+      "width": 485,
+      "height": 446
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-012.webp",
+      "caption": "Figure 11. Comparison of five exploration methods in the dense Harbour Basin scenario (left: final exploration trajectory over the occupancy grid map; right: estimated SLAM trajectory and map).",
+      "page": 17,
+      "index": 12,
+      "width": 825,
+      "height": 1364
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-013.webp",
+      "caption": "Figure 7. Exploration in the dense Docker Basin environment. (a) Environment overview with the start position and the dominant exploration direction in each run. Run 1 snapshots are shown at steps 10, 30, and 66 with the final SLAM point-cloud map; Run 2 snapshots are shown at steps 30, 60, and 90 with the final SLAM point-cloud map.",
+      "page": 12,
+      "index": 13,
+      "width": 996,
+      "height": 1223
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-014.webp",
+      "caption": "Figure 5. Example of the EM–planner selecting a goal and generating an RRT trajectory over the VRVM. The USV trajectory (teal), RRT tree (purple), and goal position (yellow star) are shown together with fixed landmarks (blue), virtual landmarks (gray), and the occupancy map, where black, white, and gray denote occupied, free, and unknown regions.",
+      "page": 9,
+      "index": 14,
+      "width": 509,
+      "height": 1050
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-015.webp",
+      "caption": "Figure 16. Global exploration trajectory within the 1000 m × 1000 m environment (Part I). The USV initiates the survey from the starting point and traverses the open water region.",
+      "page": 20,
+      "index": 15,
+      "width": 877,
+      "height": 758
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-016.webp",
+      "caption": "Figure 2. Overview of the navigation pipeline. The factor graph produced by LiDAR-based Graph SLAM is used to construct the variable-resolution virtual map (VRVM), which provides uncertainty-aware information for decision making.",
+      "page": 5,
+      "index": 16,
+      "width": 979,
+      "height": 354
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22667v1/fig-017.webp",
+      "caption": "Figure 10. Comparison of five exploration methods in the moderate Harbour Basin scenario (left: final exploration trajectory over the occupancy grid map; right: estimated SLAM trajectory and map).",
+      "page": 16,
+      "index": 17,
+      "width": 825,
+      "height": 1364
+    }
+  ]
+}

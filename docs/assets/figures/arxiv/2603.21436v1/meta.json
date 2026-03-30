@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-001.webp",
+      "caption": "Fig. 10: Comparison of camera pose estimation on TUM [54]",
+      "page": 21,
+      "index": 1,
+      "width": 710,
+      "height": 184
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-002.webp",
+      "caption": "Fig. 12: Comparison of depth on Kitti [23]",
+      "page": 22,
+      "index": 2,
+      "width": 719,
+      "height": 194
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-003.webp",
+      "caption": "Fig. 5: Effect of online spatial geometry refinement.",
+      "page": 10,
+      "index": 3,
+      "width": 725,
+      "height": 190
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-004.webp",
+      "caption": "Fig. 9: Qualitative comparison of 3D reconstruction results. In the Stair scene, methods such as IVGGT and CUT3R suffer from large spatial drift. In the Office and Kitchen scene, IVGGT, TTT3R, and CUT3R all experience varying degrees of structural collapse at wall corners, whereas PAS3R remains well aligned with the GT.",
+      "page": 14,
+      "index": 4,
+      "width": 672,
+      "height": 262
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-005.webp",
+      "caption": "Fig. 13: More qualitative comparison of 3D reconstruction results",
+      "page": 23,
+      "index": 5,
+      "width": 663,
+      "height": 262
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-006.webp",
+      "caption": "Fig. 7: Comparison of depth on Bonn [39]",
+      "page": 13,
+      "index": 6,
+      "width": 719,
+      "height": 195
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-007.webp",
+      "caption": "Table 2: Quantitative comparison on Sintel, Bonn [39], and Kitti [23] datasets. Bold indicates the best performance, and underlined indicates the second best. ↓ indicates lower is better, while ↑ indicates higher is better.",
+      "page": 13,
+      "index": 7,
+      "width": 760,
+      "height": 229
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-008.webp",
+      "caption": "Fig. 6: Comparison of camera pose estimation on Scannet [15]",
+      "page": 12,
+      "index": 8,
+      "width": 710,
+      "height": 184
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-009.webp",
+      "caption": "Table 1: Quantitative comparison on Sintel [7] and Tum [54] datasets. Bold indicates the best performance, and underlined indicates the second best. ↓ indicates lower is better.",
+      "page": 12,
+      "index": 9,
+      "width": 779,
+      "height": 228
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21436v1/fig-010.webp",
+      "caption": "Fig. 1: The overall pipeline. Given a streaming image sequence, the model maintains a persistent memory that is iteratively updated through cross-attention with incoming frames. PAS3R introduces pose-adaptive state update modulation, where the update intensity (learning rate) is dynamically adjusted based on camera motion and image structure (via Fourier analysis), allowing the model to balance adaptation to novel viewpoints and preservation of accumulated geometry. During inference, the model predicts camera poses and dense point clouds at each step. During training, we further enforce trajectory-consistent optimization using a novel pose loss with ATE, RPE, and acceleration constraints. A lightweight online spatiotemporal stabilization module is applied to reduce trajectory jitter and geometric artifacts. Together, these components enable stable and scalable long-horizon streaming 3D reconstruction.",
+      "page": 5,
+      "index": 10,
+      "width": 718,
+      "height": 221
+    }
+  ]
+}

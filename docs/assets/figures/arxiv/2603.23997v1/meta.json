@@ -1,0 +1,134 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-001.webp",
+      "caption": "Fig. 3: Samples from our synthetic dataset. It contains diverse photorealistic hand-object interactions.",
+      "page": 6,
+      "index": 1,
+      "width": 725,
+      "height": 254
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-002.webp",
+      "caption": "Table 1: The “Cali-Free” column denotes calibration dependency. Rows in gray (marked with ✗) represent methods utilizing ground-truth camera parameters, serving as an upper-bound reference. Rows in black (marked with ✓) represent calibration-free approaches. Within the calibration-free setting, we highlight the best results in bold and the second-best with an underline.",
+      "page": 11,
+      "index": 2,
+      "width": 716,
+      "height": 548
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-003.webp",
+      "caption": "Fig. 8: Qualitative comparison on the DexYCB dataset. We compare our method against baselines on DexYCB dataset. Rows correspond to: Input, Ground Truth, (a) Cameras Predicted by VGGT + POEMv2-large, (b) POEMv2-large, (c) Cameras Predicted by Ours + POEMv2-large, and (d) Ours (Full).",
+      "page": 25,
+      "index": 3,
+      "width": 641,
+      "height": 977
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-004.webp",
+      "caption": "Fig. 9: Additional qualitative results on the DexYCB [1] dataset.",
+      "page": 26,
+      "index": 4,
+      "width": 725,
+      "height": 902
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-005.webp",
+      "caption": "Fig. 7: Robustness in Extreme Scenarios. Our method maintains reasonable reconstruction quality even under challenging conditions, such as severe motion blur (top) and heavy object occlusion where the right hand is visible in only 2 out of 8 views (bottom).",
+      "page": 15,
+      "index": 5,
+      "width": 725,
+      "height": 786
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-006.webp",
+      "caption": "Fig. 13: Additional qualitative results on the InterHand2.6M [25] dataset.",
+      "page": 30,
+      "index": 6,
+      "width": 725,
+      "height": 898
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-007.webp",
+      "caption": "Fig. 12: Additional qualitative results on the HO3D [15] dataset.",
+      "page": 29,
+      "index": 7,
+      "width": 725,
+      "height": 852
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-008.webp",
+      "caption": "Table 3: Additional ablation studies on the intermediate supervision strategy, projection loss placement, and the number of cross-attention blocks. PA-MPVPE and PA-MPJPE are reported in millimeters (mm).",
+      "page": 22,
+      "index": 8,
+      "width": 712,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-009.webp",
+      "caption": "Fig. 17: Qualitative comparison with POEMv2-large on in-the-wild video sequence (Demo 3).",
+      "page": 33,
+      "index": 9,
+      "width": 725,
+      "height": 933
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-010.webp",
+      "caption": "Fig. 11: Additional qualitative results on the OakInk [43] dataset.",
+      "page": 28,
+      "index": 10,
+      "width": 725,
+      "height": 1064
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-011.webp",
+      "caption": "Fig. 16: Qualitative comparison with POEMv2-large on in-the-wild video sequence (Demo 2).",
+      "page": 32,
+      "index": 11,
+      "width": 725,
+      "height": 506
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-012.webp",
+      "caption": "Table 2: Ablation Studies. We analyze the impact of (a) freezing different stages of the VGGT backbone and (b) incorporating our rendered synthetic dataset. The default",
+      "page": 12,
+      "index": 12,
+      "width": 719,
+      "height": 219
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-013.webp",
+      "caption": "Fig. 10: Additional qualitative results on the Arctic [8] dataset.",
+      "page": 27,
+      "index": 13,
+      "width": 725,
+      "height": 894
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-014.webp",
+      "caption": "Fig. 15: Qualitative comparison with POEMv2-large on in-the-wild video sequence (Demo 1).",
+      "page": 31,
+      "index": 14,
+      "width": 725,
+      "height": 535
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-015.webp",
+      "caption": "Fig. 14: Camera settings for in-the-wild video capture. The videos are recorded using two smartphones placed at random positions without prior calibration.",
+      "page": 31,
+      "index": 15,
+      "width": 725,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23997v1/fig-016.webp",
+      "caption": "Fig. 2: The pipeline of HGGT. Given uncalibrated multi-view images, we first employ a VGGT Aggregator to extract image tokens and initial camera tokens. These are processed alongside learnable random hand tokens via a series of Cross-attention Blocks. Finally, two parallel heads predict the camera parameters and the canonical MANO parameters (θ,β, t), which can be re-projected onto the input views for verification.",
+      "page": 5,
+      "index": 16,
+      "width": 725,
+      "height": 296
+    }
+  ]
+}

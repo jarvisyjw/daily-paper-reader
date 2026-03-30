@@ -1,0 +1,86 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-001.webp",
+      "caption": "Fig. 4: Results obtained using laser scan initialization with 0.5 · Gmax points for all evaluated densification strategies, under different levels of Gaussian noise with standard deviations σ expressed as fractions of the scene extent Sscene.",
+      "page": 11,
+      "index": 1,
+      "width": 705,
+      "height": 214
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-002.webp",
+      "caption": "Fig. 12: Qualitative results using SfM initialization with AbsGS, MCMC, and IDHFR densification. The depicted scenes are (top to bottom): (1) ScanNet++ (default split) - “bde1e479ad”, (2) ScanNet++ (default split) - “bcd2436daf”, (3) ScanNet++ (ontrajectory) - “3f15a9266d”, (4) ETH3D - “Pipes”, (5) ETH3D - “Terrace”, (6) Tanks & Temples - “Train”, (7) Tanks & Temples - “Family”, (8) MipNerf360 - “Stump”.",
+      "page": 25,
+      "index": 2,
+      "width": 723,
+      "height": 931
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-003.webp",
+      "caption": "Fig. 13: Qualitative results using IDHFR densification and the practical initialization methods evaluated in the paper, as well as Depth Anything 3. The depicted scenes are (in columns): (1) MipNerf360 - “Stump”, (2) MipNerf360 - “Treehill”, (3) ScanNet++ (default split) - “bcd2436daf”, (4) Tanks & Temples - “Family”.",
+      "page": 26,
+      "index": 3,
+      "width": 723,
+      "height": 608
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-004.webp",
+      "caption": "Fig. 7: Qualitative comparison on the “Garden” scene from the MipNerf360 [2] dataset using SfM, EDGS∗, and Monodepth initialization, paired with AbsGS and IDHFR, and without densification. Using dense initialization does not provide improvements in every part of the image, but improves generalization.",
+      "page": 14,
+      "index": 4,
+      "width": 723,
+      "height": 240
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-005.webp",
+      "caption": "Fig. 10: Comparison of Depth Anything 3 (DA3) performance with the results already included in the paper. Please note that, as mentioned in Sec. C, some scenes for ScanNet++ (default split) and ScanNet++ (on-trajectory) are not included due to errors when running DA3. DA3 is subsampled to same size as the other initializations (same as in the paper).",
+      "page": 23,
+      "index": 5,
+      "width": 619,
+      "height": 654
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-006.webp",
+      "caption": "Fig. 5: Performance comparison under varying limits on the maximum number of Gaussians using laser scan and SfM initialization.",
+      "page": 12,
+      "index": 6,
+      "width": 711,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-007.webp",
+      "caption": "Fig. 14: Qualitative results using MCMC densification and the practical initialization methods evaluated in the paper, as well as Depth Anything 3. The depicted scenes are (in columns): (1) MipNerf360 - “Stump”, (2) MipNerf360 - “Treehill”, (3) ScanNet++ (default split) - “bcd2436daf”, (4) Tanks & Temples - “Family”.",
+      "page": 27,
+      "index": 7,
+      "width": 723,
+      "height": 608
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-008.webp",
+      "caption": "Fig. 11: Initialization point clouds produced by Depth Anything 3 and our Monodepth implementation on the “Stump” scene from the MipNerf360 dataset. Please note different point primitive sizes are used for visualization to improve visibility, as the initial DA3 point cloud contains a lot more points.",
+      "page": 24,
+      "index": 8,
+      "width": 723,
+      "height": 223
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-009.webp",
+      "caption": "Fig. 1: Results using laser scan initialization at different sizes with all tested densification strategies. Dotted lines represent results using SfM initialization. The smallest laser scan initialization size in each graph corresponds to |GSfM",
+      "page": 9,
+      "index": 9,
+      "width": 630,
+      "height": 658
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20714v1/fig-010.webp",
+      "caption": "Fig. 8: Ablation on the use of adjusted opacity regularization for the MCMC densification strategy on ScanNet++ (default split) and ScanNet++ (on-trajectory).",
+      "page": 20,
+      "index": 10,
+      "width": 710,
+      "height": 343
+    }
+  ]
+}

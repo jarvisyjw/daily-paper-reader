@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-001.webp",
+      "caption": "Figure A.3. Visual qualitative results for aligning different objects within the same cateogry. In each of the three 2-row blocks we show an example form a different category (boats, airplanes, and chairs). The two rows within each 2-row block show different views. In each 2-row block we show, from lest to right: 1) a random initialization; 2) the result of GSA’s coarse step; 3) the result of GSA’s fine step. The random initialization includes arbitrary translations, rotations up to 180 degrees, and significant scale differences.",
+      "page": 15,
+      "index": 1,
+      "width": 1027,
+      "height": 1257
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-002.webp",
+      "caption": "Figure 1. (A) Cross-instance registration: GSA successfully aligns the red boat to the white boat despite extremely poor initialization, including a 180° rotation and over 5× scale difference. (B) GSA enables geometrically consistent object replacement even across datasets, e.g., replacing the white car from 3D Real Car [9] with purple/red cars from the same dataset and a police car from ShapeNet [3].",
+      "page": 2,
+      "index": 2,
+      "width": 893,
+      "height": 358
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-003.webp",
+      "caption": "Figure A.1. A Comparison of alignment results on two 3DGS models of the same chair from the Objaverse dataset. Although the object has a clear and rigid structure, classical and learning-based methods struggle to achieve consistent alignment. Our GSA method, especially with coarse and fine refinement, achieves the most accurate and coherent results.",
+      "page": 14,
+      "index": 3,
+      "width": 942,
+      "height": 279
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-004.webp",
+      "caption": "Figure A.2. Comparison of two 3DGS models of the same teddy bear, Objaverse [8] dataset. Although the object is somewhat simple and although there is a unique rigid transformation solution, existing point cloud-based registration methods still struggle while our coarse point-cloud registration achieves almost-perfect results (so in this particular case, the further improvement by our fine step is hard to notice visually).",
+      "page": 14,
+      "index": 4,
+      "width": 1026,
+      "height": 549
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-005.webp",
+      "caption": "Figure C.1. Qualitative registration results. Top row: comparison of the random initialization, coarse, and fine alignment results. Bottom row: close-up views of the boat top, highlighting the improved accuracy of the fine stage over the coarse alignment.",
+      "page": 18,
+      "index": 5,
+      "width": 968,
+      "height": 459
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-006.webp",
+      "caption": "Table 4. Testing various GSA configurations on different object categories. Lower is better (↓).",
+      "page": 8,
+      "index": 6,
+      "width": 882,
+      "height": 236
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-007.webp",
+      "caption": "Figure 2. The GSA pipeline. Please refer to the text for details on each algorithm.",
+      "page": 4,
+      "index": 7,
+      "width": 910,
+      "height": 402
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-008.webp",
+      "caption": "Figure D.1. Augmented 3DGS models using different choices of semantic features: [21], [25], and [39]. For [25] or [39], dimensionality was reduced to 3 by Principal Component Analysis.",
+      "page": 19,
+      "index": 8,
+      "width": 969,
+      "height": 843
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-009.webp",
+      "caption": "Figure B.2. Synchronized novel view and feature renderings across multiple semantically aligned motorcycle instances. Each row shows either a novel rendering or the corresponding feature projection for different objects and camera views.",
+      "page": 17,
+      "index": 9,
+      "width": 905,
+      "height": 559
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-010.webp",
+      "caption": "Figure B.3. Renderings of the unified 3D Gaussian Splatting (3DGS) model combining all gaussians from the aligned motorcycle instances, shown from two additional novel synchronized views. These renderings provide a global perspective of the unified category-level geometry.",
+      "page": 17,
+      "index": 10,
+      "width": 956,
+      "height": 344
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-011.webp",
+      "caption": "Figure D.2. Qualitative comparison of the GSA coarse alignment step, when using different features. Top row: Unaligned models. Middle row, left: Alignment result when using DINOv2 [25]. Note the angular mistake is about 180 degrees. Middle row, right: Alignment results when using and [39]. Again the mistake is about 180 degrees, and the tilting angle is also evidently wrong. Bottom row: In contrast, when GSA uses [21], it successfully aligns the cars.",
+      "page": 20,
+      "index": 11,
+      "width": 1010,
+      "height": 923
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21936v2/fig-012.webp",
+      "caption": "Figure B.1. Geometrically consistent object replacement using GSA. Each row shows a different camera view. The first column displays the original white car. The second to fourth columns show replacements with red, purple, and toy police cars, respectively. GSA aligns the models in rotation, translation, and symmetric scale, preserving their intrinsic geometry while adapting them to best match the target object’s position, orientation, and scale in a structurally faithful way.",
+      "page": 16,
+      "index": 12,
+      "width": 1036,
+      "height": 434
+    }
+  ]
+}

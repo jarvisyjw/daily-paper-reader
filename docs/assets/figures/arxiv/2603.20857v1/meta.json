@@ -1,0 +1,126 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-001.webp",
+      "caption": "Fig. 4: Observation of 3DGs in dim scenes.",
+      "page": 6,
+      "index": 1,
+      "width": 529,
+      "height": 686
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-002.webp",
+      "caption": "Fig. 11: Illustration of limitations on challenging monocular scenes. Failure cases show blurry reconstructions and artifacts in regions with significant view information loss. (a) The Broom scene. (b) The 3D Printer scene.",
+      "page": 11,
+      "index": 2,
+      "width": 529,
+      "height": 301
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-003.webp",
+      "caption": "Fig. 10: Ablation studies on adaptive opacity reduction.",
+      "page": 11,
+      "index": 3,
+      "width": 529,
+      "height": 391
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-004.webp",
+      "caption": "TABLE I: Quantitative comparison on the N3DV dataset. Storage, training time, and FPS are calculated on flame salmon frag1. †For a fairer comparison under our setting, ST-GS was evaluated using a single first-frame COLMAP initialization.",
+      "page": 7,
+      "index": 4,
+      "width": 1076,
+      "height": 215
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-005.webp",
+      "caption": "Fig. 8: Ablation studies on embedding fusion.",
+      "page": 10,
+      "index": 5,
+      "width": 1076,
+      "height": 457
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-006.webp",
+      "caption": "Fig. 9: Ablation studies of Canonical Field Sampling. The top row shows results on the dynamic broom scene, and the bottom row shows results on the static background of the salmon scene. Our method (c) shows clear improvements in both cases.",
+      "page": 10,
+      "index": 6,
+      "width": 1076,
+      "height": 433
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-007.webp",
+      "caption": "Fig. 5: Qualitative comparisons on the N3DV dataset.",
+      "page": 8,
+      "index": 7,
+      "width": 1076,
+      "height": 349
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-008.webp",
+      "caption": "Fig. 6: Qualitative comparisons on the HyperNeRF dataset.",
+      "page": 8,
+      "index": 8,
+      "width": 1076,
+      "height": 451
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-009.webp",
+      "caption": "Fig. 7: Qualitative comparisons on the Technicolor dataset.",
+      "page": 8,
+      "index": 9,
+      "width": 1048,
+      "height": 311
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-010.webp",
+      "caption": "Fig. 1: Overview of FRoG. We begin by performing early fusion on the coarse and fine temporal embeddings through the Hadamard product, aiming to enhance rendering speed while preserving high rendering quality. During rendering, we apply an aggressive opacity reduction strategy to prevent the model from converging to local optima. To further enhance the rendering quality, we compute the error between the rendered image and the ground truth, and sample in the canonical field based on the depth map, thereby complementing the details in regions where the initial point cloud is sparse.",
+      "page": 4,
+      "index": 10,
+      "width": 1062,
+      "height": 342
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-011.webp",
+      "caption": "TABLE III: Quantitative comparison on the Technicolor dataset. Storage, training time, and FPS are tested on all five scenes and are calculated on an A6000. For storage, training time, and FPS, 1 are tested only on Painter, and 2 are measured using a 3090.",
+      "page": 9,
+      "index": 11,
+      "width": 1076,
+      "height": 191
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-012.webp",
+      "caption": "TABLE IV: Comprehensive ablation study on the N3DV dataset. The top section compares various temporal embedding fusion strategies, while the bottom section demonstrates the incremental performance gains provided by the Canonical Field Sampling and Aggressive Opacity Reduction strategies.",
+      "page": 9,
+      "index": 12,
+      "width": 1076,
+      "height": 244
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-013.webp",
+      "caption": "TABLE II: Quantitative comparison on the HyperNeRF dataset. Storage, training time, and FPS are tested across all four scenes, based on the NVIDIA RTX A6000. 1Storage, training time, and FPS are tested only on Broom. 2Storage, training time, and FPS are tested using an NVIDIA RTX 3090. For a fair comparison, we also report results using the specific settings of other methods.",
+      "page": 9,
+      "index": 13,
+      "width": 1076,
+      "height": 263
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-014.webp",
+      "caption": "Fig. 2: Visualization of the Learned Canonical Fields. Direct renderings of the undeformed canonical fields from scenes in the N3DV (flame salmon, cook spinach) and HyperNeRF (chicken, peel-banana) datasets. Each canonical rendering is paired with a corresponding ground truth frame. The high visual similarity across both multiview and monocular datasets validates our assumption that the learned canonical field provides a stable and coherent representation of the scene, forming a solid basis for our sampling strategy.",
+      "page": 5,
+      "index": 14,
+      "width": 529,
+      "height": 724
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20857v1/fig-015.webp",
+      "caption": "Fig. 3: Comparison of depth computation methods. The visual results on the chicken scene clearly show that our chosen median depth (c) produces a cleaner depth map with fewer floaters compared to mean depth (d). Its structure aligns better with the pseudo-GT depth (b), which was generated by the SOTA model Depth Anything [64].",
+      "page": 5,
+      "index": 15,
+      "width": 529,
+      "height": 791
+    }
+  ]
+}

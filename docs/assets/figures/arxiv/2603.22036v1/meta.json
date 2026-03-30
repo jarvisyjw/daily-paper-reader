@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.22036v1/fig-001.webp",
+      "caption": "Figure 2: The overview of the surface reconstruction pipeline. We combine the surface and interior Gaussians by introducing a Fresnel term and get the first rendering result 𝐶SH. Then, we use surface Gaussians to brake several texture maps (depth, normal, base color and roughness), and leverage interior Gaussians to render the scattering map. After that, we obtain the second rendering result𝐶PBR by blending these maps based on Disney BSDF model in screen space. Finally, we use ground truth to supervise the two rendering results simultaneously.",
+      "page": 4,
+      "index": 1,
+      "width": 1056,
+      "height": 463
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22036v1/fig-002.webp",
+      "caption": "Figure 3: The visualization of optimization results for different methods. The first row shows the opacity of Gaussian kernels. The second row shows the reconstructed meshes for different methods. The color banding at the top shows the opacity ranging from 0 to 1. Compared to other methods, our method can produce much denser and opaque surface Gaussians. The area of 3DGS’s result pointed out by the arrows shows that many Gaussian kernels with high opacity are located inside the object.",
+      "page": 4,
+      "index": 2,
+      "width": 506,
+      "height": 241
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22036v1/fig-003.webp",
+      "caption": "Figure 6: Surface reconstruction results on NeuralTO dataset. We compare several surface reconstruction method with our method, including NeuS-based (NeuralTO [3]) and 3DGSbased (PGSR[5]).",
+      "page": 7,
+      "index": 3,
+      "width": 506,
+      "height": 338
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22036v1/fig-004.webp",
+      "caption": "Figure 8: Surface reconstruction results on real-world translucent object datasets. The input images are captured by a camera with a flash in a dark environment.",
+      "page": 8,
+      "index": 4,
+      "width": 506,
+      "height": 407
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22036v1/fig-005.webp",
+      "caption": "Figure 7: Comparison of different methods in the ablation study in some scenes of NeuralTO Syn dataset. (a) uses point wised error map to visualize the difference between wo PBR and full. (b) and (c) show the reconstructed meshes using different methods.",
+      "page": 8,
+      "index": 5,
+      "width": 506,
+      "height": 442
+    }
+  ]
+}

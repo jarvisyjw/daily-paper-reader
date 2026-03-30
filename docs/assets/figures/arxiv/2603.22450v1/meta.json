@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-001.webp",
+      "caption": "Figure 5. Module B3&4: chunk-wise reconstruction and overlap-based Sim(3) stitching. We split a long egocentric RGB video into overlapping temporal chunks (here K=192 frames with overlap O=96). Each chunk is reconstructed independently by MapAnything, producing chunk-local camera poses and dense point clouds. To obtain a globally aligned trajectory and static map, we estimate a similarity transform between consecutive chunks by Umeyama alignment on overlap camera centers, anchoring the global frame with the first chunk (s=1, R=I, t=0). We then apply the estimated Sim(3) transform to map each chunk into the global frame and fuse transformed point clouds (with optional subsampling for memory control), yielding a stitched global camera trajectory and a fused point cloud with reduced cross-chunk misalignment.",
+      "page": 6,
+      "index": 1,
+      "width": 1036,
+      "height": 376
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-002.webp",
+      "caption": "Figure 8. EPIC-KITCHENS Sense point-cloud reconstructions comparing four masking strategies across three scenes (rows). Baseline (no masking) exhibits severe hand ghosting. Blackout removes dynamic regions at the image level, resulting in large black voids. Dynamin (ours) suppresses most ghosting while preserving sufficient static context to maintain spatial consistency. Overall-mask removes all moving objects from the beginning, often leading to unstable or incomplete structure due to missing spatial cues.",
+      "page": 11,
+      "index": 2,
+      "width": 1036,
+      "height": 573
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-003.webp",
+      "caption": "Figure 11. SAM3D single-frame reconstruction (exploratory). For each object category, we show the input image (with mask) and the generated textured mesh. While outside our main scope, these results suggest a future direction for object-level reconstruction on top of our static mapping pipeline.",
+      "page": 15,
+      "index": 3,
+      "width": 1036,
+      "height": 548
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-004.webp",
+      "caption": "Figure 1. Overall pipeline. Module A constructs a binary dynamic activity prior Dt from VLM (Gemini) prompts and SAM3 video segmentation/tracking, optionally gated by interaction time windows. Module B runs chunk-wise reconstruction and fusion (MapAnything) while ignoring dynamic pixels indicated by Dt, then stitches chunks using overlap-based Sim(3) alignment to obtain globally consistent poses and a fused static map.",
+      "page": 2,
+      "index": 4,
+      "width": 1036,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-005.webp",
+      "caption": "Figure 9. Semantic grounding vs. ID fragmentation (Grounded-SAM2). Grounded-SAM2 provides semantic relevance but exhibits severe ID fragmentation in long egocentric videos; our post-hoc matching reduces the number of fragmented IDs but does not fully resolve failures under heavy occlusion and re-entry.",
+      "page": 14,
+      "index": 5,
+      "width": 1036,
+      "height": 507
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-006.webp",
+      "caption": "Figure 10. Temporal stability vs. over-segmentation (SAMTrack + DeAOT). While long-term memory improves ID retention, the method progressively segments and tracks many irrelevant regions in long videos, yielding an explosion in tracked objects without semantic filtering.",
+      "page": 14,
+      "index": 6,
+      "width": 496,
+      "height": 485
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-007.webp",
+      "caption": "Figure 2. Module A: interaction-aware dynamic prior pipeline. Given egocentric video frames (or reconstruction chunks), a VLM selects scene-relevant semantic categories and text prompts (e.g., hand, plate, cup). SAM3 then performs concept-driven video segmentation and tracking to produce per-category instance masks with consistent IDs. We aggregate these masks into a per-frame dynamic prior Dt (union over categories, optionally filtered by proximity to the hand to isolate manipulated objects). Finally, MapAnything consumes Dt to suppress dynamic regions and reconstruct the static scene with reduced ghosting artifacts.",
+      "page": 4,
+      "index": 7,
+      "width": 1036,
+      "height": 567
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-008.webp",
+      "caption": "Figure 4. Dynamic prior injection for robust 3D reconstruction. We augment the standard transformer attention between 3D query tokens (cameras / 3D points) and image tokens (pixel patches) by gating cross-attention with a dynamic mask Dt. Tokens marked as dynamic (red) are suppressed, so 3D queries attend primarily to static regions (green), reducing motion-induced contamination and ghosting artifacts in the reconstructed scene.",
+      "page": 5,
+      "index": 8,
+      "width": 496,
+      "height": 335
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22450v1/fig-009.webp",
+      "caption": "Figure 3. Interaction-activated dynamic prior. We show a SAM3 tracking frame with instance IDs together with the corresponding interaction-activated binary prior Dt (hands always masked; objects masked cumulatively after onset), which is used to construct attention masks in the reconstruction module.",
+      "page": 5,
+      "index": 9,
+      "width": 496,
+      "height": 249
+    }
+  ]
+}

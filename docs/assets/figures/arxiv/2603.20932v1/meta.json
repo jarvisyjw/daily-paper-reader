@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20932v1/fig-001.webp",
+      "caption": "Fig. 1: Examples of solutions obtained with GNC-Local (left) and the proposed Certi-GNC framework (right), in the presence of 30 % outlier loop closures (shown in grey) for a) PGO and b) landmark SLAM.",
+      "page": 1,
+      "index": 1,
+      "width": 512,
+      "height": 341
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20932v1/fig-002.webp",
+      "caption": "Fig. 3: Illustration of the Certi-FGO framework showing the transformation from constrained to unconstrained optimization leveraging underlying sparse factor graph structure. The BM variable Y is partitioned into K block rows Yi corresponding to variables xi in the factor graph. The preserved block structure is apparent in this BM form of the factor graph MLE (9), in that each constraint block (Aℓ)i,i acts locally on a single block Yi, defining individual submanifolds M(p) i . Sparse separable structure is also present in the objective, though not explicitly visualized. The constrained optimization problem (Eq. (9), left) is reformulated as unconstrained Riemannian optimization over the product manifold M(p) = M(p) 1 × · · · × M(p) K (Eq. (11), right), enabling efficient solution using standard manifold optimization techniques.",
+      "page": 6,
+      "index": 2,
+      "width": 512,
+      "height": 466
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20932v1/fig-003.webp",
+      "caption": "Fig. 4: Performance of our Certi-GNC framework with random initialization compared with the non-certifiable baseline GNC-Local given a good initialization from odometry and a random one. Columns (left to right): RMSE-ATE (translation), RMSE-ATE (rotation), and solution time. Rows (top to bottom): a) PGO problems from Intel dataset and b) landmark simultaneous localization and mapping (SLAM) from Trees dataset [25].",
+      "page": 7,
+      "index": 3,
+      "width": 1054,
+      "height": 373
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20932v1/fig-004.webp",
+      "caption": "Fig. 2: Overview of our Certi-GNC framework: Certi-FGO [11] provides 1) certifiable global inner solves (i.e. non-linear weighted least squares (WLS) problem) within a graduated non-convexity (GNC) framework. The control parameter µ defines convex surrogates ρµ(ri) of the target nonconvex robust loss, yielding a sequence of WLS problems with 2) weights wi ∈ [0, 1] updated via. closed form solve from residuals ri. 3) A truncated least squares (TLS) robust loss function is used here: µ is increased to gradually recover non-convexity, with µ→∞ recovering original truncation.",
+      "page": 3,
+      "index": 4,
+      "width": 514,
+      "height": 431
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20932v1/fig-005.webp",
+      "caption": "Fig. 5: A single Monte Carlo trial on the Intel PGO dataset with outlier rates of 0%, 10%, 20%, and 30%, showing (top) the Riemannian-staircase termination rank (a proxy for computational effort) and (bottom) the stagewise optimality gap of the Certi-FGO solve at each GNC iteration. In the 0% outlier case, GNC weights converge in the first iteration and the optimality gap is 10−12 as per Remark 1, the terminal level is visualized with a dashed line. All trials start at level 2 with random initialization; the trials with outlier terminated at GNC iteration 13.",
+      "page": 8,
+      "index": 5,
+      "width": 512,
+      "height": 262
+    }
+  ]
+}

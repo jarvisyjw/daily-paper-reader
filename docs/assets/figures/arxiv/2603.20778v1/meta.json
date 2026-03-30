@@ -1,0 +1,142 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-001.webp",
+      "caption": "Figure 5. Rotation-aware sampling and coarse-to-fine optimization. The figure visualizes the pose convergence process in the pitch/yaw space: it synergizes wide-area Rotation-Aware Sampling (a) with parallel, coarse-to-fine refinement (b-d) to ensure robust convergence under aggressive motion.",
+      "page": 6,
+      "index": 1,
+      "width": 484,
+      "height": 382
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-002.webp",
+      "caption": "Figure 8. Comparison of optimization strategies in a nonconvex landscape. While (a) Random Sampling is inefficient and (b) Gradient Descent is prone to local minima, our method (c) efficiently searches for the best solution. The convergence plot below illustrates how our method (green) achieves faster convergence and a lower final loss compared to alternatives.",
+      "page": 11,
+      "index": 2,
+      "width": 478,
+      "height": 272
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-003.webp",
+      "caption": "Figure 15. Visualization of the designed ”barrel-roll” trajectory. The top-down view (top) shows yaw variation along the Sshaped path. The perspective views (bottom) illustrate changes in altitude (up-and-down arcs) and pitch (tilting of camera frustums).",
+      "page": 15,
+      "index": 3,
+      "width": 496,
+      "height": 358
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-004.webp",
+      "caption": "Table 9. Summary of UAVD4L-2yr dataset. Each sequence contains camera frames captured under varying illumination and altitude, covering different scene types with annotated primary target objects.",
+      "page": 21,
+      "index": 4,
+      "width": 727,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-005.webp",
+      "caption": "Table 10. Summary of UAVD4L-SynTarget dataset. Each sequence contains camera frames captured under varying weather/illumination conditions and flight altitudes, with multiple target objects annotated along with their quantities.",
+      "page": 21,
+      "index": 5,
+      "width": 688,
+      "height": 185
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-006.webp",
+      "caption": "Figure 12. The AirSim-Cesium-Unreal Engine Simulator Interface. Our system integrates Unreal Engine (UE) for real-time rendering, Cesium to load Google 3D Tiles models, and AirSim to simulate UAV flight missions. This pipeline enables the synchronous acquisition of photo-realistic query images and accurate 6-DoF ground truth poses within large-scale, geo-referenced environments.",
+      "page": 14,
+      "index": 6,
+      "width": 496,
+      "height": 304
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-007.webp",
+      "caption": "Figure 14. Geometric Consistency Validation of Synthetic Data. Top: The Cumulative Distribution Function (CDF) of bidirectional relative depth errors across different altitudes (100m– 800m). Bottom: Qualitative alignment results. The middle and bottom row illustrates the accurate mapping of co-visible regions across disparate perspectives.",
+      "page": 14,
+      "index": 7,
+      "width": 496,
+      "height": 589
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-008.webp",
+      "caption": "Figure 20. Trajectory estimation results on challenging real-world and long-term scenarios. This figure demonstrates the model’s robustness by evaluating on: (1) a synthetic sunset scene from SynthCity-6 (USA-seq8), and (2) 4 real-world sequences from the UAVD4L2yr dataset, which include challenging day/night conditions (seq2, seq3, seq6, seq8).",
+      "page": 18,
+      "index": 8,
+      "width": 932,
+      "height": 1219
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-009.webp",
+      "caption": "Figure 10. Convergence basin evolution across levels.",
+      "page": 13,
+      "index": 9,
+      "width": 494,
+      "height": 316
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-010.webp",
+      "caption": "Figure 7. Qualitative results for joint UAV ego localization and dynamic target geo-localization on a UAVD4L-2yr sample sequence.",
+      "page": 8,
+      "index": 10,
+      "width": 1018,
+      "height": 252
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-011.webp",
+      "caption": "Figure 3. Overview of the PiLoT framework and localization pipeline. (a) The overall pipeline inputs a query frame and outputs the UAV’s 6-DoF ego-pose along with the target’s 3-DoF geo-location. (b) A highly efficient one-to-many paradigm matches multiple query hypotheses against a single rendered reference view via feature alignment. (c) Our coarse-to-fine optimizer iteratively narrows the search space to converge on the optimal 6-DoF pose. (d) The final estimated trajectory demonstrates robust and drift-free sequential localization.",
+      "page": 4,
+      "index": 11,
+      "width": 1031,
+      "height": 281
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-012.webp",
+      "caption": "Figure 21. Generalization performance on the standard UAVScenes benchmark dataset. This figure validates our model’s strong generalization capability on four diverse, unseen scenes from the public UAVScenes benchmark. The scenes cover a wide range of environments: a town (AMtown), a natural valley (AMvalley), an airport (HKairport), and an island (HKisland).",
+      "page": 19,
+      "index": 12,
+      "width": 932,
+      "height": 1102
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-013.webp",
+      "caption": "Figure 19. Trajectory estimation results on various synthetic scenes from the SynthCity-6 dataset. The figure showcases our method’s performance across diverse synthetic conditions, including night (Switzerland-seq4, -seq7), cloudy (Switzerland-seq12), sunny (USA-seq2), and foggy (USA-seq5).",
+      "page": 17,
+      "index": 13,
+      "width": 932,
+      "height": 1219
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-014.webp",
+      "caption": "Figure 9. Qualitative results of our multi-hypothesis refinement process. The top row shows a challenging rural scene with significant viewpoint change, while the bottom row demonstrates robustness in a day-night urban setting. The ‘convergence basin’ visualization on the query image (right) demonstrates the subsequent refinement.",
+      "page": 12,
+      "index": 14,
+      "width": 496,
+      "height": 282
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-015.webp",
+      "caption": "Figure 22. Additional examples of the refinement process and its convergence basin. For various anchor points sampled in the reference image, the initial estimates in the query image (covering a wide area, shown as a field of arrows) are effectively guided by our learned features to converge to a single, precise location.",
+      "page": 20,
+      "index": 15,
+      "width": 922,
+      "height": 1087
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-016.webp",
+      "caption": "Figure 4. Overview of our synthetic data generation and its resulting zero-shot sim-to-real performance. From left to right: (a) realistic UAV trajectories rendered over geo-referenced 3D tiles in Cesium for Unreal; (b) multi-condition diversity across weather/time and viewpoint (in-plane yaw, out-of-plane pitch/yaw, planar translation Tx, Ty , altitude Tz); (c) geometric consistency: we export absolute per-pixel depth and validate by reprojection; (d) our three-level feature pyramid on query (real) vs. reference (synthetic) images.",
+      "page": 5,
+      "index": 16,
+      "width": 1036,
+      "height": 356
+    },
+    {
+      "url": "assets/figures/arxiv/2603.20778v1/fig-017.webp",
+      "caption": "Figure 18. Trajectory estimation results on Long Trajectory Flights. We compare our method’s estimated trajectory (orange) against the ground truth from an RTK-IMU system (black). The plots show high consistency for planar position (XY), altitude, pitch, and yaw. The checkerboard insets provide an AR visualization, which overlays the live camera views with the rendered views based on our estimated pose.",
+      "page": 16,
+      "index": 17,
+      "width": 932,
+      "height": 1127
+    }
+  ]
+}

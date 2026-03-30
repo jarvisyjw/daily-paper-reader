@@ -1,0 +1,78 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-001.webp",
+      "caption": "Fig. 2 SparseVoxelDet architecture. Events are binned into a sparse 3D voxel grid (T×H×W , 6 temporal-surface channels). The SparseSEResNet backbone processes voxels through four stages of sparse 3D residual blocks with SE attention at stages 3–4, producing multi-scale features {C2, C3, C4} at strides 4, 8, 16. The SparseFPN fuses scales top-down via sparse lateral projections and sparse transpose-convolution upsampling to a unified stride-4 feature map. After temporal max-pooling collapses the time axis, the detection head (shared MLP) predicts classification, LTRB box regression, and centerness at each active 2D position, followed by NMS. No dense tensor is ever allocated.",
+      "page": 6,
+      "index": 1,
+      "width": 777,
+      "height": 425
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-002.webp",
+      "caption": "Fig. 3 FRED dataset samples across lighting conditions. Top row: RGB frames. Bottom row: corresponding event-camera frames rendered as polarity images (red: ON events, blue: OFF events). While RGB quality degrades from day to night, event-camera output remains usable for drone detection across all conditions.",
+      "page": 11,
+      "index": 2,
+      "width": 765,
+      "height": 327
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-003.webp",
+      "caption": "Table 3 SparseVoxelDet mAP at varying IoU thresholds (all 119,459 test frames). Performance improves sharply at relaxed thresholds, confirming that box regression precision, not detection capability, is the primary bottleneck.",
+      "page": 15,
+      "index": 3,
+      "width": 775,
+      "height": 183
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-004.webp",
+      "caption": "Fig. 8 True positive detections. Each cell: event frame (left) + RGB frame (right). Green: ground truth; cyan: prediction. Four examples from diverse conditions.",
+      "page": 22,
+      "index": 4,
+      "width": 646,
+      "height": 840
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-005.webp",
+      "caption": "Fig. 6 Error forensics. (a) Of 9,673 false negatives (all 119,459 test frames), 71% are localization nearmisses (IoU ∈ (0, 0.5)) where a detection overlaps the ground truth but fails the 0.5 IoU threshold. 29% are complete misses with zero overlap. (b) True positive and false positive confidence distributions are well-separated (µTP = 0.46 vs. µFP = 0.11), indicating reliable confidence calibration.",
+      "page": 18,
+      "index": 5,
+      "width": 640,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-006.webp",
+      "caption": "Fig. 9 Localization near-miss examples. Green: ground truth; orange: best prediction (IoU ∈ [0.4, 0.5)). These cases narrowly miss the standard 0.50 threshold.",
+      "page": 23,
+      "index": 6,
+      "width": 646,
+      "height": 840
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-007.webp",
+      "caption": "Fig. 1 Dense vs. sparse processing. Left: dense detectors process all pixel positions in the input grid, including the >95% containing no events (gray). Right: SparseVoxelDet processes only the active voxel positions (blue dots), typically <1% of the 3D voxel grid (∼0.23% at 6402, ∼0.11% at native resolution), yielding ∼28× fewer 2D spatial positions than a dense YOLO input.",
+      "page": 4,
+      "index": 7,
+      "width": 633,
+      "height": 352
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-008.webp",
+      "caption": "Fig. 7 IoU threshold sensitivity (all 119,459 test frames). (a) Recall as a function of IoU threshold. Relaxing from the standard 0.50 to 0.40 recovers 3.5 percentage points, reaching 95.4% recall. (b) Histogram of 9,673 false negatives by their best-matching prediction IoU. The largest bin (43.1%) has IoU ∈ [0.4, 0.5)—predictions that narrowly miss the standard threshold, confirming that the model detects the drone in these cases but produces a box that is insufficiently tight. The lowest bin (30.5%, IoU ∈ [0, 0.1)) is dominated by complete misses (2,761 of 2,954 have zero overlap), predominantly in event-sparse frames.",
+      "page": 19,
+      "index": 8,
+      "width": 699,
+      "height": 484
+    },
+    {
+      "url": "assets/figures/arxiv/2603.21638v1/fig-009.webp",
+      "caption": "Fig. 5 Training dynamics over 8 epochs (training was stopped after epoch 7 due to rising validation loss). (a) Training and validation loss. Validation loss reaches its minimum at epoch 4 and then rises, confirming overfitting. (b) mAP@50 and mAP@50:95 on the FRED canonical test set (note: y-axis is truncated). Best mAP@50 = 83.38% at epoch 4 (early stopping checkpoint).",
+      "page": 17,
+      "index": 9,
+      "width": 713,
+      "height": 547
+    }
+  ]
+}

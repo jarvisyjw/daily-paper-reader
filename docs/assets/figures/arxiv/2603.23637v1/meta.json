@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-001.webp",
+      "caption": "Figure 8. Visualization of the variance of the gradient obtained by our method and the baseline method. (a) shows the forward rendering result, and (b) visualizes the opacities of each Gaussian along the ray at the red cross in (a). We further visualize the gradient that the Gaussians along each pixel receive when applying: (c) Sorted alpha blending (3DGRT), (d) Ours, with Mb = 8, (e) Our implementation of [19], with Mb = 8, and (f) Our implementation of [19], with Mb = 128. The time for the backward pass and RMSE are provided with each image.",
+      "page": 11,
+      "index": 1,
+      "width": 910,
+      "height": 495
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-002.webp",
+      "caption": "Figure 9. Similar to our ray tracing baseline, our method also seamlessly supports distorted cameras, e.g., fisheye.",
+      "page": 11,
+      "index": 2,
+      "width": 456,
+      "height": 328
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-003.webp",
+      "caption": "Figure 4. Reconstruction quality comparison between our method and StochasticSplats [19].",
+      "page": 7,
+      "index": 3,
+      "width": 502,
+      "height": 356
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-004.webp",
+      "caption": "Figure 5. Equal-time comparison between our method and baselines. All methods run for the same wall-clock time. Our method produces comparable visual quality to 3DGS and outperforms 3DGRT.",
+      "page": 8,
+      "index": 4,
+      "width": 1067,
+      "height": 559
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-005.webp",
+      "caption": "Figure 6. Reconstruction quality of our method and baselines on the relightable benchmark. Our method produces significantly better geometry, especially shadow quality.",
+      "page": 8,
+      "index": 5,
+      "width": 1067,
+      "height": 379
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-006.webp",
+      "caption": "Figure 7. Re-renderings of our reconstructed 3DGS objects under novel environmental illumination.",
+      "page": 8,
+      "index": 6,
+      "width": 1073,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-007.webp",
+      "caption": "Figure 11. Visualization of reconstruction quality of our method and baselines. Our method produces significantly better geometry, and in particular, shadow quality.",
+      "page": 12,
+      "index": 7,
+      "width": 1067,
+      "height": 381
+    },
+    {
+      "url": "assets/figures/arxiv/2603.23637v1/fig-008.webp",
+      "caption": "Figure 10. Equal-time Comparison between our method and baselines. We run the methods for the same period of wall-clock time, and compare the reconstruction quality. Our method produces comparable visual quality to 3DGS, and outperforms 3DGRT.",
+      "page": 12,
+      "index": 8,
+      "width": 1067,
+      "height": 376
+    }
+  ]
+}

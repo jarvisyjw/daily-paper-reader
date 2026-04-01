@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.30038v1/fig-001.webp",
+      "caption": "Figure 3. Comparison of General and Research Capability.",
+      "page": 6,
+      "index": 1,
+      "width": 494,
+      "height": 394
+    },
+    {
+      "url": "assets/figures/arxiv/2603.30038v1/fig-002.webp",
+      "caption": "Figure 7. Impact of Paper Length on Detailed Dimension Performance.",
+      "page": 7,
+      "index": 2,
+      "width": 495,
+      "height": 566
+    },
+    {
+      "url": "assets/figures/arxiv/2603.30038v1/fig-003.webp",
+      "caption": "Figure 13. Case Study: MGadapter Fidelity Differs with Text Length.",
+      "page": 14,
+      "index": 3,
+      "width": 496,
+      "height": 274
+    },
+    {
+      "url": "assets/figures/arxiv/2603.30038v1/fig-004.webp",
+      "caption": "Figure 10. Problem Type and Representative Functions in GeoCodeBench.",
+      "page": 13,
+      "index": 4,
+      "width": 495,
+      "height": 243
+    },
+    {
+      "url": "assets/figures/arxiv/2603.30038v1/fig-005.webp",
+      "caption": "Figure 2. The Benchmark Curation and Evaluation Pipeline of GeoCodeBench.",
+      "page": 4,
+      "index": 5,
+      "width": 982,
+      "height": 493
+    }
+  ]
+}

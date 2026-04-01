@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.25382v1/fig-001.webp",
+      "caption": "Fig. 1. Existing methods exhibit short-sighted behavior due to the decoupling of global planning and local control, leading to locally reasonable yet globally inefficient or even incorrect trajectories: (a) excessive subgoal attraction results in zigzag trajectories and low overall efficiency; (b) large initial heading errors cause persistent wrong-direction motion. Our method introduces a lowdimensional intent to condition the waypoint policy, enforcing topologically consistent progression and enabling efficient correction, as shown in (c).",
+      "page": 1,
+      "index": 1,
+      "width": 529,
+      "height": 490
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25382v1/fig-002.webp",
+      "caption": "Fig. 6. Performance under different initial orientation offsets in the Opposite task. Annotated percentages indicate the relative improvement over the strongest baseline.",
+      "page": 7,
+      "index": 2,
+      "width": 529,
+      "height": 313
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25382v1/fig-003.webp",
+      "caption": "Fig. 2. IntentReact Navigation pipeline. (1) We construct an object-level topological map with 3D node information. (2) During online execution, the current observation is matched to the map to obtain a set of query nodes. (3) For each query node, global planning is performed to obtain a shortest path, from which an object-level costmap is built and an intent vector indicating the direction of decreasing topological distance is computed and fed into the local control stage. (4) The intent is incorporated as a conditional signal to modulate the controller’s feature representation, enabling global guidance rather than hard intervention. (5) A BEV costmap is further used to correct the feasibility of the predicted waypoint, forming a unified closed loop between learned control and geometric feasibility.",
+      "page": 3,
+      "index": 3,
+      "width": 968,
+      "height": 442
+    },
+    {
+      "url": "assets/figures/arxiv/2603.25382v1/fig-004.webp",
+      "caption": "TABLE IV NAVIGATION PERFORMANCE UNDER THE LEARNED-PERCEPTION SETTING.",
+      "page": 9,
+      "index": 4,
+      "width": 882,
+      "height": 198
+    }
+  ]
+}

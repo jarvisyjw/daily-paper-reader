@@ -1,0 +1,94 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-001.webp",
+      "caption": "Fig. 2: MultiLoc Architecture overview. MultiLoc is a visual localization method where query poses are estimated using co-visible retrieved images with known camera poses. The retrieved images’ extrinsics are embedded via an MLP into camera tokens y and added with learnable camera tokens l, while all images pass through DINOv2 [33] to obtain patch tokens. All the tokens are then concatenated and processed by alternating-attention (AA) transformer blocks. Finally, camera tokens are used to predict relative poses between query and reference images followed by geometric optimization for scale recovery and obtaining global pose for the query image. The red arrows denote the flow of camera tokens.",
+      "page": 6,
+      "index": 1,
+      "width": 710,
+      "height": 346
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-002.webp",
+      "caption": "Table 2: Visual Re-Localization benchmarking of methods on Cambridge dataset. Translation error is in meters (m) and median rotation error in degrees (◦).",
+      "page": 11,
+      "index": 2,
+      "width": 710,
+      "height": 223
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-003.webp",
+      "caption": "Table 7: Relative camera pose estimation results on ScanNet-1500 dataset. Red indicates best, bold second best. While certain baseline results are cited from [16], we performed an independent benchmarking of our primary baselines, ReLoc3r and VGGT, within our own evaluation framework to ensure a consistent comparison.",
+      "page": 21,
+      "index": 3,
+      "width": 462,
+      "height": 335
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-004.webp",
+      "caption": "Fig. 1: Illustration of improving pose regression through scene context grounding. Estimating camera pose from image pairs can be erroneous especially when there is little-to-no co-visibility between frames. To solve this, our proposed method (right) moves beyond the standard visual-only approach (left). By incorporating multi-view images and existing pose data, we create a sub-scene context that grounds the query image. This additional spatial information provides the necessary cues to stabilize pose estimation even when direct co-visibility is low.",
+      "page": 2,
+      "index": 4,
+      "width": 708,
+      "height": 227
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-005.webp",
+      "caption": "Fig. 3: MultiLoc v/s ReLoc3r trajectory error depiction on GreatCourt sequence of Cambridge dataset. Gray dashed lines indicate the translational error between ground truth and predicted poses. MultiLoc achieves significantly lower error by leveraging 3D sub-scene context from multiple images and their pose, whereas ReLoc3r’s reliance on pairwise images lead to higher drift.",
+      "page": 10,
+      "index": 5,
+      "width": 702,
+      "height": 185
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-006.webp",
+      "caption": "Fig. 5: Comparison of reference-view selection strategies. Compared to VPRbased retrieval (top), our co-visibility-based reference set (bottom) exhibits higher 3D surface overlap, or co-visibility, with the query. This geometric consistency and spatial relevance mitigate pose estimation errors, as evidenced by the shorter line length (purple dashed line) for positional error and closer alignment between ground truth and predicted viewing direction rays for rotation. In contrast, VPR-selected views suffer from poor 3D surface overlap, leading to higher angular and positional errors. Orange represents the GT query pose frustum, green for prediction and blue for reference views.",
+      "page": 14,
+      "index": 6,
+      "width": 690,
+      "height": 308
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-007.webp",
+      "caption": "Fig. 6: Visual Localization performance and inference speed comparison across varying numbers of input views (k).",
+      "page": 14,
+      "index": 7,
+      "width": 616,
+      "height": 259
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-008.webp",
+      "caption": "Fig. 8: Co-visibility-aware retrieval failure cases. The following cases illustrate scenarios where co-visibility-based retrieval features fail to identify appropriate reference images. We demonstrate using top-5 of 10 such reference images per query. Such instances result in significant translation (purple dashed line) and rotation errors between the ground truth and predicted camera poses.",
+      "page": 23,
+      "index": 8,
+      "width": 696,
+      "height": 366
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-009.webp",
+      "caption": "Fig. 4: Visual re-localization result on Indoor6 benchmark. Top row represents the query image and it’s corresponding retrieved reference views. Bottom represents the 3D reconstructed scene from Indoor6 dataset and the estimated camera pose for query image. MultiLoc achieves high re-localization accuracy for both translation and rotation components in indoor domain as demonstrated by green colored MultiLoc’s camera prediction closeness to orange colored ground truth query pose frustum. Blue frustums represent the supportive reference views.",
+      "page": 12,
+      "index": 9,
+      "width": 694,
+      "height": 498
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-010.webp",
+      "caption": "Table 1: Relative Camera Pose Estimation results on ACID and MegaDepth-1500. Non-PR denotes non-pose regression methods and PR Relative Pose Regression. VGGT-pair represents a pair of images as input while VGGT represents when the same number of images as MultiLoc is used. Red indicates best, bold second best.",
+      "page": 9,
+      "index": 10,
+      "width": 700,
+      "height": 345
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27170v1/fig-011.webp",
+      "caption": "Fig. 7: Ablation study for MultiLoc’s architecture. Using learnable camera token only for the last image (top) leads to unstable training and sudden gradient jumps. Whereas, using learnable tokens for all the images in a sequence (bottom) and regressing upon them reduces this instability.",
+      "page": 20,
+      "index": 11,
+      "width": 692,
+      "height": 248
+    }
+  ]
+}

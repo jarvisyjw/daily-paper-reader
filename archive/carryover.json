@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-03-30T06:28:32.803653+00:00",
-  "updated_date": "20260321-20260330",
+  "generated_at": "2026-04-01T03:27:10.207488+00:00",
+  "updated_date": "20260323-20260401",
   "carryover_days": 9,
   "tag_states": {
     "3D视觉": {
-      "updated_date": "20260321-20260330",
+      "updated_date": "20260323-20260401",
       "carryover_days": 9,
       "items": []
     }

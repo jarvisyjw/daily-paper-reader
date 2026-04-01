@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-001.webp",
+      "caption": "Table 1. Quantitative evaluation of geometry on the synthetic 3D-FRONT-T dataset. We report normal metrics (MAE, and accuracy thresholds of 11.25◦, 22.5◦) and depth metrics (AbsRel, RMSE, δ < 1.25), along with mesh metrics (CD, F1-score).",
+      "page": 6,
+      "index": 1,
+      "width": 972,
+      "height": 231
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-002.webp",
+      "caption": "Figure 5. Qualitative comparison on synthetic scenes. Each column shows results from GT, PGSR [5], EnvGS [39], TSGS [24], and Ours. For each scene, rows correspond to RGB (top) and depth maps (bottom).",
+      "page": 6,
+      "index": 2,
+      "width": 1036,
+      "height": 481
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-003.webp",
+      "caption": "Figure 9. 3D-FRONT-T dataset. RGB, depth, and normal ground truth examples. As can be seen in the transparent surface (glass), the outgoing radiance for each pixel is entanglement of radiance from interface surface and the transmitted radiance.",
+      "page": 11,
+      "index": 3,
+      "width": 496,
+      "height": 495
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-004.webp",
+      "caption": "Figure 7. Qualitative comparison on DL3DV-10K dataset. Each column shows results from GT, PGSR [5], EnvGS [39], TSGS [24], and Ours. For each scene, rows correspond to RGB (top) and normal (bottom) maps.",
+      "page": 7,
+      "index": 4,
+      "width": 1018,
+      "height": 742
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-005.webp",
+      "caption": "Figure 11. Effect of geometric losses. Ablating geometric supervision leads to degraded geometry reconstruction. Removing Ldepth produces inaccurate interface depth, removing Lnormal results in unstable surface orientation, and removing all geometric losses (Lgeo) severely distorts both depth and normals.",
+      "page": 14,
+      "index": 5,
+      "width": 1006,
+      "height": 883
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-006.webp",
+      "caption": "Figure 17. Additional qualitative comparisons on the DL3DV-10K dataset. Each column shows results from GT, PGSR [5], EnvGS [39], TSGS [24], and Ours. For each scene, rows correspond to RGB (top), depth (middle), and normal (bottom) predictions.",
+      "page": 18,
+      "index": 6,
+      "width": 1036,
+      "height": 738
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-007.webp",
+      "caption": "Figure 8. Qualitative Ablation study of G-buffer guidance.",
+      "page": 8,
+      "index": 7,
+      "width": 446,
+      "height": 298
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-008.webp",
+      "caption": "Figure 2. Pipeline Overview. The interface component Gintr captures primary first-surface, while secondary components Gtrans and Grefl separately model transmission and reflection. The output color Lo is obtained through hybrid rendering under transparency-aware radiance transport and supervised by photometric loss Lphoto. DiffusionRenderer [26] provides priors that regularize the G-buffers via Lgeo.",
+      "page": 4,
+      "index": 8,
+      "width": 1048,
+      "height": 387
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-009.webp",
+      "caption": "Figure 15. Comparison of transparency masks across two scenes. Each scene is shown with three viewpoints (rows), including ground-truth reference RGB (left), our predicted transparency maps (middle), and G-SAM2 [31] masks (right). GT images provide visual context, highlighting that our method consistently isolates transparent surfaces, while Grounded-SAM2 often produces noisy, incomplete or completely missing masks.",
+      "page": 17,
+      "index": 9,
+      "width": 1035,
+      "height": 321
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-010.webp",
+      "caption": "Figure 16. Qualitative comparison on synthetic scenes. Each column shows results from GT, PGSR [5], EnvGS [39], TSGS [24], and Ours. For each scene, rows correspond to RGB (top), depth (middle), and normal (bottom) maps.",
+      "page": 17,
+      "index": 10,
+      "width": 1036,
+      "height": 736
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-011.webp",
+      "caption": "Figure 14. Comparison with EnvGS [39] trained with a DiffusionRenderer [26] prior. With the DiffusionRenderer normal priors, EnvGS still fails to produce consistent depth and normals for transparent regions. In particular, the transmission surface remains incorrectly reconstructed, showing blurry rendering quality.",
+      "page": 16,
+      "index": 11,
+      "width": 487,
+      "height": 255
+    },
+    {
+      "url": "assets/figures/arxiv/2603.26181v1/fig-012.webp",
+      "caption": "Figure 13. Radiance decomposition comparison. Each 2× 2 grid is arranged in clockwise order as rendered RGB, base color, reflection and transmission. EnvGS does not provide a transmission component, so the corresponding slot is left blank.",
+      "page": 16,
+      "index": 12,
+      "width": 1022,
+      "height": 315
+    }
+  ]
+}

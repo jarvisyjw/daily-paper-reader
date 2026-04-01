@@ -1,0 +1,102 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-001.webp",
+      "caption": "Figure 1. Bearing-UAV overview. Given a UAV-view patch (UVP) and four adjacent remote-sensing tile (RST) features with relative coordinates (C), the model jointly regresses position and heading.",
+      "page": 1,
+      "index": 1,
+      "width": 496,
+      "height": 371
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-002.webp",
+      "caption": "Table 7. List of main acronyms used in this paper.",
+      "page": 11,
+      "index": 2,
+      "width": 498,
+      "height": 765
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-003.webp",
+      "caption": "Figure 12. Localization and heading error distributions and scatter plots of 9k unseen test samples in satellite and UAV views.",
+      "page": 15,
+      "index": 3,
+      "width": 1022,
+      "height": 309
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-004.webp",
+      "caption": "Figure 18. The UAV cross-view navigation process corresponding to trajectory #2 in City A is shown in Fig. 16 (middle subfigure in the first row). This is a more challenging case in which navigation eventually fails; however, the UAV still follows a substantial portion of the planned path before drifting away. We visualize the overlapping portion (first 60 steps) to highlight cross-view discrepancies. Significant spatial differences between UVP and satellite patches arise from 3D parallax and illumination variations at low altitudes. Deviations occur at frames 26–34, likely due to waypoint turns and repetitive building patterns. Despite these challenges, Bearing-UAV remains robust along winding trajectories.",
+      "page": 21,
+      "index": 4,
+      "width": 1036,
+      "height": 1150
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-005.webp",
+      "caption": "Figure 11. Effect of Weather Augmentation on Bearing-UAV. Mixed-weather training further boosts and stabilizes performance compared with the non-augmented setting.",
+      "page": 14,
+      "index": 5,
+      "width": 483,
+      "height": 280
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-006.webp",
+      "caption": "Figure 2. Bearing-UAV in training mode. Given four adjacent RSTs with their relative coordinates (C) and one UVP within the same remotesensing block (RSB), Bearing-UAV predicts the UAV’s absolute position and heading angle. Two GLUF submodules with shared parameters extract UVP/RST features. RCE encodes the relative coordinate of each RST. CA captures overlap-aware cross-view correspondences via cross-attention between UVP and RST features. PSG estimates a weighted position vector by aggregating UVP-RSTs patch similarities. We then fuse these output features via a residual-style connection, and apply two independent heads to jointly regress position and heading.",
+      "page": 3,
+      "index": 6,
+      "width": 1036,
+      "height": 256
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-007.webp",
+      "caption": "Figure 6. Navigation performance comparison. The purple dashed line here denotes the predefined navigation trajectory #1 in City D. ■ start, ⋆ end, × failure, ▲ success. The corresponding UAV-view frames across the 45 navigation steps are shown in Suppl. Fig. 17.",
+      "page": 8,
+      "index": 7,
+      "width": 496,
+      "height": 245
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-008.webp",
+      "caption": "Figure 16. Navigation performance comparison on seven additional routes. We further provide a comprehensive comparison between Bearing-UAV (red trajectories) and four baseline methods on seven additional navigation routes across the four cities. The UAV step size is 25 m, and the waypoint arrival threshold is 20 m. All visual elements follow Fig. 6. The eight routes across City A–D (Route #1 and #2 for each city) have lengths of 771, 1119, 644, 757, 524, 821, 721, and 1115 m, respectively. Each route contains 10–13 waypoints and covers diverse scene types, including buildings of varying scales, green areas, rivers, and playgrounds. Overall, Bearing-UAV exhibits the strongest adaptability to different urban layouts and highly winding paths. It successfully completes four of the eight routes and, for the remaining ones, still follows most of the designated path before failure. In contrast, baseline methods struggle in these complex scenes and along curved routes. The green GTA-UAV trajectories are often longer but show significant deviation from the reference path. The orange Uni-1652, yellow DenseUAV, and blue SUES-200 trajectories tend to drift away near the starting point, with some falling into local loops and circling within a small region. Notably, large positional deviations and flight drift mainly occur in vegetation areas (traj. #1 City A, traj. #2 City A, traj. #2 City D), similar building areas (traj. #1 City B, traj. #2 City D), and tall building areas (traj. #2 City C). These regions often suffer from feature sparsity, high feature similarity, and significant cross-view appearance discrepancies, all of which degrade localization and heading estimation performance.",
+      "page": 19,
+      "index": 8,
+      "width": 1024,
+      "height": 1015
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-009.webp",
+      "caption": "Figure 14. Visualization of Bearing-UAV localization/heading errors on 9K unseen samples in both views. The top panels: satellite view, the bottom panels: UAV view. The left column panels visualize the position error (Pos. Err.). The blue dots denote the ground-truth UAV positions (GT Pos.), the green arrows originate from GT Pos., with their tips indicating the predicted positions and lengths representing the model’s position error (Pos. Err.). The right column panels visualize the ground-truth heading (GT Head.), predicted heading(Pred. Head.), and position error (Pos. Err.). The blue/red dots denote GT Pos. / Pred. Pos., the blue/red arrows represent the ground-truth/predicted heading vectors (GT Head. / Pred. Head.), respectively, and green segments indicate the position error (Pos. Err.). A shorter green segment indicates smaller position errors, and perfect alignment between the red and blue arrows represents the ideal scenario. The yellow dashed lines mark the boundaries between neighboring RSTs. The 9k unseen test samples provide good coverage of the satellite imagery. Comparing the upper and lower panels, the satellite-view results serve as an ideal reference, showing smaller localization errors and higher consistency between predicted and ground-truth headings, whereas the U–S cross-view setting exhibits larger position and heading errors with more large-error cases. From a local perspective, this visualization enables fine-grained inspection within individual RSTs: for the same location, some regions show consistent errors across views, while others exhibit large discrepancies, revealing geographically sensitive areas. Zooming into local regions further allows direct comparison of predicted and ground-truth position–heading pairs at the sample level, uncovering detailed error patterns.",
+      "page": 17,
+      "index": 9,
+      "width": 1021,
+      "height": 1013
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-010.webp",
+      "caption": "Table 8. Comparison of localization and heading performance with four different backbones in both satellite views and UAV views (U-S cross-view). Bearing-UAV with the VGG-16 backbone achieves the best overall results. Mobile-V3S = MobileNet-V3-Small.",
+      "page": 12,
+      "index": 10,
+      "width": 1026,
+      "height": 185
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-011.webp",
+      "caption": "Figure 7. Satellite imagery of four cities with distinct landscapes. Below the satellite imagery are their selected U-S cross-view image pairs (UAV views left). City A is dominated on the right side by vegetation; City B consists mainly of densely packed low-rise buildings; City C contains many tall buildings and a wide river; City D lies in mountainous terrain with sparse, highly similar buildings. They exhibit prominent cross-view appearance gaps, illumination variations, and scene changes, covering diverse landforms such as buildings, roads, forests, mountains, and rivers.",
+      "page": 12,
+      "index": 11,
+      "width": 496,
+      "height": 375
+    },
+    {
+      "url": "assets/figures/arxiv/2603.22153v2/fig-012.webp",
+      "caption": "Figure 17. Visualization of cross-view navigation frames of Bearing-UAV. We present a successful case for trajectory #1 in City D from Fig. 6 of the main paper. Frames are arranged top-to-bottom and left-to-right. In each step, the left panel shows the current RSB, where the blue rectangle indicates the UAV field of view and the airplane icon indicates the heading. The top-right inset shows the UVP, and the bottom-right inset reports outputs including heading angle, relative coordinates, direction vector, geographic coordinates, and the RSB index.",
+      "page": 20,
+      "index": 12,
+      "width": 1036,
+      "height": 1244
+    }
+  ]
+}

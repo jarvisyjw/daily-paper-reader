@@ -1,0 +1,54 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-001.webp",
+      "caption": "Table 4 Monocular depth estimation on ScanNet and NYUv2.",
+      "page": 10,
+      "index": 1,
+      "width": 518,
+      "height": 246
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-002.webp",
+      "caption": "Table 3 Point map reconstruction on 7-Scenes, NRGBD, and DTU. Our HD-VGGT sets a new state-of-the-art across all benchmarks.",
+      "page": 10,
+      "index": 2,
+      "width": 972,
+      "height": 267
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-003.webp",
+      "caption": "Table 1 Camera pose estimation on RealEstate10K, Sintel, and TUM-dynamics. Our method demonstrates robust and accurate pose estimation.",
+      "page": 8,
+      "index": 3,
+      "width": 972,
+      "height": 235
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-004.webp",
+      "caption": "Figure 2 Qualitative comparison of monocular depth estimation. Our method produces more accurate and detailed results, which are indicated by dotted boxes",
+      "page": 8,
+      "index": 4,
+      "width": 932,
+      "height": 499
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-005.webp",
+      "caption": "Figure 1 Overview of the HD-VGGT architecture. A low-resolution branch first computes a coarse 3D feature volume. A high-resolution branch then uses a learned feature upsampler guided by the high-resolution image to produce detailed features, which are processed by a lightweight refiner transformer to yield the final high-fidelity output.",
+      "page": 4,
+      "index": 5,
+      "width": 980,
+      "height": 765
+    },
+    {
+      "url": "assets/figures/arxiv/2603.27222v1/fig-006.webp",
+      "caption": "Figure 3 Qualitative comparison of Point map reconstruction.",
+      "page": 9,
+      "index": 6,
+      "width": 934,
+      "height": 460
+    }
+  ]
+}

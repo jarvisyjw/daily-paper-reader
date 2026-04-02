@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "extractor": "pdffigures2",
+  "figures": [
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-001.webp",
+      "caption": "TABLE IV TRACKING ACCURACY ON OUR PROPOSED PANORAMIC UAV BENCHMARK (ATE,IN METERS)",
+      "page": 6,
+      "index": 1,
+      "width": 1064,
+      "height": 202
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-002.webp",
+      "caption": "TABLE V TRACKING ACCURACY ON 360-VIO BENCHMARK (ATE AND RPE, IN METERS)",
+      "page": 6,
+      "index": 2,
+      "width": 690,
+      "height": 229
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-003.webp",
+      "caption": "TABLE I COMPARISON OF EXISTING BENCHMARKS FOR PANORAMIC VISUAL AND VISUAL-INERTIAL ODOMETRY/SLAM",
+      "page": 2,
+      "index": 3,
+      "width": 860,
+      "height": 242
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-004.webp",
+      "caption": "Fig. 4. Qualitative comparison results. Top: comparison of different methods on the proposed dataset, where our method produces estimates closer to the ground truth and demonstrates stronger robustness. Bottom: results on an additional large-scale handheld sequence. Other methods suffer from varying degrees of drift, while our method achieves lower drift and, by leveraging panoramic loop closure, successfully aligns with the starting position, resulting in a globally consistent estimation.",
+      "page": 7,
+      "index": 4,
+      "width": 1056,
+      "height": 765
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-005.webp",
+      "caption": "Fig. 1. Overview of the proposed dataset. A panoramic camera is mounted on a UAV to collect panoramic-IMU data, with ground-truth trajectories recorded using an RTK ground station (a). The dataset covers diverse lighting conditions, altitudes, flight speeds, and maneuvering characteristics, as summarized in (b), with representative scenes shown in (c), details in SectionIII.",
+      "page": 3,
+      "index": 5,
+      "width": 1066,
+      "height": 551
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-006.webp",
+      "caption": "Fig. 5. Box plots of ATE on the PC (30 Hz) and the Orin NX (10 Hz) in five runs.",
+      "page": 8,
+      "index": 6,
+      "width": 469,
+      "height": 288
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-007.webp",
+      "caption": "TABLE III STATISTICS OF DIFFERENT SEQUENCES OF THE PROPOSED DATASET",
+      "page": 4,
+      "index": 7,
+      "width": 462,
+      "height": 403
+    },
+    {
+      "url": "assets/figures/arxiv/2604.00852v1/fig-008.webp",
+      "caption": "Fig. 2. Overview of the proposed panoramic visual-inertial SLAM framework. The system takes panoramic images and IMU measurements as inputs, and achieves robust, accurate, and globally consistent results through panoramic feature extraction (Section IV-A), as well as panoramic optimization and panoramic loop closure (Section IV-B). Experimental results are presented in Section V.",
+      "page": 4,
+      "index": 8,
+      "width": 524,
+      "height": 465
+    }
+  ]
+}

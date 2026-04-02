@@ -1,0 +1,700 @@
+Title: Ghost-FWL: A Large-Scale Full-Waveform LiDAR Dataset for Ghost Detection and Removal
+
+URL Source: https://arxiv.org/pdf/2603.28224v1
+
+Published Time: Tue, 31 Mar 2026 02:17:05 GMT
+
+Number of Pages: 21
+
+Markdown Content:
+# Ghost-FWL: A Large-Scale Full-Waveform LiDAR Dataset for Ghost Detection and Removal 
+
+# Kazuma Ikeda 1∗, Ryosei Hara 1∗, Rokuto Nagata 1, Ozora Sako 1, Zihao Ding 1,Takahiro Kado 2, Ibuki Fujioka 2, Taro Beppu 2, Mariko Isogawa 1, Kentaro Yoshioka 11Keio University 2Sony Semiconductor Solutions ∗Equal contribution Ghost 
+
+> Ghost
+> Glass
+> Glass
+> (b) Localization and Mapping
+> (a) Detection
+> which one is
+> the real person ?
+> wall ?
+> No wall
+> Image
+
+Ghost Problem     
+
+> LiDAR
+> 400
+> 512
+> 700 FWL Data LiDAR Sensor
+> LiDAR
+> Object
+> LiDAR
+> Object
+> Object
+> Glass
+> Ghost
+> Reflection
+> Object
+> Glass
+> Ghost
+> Object
+> IIntensity
+> Time t
+> intensity
+> IIntensity
+> Time t
+> x
+> t
+> 512
+> 400
+> Ghost
+> Object
+> peak-level annotation
+> Scene
+
+Proposed Ghost-FWL Dataset 
+
+> y
+> 700
+
+Mechanism of Ghost Generation 
+
+> glass
+> object
+> ghost
+> I
+> t
+
+Figure 1. LiDAR data often contains ghost points caused by multi-path reflections from glass and reflective materials (top right), which appear as spurious structures that do not physically exist. Ghost leads to substantial errors in tasks such as detection (left (a)) and localiza-tion and mapping (left (b)). We address this issue by introducing the Ghost-FWL dataset (bottom right) and a ghost removal framework. 
+
+# Abstract 
+
+LiDAR has become an essential sensing modality in au-tonomous driving, robotics, and smart-city applications. However, ghost points (or ghost ), which are false reflec-tions caused by multi-path laser returns from glass and re-flective surfaces, severely degrade 3D mapping and local-ization accuracy. Prior ghost removal relies on geomet-ric consistency in dense point clouds, failing on mobile Li-DAR’s sparse, dynamic data. We address this by exploiting full-waveform LiDAR (FWL), which captures complete tem-poral intensity profiles rather than just peak distances, pro-viding crucial cues for distinguishing ghosts from genuine reflections in mobile scenarios. As this is a new task, we present Ghost-FWL, the first and largest annotated mobile FWL dataset for ghost detection and removal. Ghost-FWL comprises 24K frames across 10 diverse scenes with 7.5 bil-lion peak-level annotations, which is 100 × larger than ex-isting annotated FWL datasets. Benefiting from this large-scale dataset, we establish a FWL-based baseline model for ghost detection and propose FWL-MAE, a masked autoen-coder for efficient self-supervised representation learning on FWL data. Experiments show that our baseline outper-forms existing methods in ghost removal accuracy, and our ghost removal further enhances downstream tasks such as LiDAR-based SLAM (66% trajectory error reduction) and 3D object detection (50 × false positive reduction). The dataset and code is publicly available and can be accessed via the project page: https://keio-csg.github. io/Ghost-FWL/ .
+
+# 1. Introduction 
+
+LiDAR (Light Detection And Ranging) is a well-used range-sensor that measures the time of flight of emitted laser pulses reflected from surrounding objects, enabling 3D ge-ometry reconstruction of the scene. Given its long-range sensing capability and robustness to illumination changes, LiDAR has become an indispensable sensor in a wide range of applications such as autonomous driving [1, 11], 
+
+> arXiv:2603.28224v1 [cs.CV] 30 Mar 2026
+
+robotics [2, 45], and large-scale terrain mapping [19]. However, LiDAR often suffers from a critical issue of false detections, commonly referred to as “ ghost ”. Ghosts occur when emitted laser pulses are reflected by transparent or reflective surfaces such as glass, causing spurious LiDAR 3D points to appear at non-existent locations ( Fig. 1). This challenge has grown with recent LiDAR advancements: in-creased sensor sensitivity improves detection range but si-multaneously amplifies weak multi-path returns, making ghosts more prevalent in modern systems [17, 35]. These artifacts can lead to severe failures in downstream tasks, such as producing false positives in object detection ( Fig. 1 (a)) or generating incorrect 3D maps and causing localiza-tion collapse in SLAM ( Fig. 1 (b)). Prior works [23, 51, 52, 54] have attempted to remove ghosts by leveraging geometric consistency between points. However, these methods assume static, high-density scan-ning setups used in construction or terrain surveying and do not generalize to mobile LiDAR systems with sparse point clouds. In real-world robotics and autonomous driving sce-narios, where LiDARs must operate in dynamic and reflec-tive environments, ghost removal remains unsolved due to the limited geometric cues available per frame. To address this limitation, full-waveform LiDAR (FWL) offers a promising alternative. Unlike point-based measure-ments that record only peak distances, FWL captures the complete temporal intensity profile of each laser pulse, en-coding both direct and indirect returns. This richer signal provides intensity and temporal cues that could enable more robust ghost detection in mobile scenarios. However, no dataset exists to enable learning-based ghost removal from FWL data. Existing LiDAR datasets [3, 14, 41] focus on point clouds and do not include full-waveform data. While a few ghost detection datasets exist [23, 52], they rely on sta-tionary, high-precision scanners unsuitable for mobile sys-tems. The only public FWL dataset, PixSet [9], lacks peak-level annotations necessary to distinguish ghost peaks from genuine reflections and does not address ghost phenomena. Moreover, reproducing ghosts in simulation requires mod-eling multi-path reflections, which is computationally ex-pensive and physically inaccurate [38], making synthetic data generation impractical. Therefore, we present Ghost-FWL , the first full-waveform LiDAR dataset for ghost detection and removal in mobile scenarios. Ghost-FWL contains 24K annotated frames collected across 10 diverse indoor and outdoor scenes, providing 7.5 billion peak-level labels for ghost, glass, object, and noise reflections. With complete temporal intensity profiles captured from real-world mobile LiDAR, Ghost-FWL is 100 × larger than prior work [38] and is the largest annotated FWL dataset to date. Unlike previous datasets that rely on stationary scanners [52] or lack peak-level labels [9], Ghost-FWL reflects practical mobile con-ditions with sparse, dynamic data and diverse reflective en-vironments—including building facades, glass storefronts, and interior surfaces under varying viewing angles and illu-mination. We propose the first baseline to tackle ghost removal using FWL data since no prior work has addressed this task. To enable effective training despite the high annota-tion cost of peak-level labeling, we further introduce FWL-MAE, a masked autoencoder designed for FWL data. Un-like existing MAE approaches designed for images [16] or transient images [39], FWL-MAE performs self-supervised pre-training on unlabeled data by reconstructing masked temporal regions while explicitly modeling peak proper-ties (position, amplitude, and width) to learn representations that better capture the underlying physical characteristics of FWL data. Experimental results show that our baseline with FWL-MAE outperforms other existing methods in terms of ghost detection accuracy. Furthermore, when applied to down-stream tasks such as SLAM and 3D object detection, our baseline significantly improves performance in ghost-existing environments, achieving up to 66% trajectory error reduction and 50 × reduced ghost-induced false-positives. To summarize, our main contributions are as follows: • We present the Ghost-FWL dataset , the largest anno-tated mobile full-waveform LiDAR dataset, comprising 7.5B peak-level annotations across 24K frames and 10 di-verse real-world scenarios, which is more than 100 times larger than previous datasets. • We are the first to propose the FWL-based ghost-removal baseline method. To enable effective training, we further propose FWL-MAE , a masked autoencoder designed for FWL data. • Experimental results show that our baseline with FWL-MAE outperforms existing methods and significantly improves downstream performance, enhancing LiDAR-based SLAM and 3D object detection in ghost-affected environments. 
+
+# 2. Related Work 
+
+2.1. Ghost Point Detection and Removal 
+
+Ghost points arise from multi-path reflections off transpar-ent or reflective surfaces, degrading 3D reconstruction and localization. Prior methods address this through geometric consistency. Optimization-based approaches [51, 52, 54] exploit symmetry properties or statistical features to iden-tify ghosts, but struggle with noise, complex structures, and multiple reflective surfaces. Learning-based methods [23] combine geometric features with deep networks, yet re-main limited to static, high-density scans where geometric cues are abundant. These approaches fail in mobile scenar-ios with sparse, single-frame data typical of robots and au-Table 1. Comparison of LiDAR real-world datasets for ghost detection and/or full-waveform analysis. Our Ghost-FWL contains mobile LiDAR full-waveform measurements and is one hundred times larger than prior work, making it the largest annotated FWL dataset. 
+
+Access & Platform Sensor Labels Dataset Year Public Platform FWL LiDAR Dim. Ray Den. Ghost FWL Data Frames/ Scenes †
+
+Annotated Peaks UNIST [52] 2017 ✓ Stationary ✗ 3D 278 ✓ ✗ – –Leddar PixSet [9] 2021 ✓ Mobile ✓ 3D 0.267 ✗ ✓ – –Lee et al. [23] 2023 ✗ Stationary ✗ 3D 278 ✗ ✗ – –FRACTAL [13] 2024 ✓ Aerial ✗ 2D – ✗ ✗ – –Scheuble et al. [38] 2025 ✗ Mobile ✓ 3D 2.56 ✗ ✓ 0.24k / 2 NA 
+
+Ghost-FWL (Ours) 2025 ✓ Mobile ✓ 3D 200 ✓ ✓ 24k / 10 7.5B  
+
+> FWL: Full-Waveform LiDAR. †Frames/Scenes: number of annotated frames and number of scenes within the real-world FWL data.
+
+tonomous driving, where geometric consistency cannot be reliably established. In contrast, our work leverages FWL data that encode temporal and intensity information beyond geometric cues, enabling ghost detection in challenging mo-bile environments. 
+
+2.2. FWL Processing on Mobile LiDAR Platforms 
+
+While conventional LiDAR records only distance informa-tion, FWL captures the complete temporal intensity pro-file of each laser pulse [30]. By leveraging peak char-acteristics contained in this rich waveform information, numerous studies have been conducted to improve rang-ing accuracy and measurement reliability in mobile Li-DAR [34]. Early approaches primarily integrated waveform information through rule-based or CNN-based feature ex-traction [42, 49, 56] to improve ranging accuracy. However, all these methods rely on rule-based peak detection and fail to fully exploit the spatial and temporal correlations inher-ent in FWL data. Scheuble et al. [38] proposed an end-to-end learning framework that takes entire FWL data as input and jointly learns peak detection and range estimation, im-proving ranging accuracy and denoising performance un-der foggy conditions. This data-driven peak detection ap-proach effectively leverages spatial and temporal features across the entire waveform. Our method similarly leverages end-to-end learning on complete FWL data. The key difference lies in the task for-mulation: whereas prior works target range estimation, we directly learn temporal peak structures to classify peak ori-gins based on their physical causes: Object, Glass, or Ghost. In doing so, we broaden the scope of FWL processing from its conventional “ranging-centric” focus to encompass the physical interpretation of FWL data. 
+
+2.3. LiDAR Datasets and Full-Waveform Data 
+
+Large-scale LiDAR datasets such as nuScenes [3], Waymo [41], and KITTI [14] have driven progress in 3D object detection and autonomous driving. However, these datasets provide only conventional point clouds without FWL data or ghost annotations. A few datasets target ghost detection, notably UNIST LS3DPC [52], but rely on sta-tionary, high-precision scanners in controlled settings un-suitable for mobile platforms. FWL captures complete temporal intensity profiles rather than single-peak distances, recording multi-path re-turns crucial for ghost detection. PixSet [9] is the only pub-lic FWL dataset, yet it lacks peak-level annotations and does not address ghost phenomena. Scheuble et al. [38] also uti-lized mobile FWL data and applied machine learning to im-prove range estimation. However, their study focused on enhancing measurement accuracy rather than ghost detec-tion, and the dataset itself was not released publicly. Ta-ble 1 compares existing datasets, revealing a critical gap: no publicly available mobile FWL dataset exists with ghost-specific peak-level annotations. An alternative approach would be to synthesize such data. However, reproducing ghosts in simulation requires modeling multi-path reflections, which is computationally expensive and physically inaccurate; CARLA [10] lacks multi-bounce support and Mitsuba [20] requires extensive tuning for outdoor scenes. We address these limitations by constructing Ghost-FWL, a large-scale real-world FWL dataset with peak-level annotations for ghost, glass, and ob-ject reflections, without reliance on synthetic data. 
+
+2.4. Representation Learning with Self-Supervision 
+
+Acquiring informative data representations is important for effective model training. However, obtaining large-scale annotated datasets is costly, which motivates research on self-supervised learning that reduces reliance on manual labels. Contrastive methods such as SimCLR [5] and MoCo [6, 7, 15] learn generalizable features by aligning views of the same instance while separating different ones. Masked Autoencoders (MAE) [16] further advance this paradigm by reconstructing masked regions from visible in-puts, enabling the model to capture structural regularities Scene Annotation 
+
+# Indoor 
+
+# Outdoor      
+
+> Scene Annotation
+> LiDAR position
+> Count
+> 4.0
+> 0.0
+> 1e6
+> 2.0
+> Incidence angle (°)
+> 40 60 20 40 80
+> Ghost Incidence Angle Distribution
+> ※single scene
+> 0
+> Mobile
+> Table LiDAR
+> PC
+> Glass
+> Indoor
+> 4 scenes
+> Outdoor
+> 6 scenes
+
+... 
+
+... 
+
+> Daytime
+> 45%
+> Evening
+> 44%
+> Morning
+> 11%
+
+Figure 2. Overview of the Ghost-FWL. Left: Our dataset includes both indoor and outdoor scenes. Based on the dense 3D maps as shown in Scene, we annotated FWL data with semantic labels: Ghost (red), Object (green), Glass (blue), Noise . Gray regions are excluded from annotation. Right shows the data acquisition setup and dataset statistics, including the incident angle distribution and LiDAR positions examples. Data were collected at three different times of day: Morning (AM10–12), Daytime (PM12–5), and Evening (PM5–7). 
+
+in an unsupervised manner. This idea has been extended to videos [44], 3D point clouds [26, 33, 50], and voxel data [18, 31, 43, 46, 48]. The work most relevant to ours is MARMOT [39] which focuses on temporal histogram data. MARMOT learns representations of transient images containing spatiotempo-ral 3D information by randomly masking and reconstruct-ing parts of the input. However, it primarily performs voxel-level reconstruction and does not explicitly account for histogram-specific statistical properties such as inten-sity peak locations or distribution shapes. In contrast, we propose a representation learning model specialized for his-togram data called FWL-MAE that explicitly models tem-poral continuity and peak information in FWL data. 
+
+# 3. Ghost-FWL Dataset 
+
+This section presents Ghost-FWL, the largest FWL dataset to date, which is specialized for ghost removal. Conven-tional LiDAR datasets provide only point cloud-level in-formation, discarding the temporal multi-path information crucial for identifying ghosts caused by glass and reflec-tive surfaces. Ghost-FWL addresses this gap by captur-ing complete temporal intensity histograms and providing peak-level annotations indicating the physical cause of each reflection (object, glass, ghost, or noise). Spanning 10 di-verse scenes with 24,412 annotated frames and 7.5B peak-level labels, Ghost-FWL is 100 × larger than prior annotated FWL datasets [38], enabling learning-based ghost detection and removal at the waveform level. Statistics of the dataset are shown in Fig. 2. 
+
+3.1. Sensing System and Data Collection 
+
+Custom FWL Acquisition System: Commercial LiDAR devices typically output only processed 3D point clouds containing range and intensity information, without provid-ing access to the underlying full-waveform data. To over-come this limitation, we developed a custom acquisition system that directly accesses the FPGA module of the Li-DAR hardware, extracting raw FWL data from the inter-nal signal processing pipeline. This enables frame-by-frame capture of the complete received signal, preserving reflec-tion peaks and multi-path components essential for ghost detection. 
+
+Sensor Specifications: 
+
+The FWL sensor system produces histograms of 512 × Masked   
+
+> FWL Data
+> Encoded Data
+> Features
+> SLAM
+> 3D Object Detection
+> MLP
+> Head
+> Reconstructed FWL Data
+> Input FWL Data
+> Denoised LiDAR
+> Point Cloud
+> Transformer
+> Encoder
+> Transformer
+> Encoder
+> Transformer
+> Decoder
+> Unmasked
+> FWL Data
+
+## FWL-MAE 
+
+## Ghost Denoising 
+
+## Application    
+
+> ・
+> ・・
+> y
+> xt
+> Classification Result of (x, y)
+> Masked Unmasked
+
+z   
+
+> remove
+> ghost peaks!
+> t
+> object glass ghost
+> Peak
+> Head
+> I
+> amplitude
+> position
+> Estimated Peak of (x, y)
+> I
+> t
+> ・
+> ・・
+> Masked Token
+> random
+> masking
+> width
+
+Figure 3. FWL-based ghost removal framework. Given FWL data, our framework predicts and removes ghost-related signals. Our model consists of a transformer-based encoder and an MLP head. We further introduce FWL-MAE, a masked autoencoder designed for representation learning on FWL data, explicitly trained to reconstruct peak position , amplitude and width . The ghosts detected by our model are then removed from FWL data, and the cleaned data are utilized for downstream tasks such as SLAM and 3D object detection. 
+
+400 pixels (vertical × horizontal), recording up to 700 tem-poral bins per ranging direction with approximately 1 ns time resolution (max. range 105 m). 
+
+3.2. Sensing Scenario and Scene 
+
+To capture diverse ghosts in real-world conditions, we col-lected data across 10 scenes (4 indoor, 6 outdoor) totaling 24,412 frames. The FWL sensor was mounted on a mobile platform to simulate mobile LiDAR scenarios common in robotics and autonomous driving. 
+
+Scene Selection: Indoor scenes include office floors, com-munication lounges, and gymnasiums; spaces featuring large glass walls where lighting and surface reflections cre-ate complex multi-path conditions. Outdoor scenes com-prise building entrances, glass-curtain facades, and glass-lined pedestrian areas, providing natural lighting variations, changing incident angles, and long-range reflections char-acteristic of autonomous driving environments. 
+
+Environmental Diversity: We systematically varied envi-ronmental conditions to ensure dataset diversity. Data col-lection spanned different times of day (morning to evening) to capture varying illumination effects on waveform charac-teristics. Within each scene, we varied sensor-to-glass dis-tance (3-20 m) and incident angle (0 °–40 °) to comprehen-sively capture reflection behavior under different geomet-ric conditions. Beyond static environments, selected scenes include dynamic elements such as pedestrians and moving objects, reflecting realistic robotics and autonomous driving conditions. 
+
+Data Collection Protocol: 
+
+We employed two capture strategies serving different learning objectives, collecting 33,345 total frames: (1) Multi-Viewpoint Static Capture: At each scene, we se-lected 37–55 viewpoints and systematically varied the inci-dent angle on glass surfaces and sensor orientation at each location. Capturing approximately 50 frames per view-point yielded an average of 2,441 frames per scene, total-ing 24,412 annotated frames for supervised ghost detection. 
+
+(2) Mobile Trajectory Capture: We recorded continuous mobile trajectories through each scene (500–1,500 frames per scene, 8,933 total), simulating realistic robotic opera-tion. These sequences remain unlabeled, as continuous mo-tion makes peak-level annotation prohibitively expensive, but provide diverse data for self-supervised pre-training in §4. 
+
+3.3. Annotation 
+
+As shown in Fig. 1, we annotated FWL data at the peak level, assigning each reflection peak exceeding a threshold to one of four classes based on its physical origin: Ob-ject, Glass, Ghost, or Noise. Annotation followed a semi-automatic pipeline leveraging high-precision 3D map point clouds generated via SLAM. First, we constructed a 3D map of each scene using a commercial 360 ° LiDAR sensor (Livox Mid-360 [28]), removed noise, and manually anno-tated glass surface regions and solid object regions. Next, we converted peak positions extracted from FWL data into point clouds and performed coordinate alignment with the 3D map. This established correspondence between each re-flection peak and real-world scene structures. Peaks were then automatically classified according to the following criteria: (1) Object : peaks generating FWL-derived points in close proximity to the 3D map. (2) Glass :peaks exhibiting surface reflections within annotated glass regions. (3) Ghost : peaks appearing at locations not corre-sponding to the 3D map after passing through or reflecting off glass. (4) Noise : remaining noise or weak reflections. Finally, annotations were reviewed by domain experts with expertise in computer vision and LiDAR sensing. 
+
+# 4. FWL-based Ghost Removal Framework 
+
+As we are the first to address this task, we propose a baseline framework that detects and removes ghost-related peaks di-rectly from FWL data ( Fig. 3). The framework first per-forms classification on FWL data V ∈ RH×W ×T to iden-tify ghost-related regions, then removes the corresponding 3D points predicted as Ghost. To obtain more discrimina-tive representations from limited FWL data, we further pro-pose FWL-MAE, a Masked Autoencoder tailored for FWL data that models their inherent peak structures. 
+
+4.1. Full Waveform LiDAR Masked Autoencoder 
+
+We propose the Full-Waveform LiDAR Masked Autoen-coder (FWL-MAE), a self-supervised pretraining method specifically designed to learn latent representations from FWL data. Our approach is inspired by the Masked Au-toencoder (MAE) [16], which learns data representations from 2D images, and by MARMOT [39], which extends this concept to transient histograms. Following MARMOT, FWL-MAE takes FWL data V ∈
+
+RH×W ×T as input, randomly samples spatial patches in the (x, y ) region, and masks all temporal bins along the 
+
+T axis within each selected patch. FWL-MAE trains a Transformer-based encoder that outputs a latent represen-tation fθ (V ) from an input histogram volume V , where θ
+
+is a trainable parameter. The encoder consists of six Trans-former blocks with six attention heads in each block. Un-like MARMOT, FWL-MAE additionally estimates the posi-tion, amplitude and width of histogram peaks using a linear head to capture physically meaningful latent representations from real FWL data. 
+
+Loss Function. Following the original MAE [16], we use the mean squared error loss ( LMSE ) to evaluate the re-construction accuracy in the voxel region. To assess the distance between predicted and ground-truth values of the dominant peak position (p), amplitude (a), and width (w)within each waveform, we employ an L1 loss, denoted as 
+
+Lpeak-p 
+
+> 1
+
+, Lpeak-a 
+
+> 1
+
+, and Lpeak-w 
+
+> 1
+
+for each attribute, respectively. The overall loss of FWL-MAE, LFWL-MAE , is defined as the weighted sum of these losses as follows: 
+
+LFWL-MAE = LMSE + λpLpeak-p 
+
+> 1
+
++ λaLpeak-a 
+
+> 1
+
++ λwLpeak-w 
+
+> 1
+
+,
+
+(1) where λp, λa, and λw are hyperparameters that control the contribution of each term. 
+
+4.2. Ghost Detection and Removal 
+
+To detect and remove ghosts, our method takes the FWL data V as input and estimates the class probabilities P ∈Ground   
+
+> Truth
+> Classification
+> Result
+> Removed
+> Ghost Data
+> Figure 4. Peak classification results and point cloud visualization after applying ghost removal. All results were obtained using the proposed framework. Red, green and blue indicates Ghost ,Object ,
+> Glass , respectively.
+
+RH×W ×T ×C for the categories Glass , Ghost , Object , and 
+
+Noise . To extract informative features from the FWL data, we use the encoder pretrained with FWL-MAE and keep its weights frozen to obtain latent representations fθ (V ). Alightweight classification head composed of two linear lay-ers is then applied to predict the class probabilities for all FWL data coordinates. By removing the 3D points corre-sponding to histogram peaks predicted as Ghost, we obtain a filtered LiDAR point cloud. The denoised point cloud pro-duced by this framework can subsequently be used as input for downstream tasks such as SLAM or 3D object detection. 
+
+Loss Function. We adopt the focal loss [24], which miti-gates the impact of class imbalance in multi-class classifi-cation. Our task poses a challenging classification problem involving highly imbalanced data, where minority classes such as Ghost coexist with the majority Noise class. 
+
+# 5. Experiments and Results 
+
+This section comprehensively evaluated the effectiveness of our proposed ghost removal framework. We first conducted a quantitative evaluation of its ability to classify and remove ghost points in 5.1, and then 5.2 investigated how the de-noised data affects the performance of downstream tasks, including SLAM and 3D object detection. Implementation details and hyperparameters are provided in the supplemen-tary material. 5.1. Ghost Denoising Evaluation 
+
+This subsection evaluated the performance of our FWL-MAE framework for ghost denoising. The task is formu-lated as a four-class classification problem with C = 4
+
+(Glass, Ghost, Object, and Noise). 
+
+Experimental Settings. All models were trained using our Ghost-FWL dataset. The raw FWL data were reshaped to (H, W, T ) = (128 , 128 , 256) before being fed into the model through the following preprocessing. First, the top and bottom 90 bins corresponding to reflections from the ceiling and floor and the front 25 bins containing noise from internal sensor reflections were removed. The remaining data were then uniformly down-sampled along the T axis and randomly cropped into H × W size. We used a data split of 13,853 for training, 2,994 for validation, and 1,427 for testing. 
+
+Metrics. We evaluate ghost detection at two levels: peak-level and point-level. For peak-level evaluation, we follow Scheuble et al. [38] and report recall, measuring the pro-portion of correctly detected ghost peaks among all ground-truth ghost peaks. For point-level evaluation, we introduce the Ghost Removal Rate , which measures the proportion of ghost points successfully removed after converting pre-dicted peaks to 3D point clouds. This metric is inspired by the snow removal rate in Charron et al. [4] and assesses practical denoising effectiveness in downstream tasks. 
+
+Comparative Methods. To investigate the effectiveness of the proposed FWL-MAE pretrained encoder, we compared three models: (1) the proposed model incorporating FWL-MAE ( Ours ), (2) the model without FWL-MAE ( Ours w/o FWL-MAE ), and (3) the model pretrained using a general MAE designed for transient imaging ( MARMOT [39]). 
+
+Results. As shown in Table 2, the proposed model with FWL-MAE achieves superior performance in both ghost detection recall and ghost removal rate compared to other models. These results demonstrate the effectiveness of in-corporating FWL-MAE, which enables pretraining that bet-ter captures the physical characteristics of FWL data. Fig. 4 shows the qualitative evaluation. It can be seen that the method successfully eliminates various types of ghost artifacts, including those spreading horizontally or vertically, and those occurring between buildings. The pro-posed Ghost Removal Framework clearly achieves accurate class classification and effective ghost removal. 
+
+5.2. Evaluation on Downstream Applications 
+
+5.2.1. Evaluation on SLAM 
+
+The presence of ghost points introduces false geomet-ric structures that do not exist in the real world, leading to frame misalignment and degraded SLAM performance. This problem is particularly critical in autonomous driving, where even small localization errors can have serious con-sequences. For example, a position error of only 0.29 m on  
+
+> Table 2. Comparison of ghost removal performance with other methods.
+
+Method Recall ( ↑) Removal Rate ( ↑)MARMOT [39] 0.746 0.910 Ours w/o FWL-MAE 0.704 0.900 Ours 0.751 0.918 
+
+> Table 3. SLAM performance under different LiDAR signal pre-processing methods.
+
+Method ATE [m] ( ↓) RTE [m] ( ↓)Dual-Peak [17, 32] 0.715 ±0.433 0.741 ±0.406 Multi-Peak [27] 1.547 ±1.394 1.602 ±1.381 Ours 0.245 ±0.138 0.245 ±0.131 
+
+regular roads or 0.74 m on highways can cause a vehicle to drift into a lane boundary [37]. This experiment eval-uates whether the proposed ghost removal framework can mitigate such issues in real-world SLAM scenarios. 
+
+Experimental Settings. We collected SLAM test se-quences using the same sensor configuration as the Ghost-FWL dataset setup. The data was captured at three loca-tions: an outdoor area of the office building and two indoor locations of the office building, including an indoor space and an indoor office corridor where strong reflections fre-quently produce ghost points. The sequence contains 231 frames along a 23.4 m trajectory. The ground-truth trajec-tory was obtained using multiple fixed high-precision Li-DAR sensors that continuously tracked the position of the moving FWL sensor. Ghost removal followed the point-level evaluation pipeline from §5.1. 
+
+Metrics. We evaluated SLAM performance using standard metrics: Absolute Trajectory Error (ATE), Relative Trajec-tory Error (RTE) [53]. Following [21], we report both mean and standard deviation of ATE and RTE, where ATE mea-sures the Euclidean distance between each estimated pose and its nearest ground-truth pose after alignment. 
+
+Comparative Methods. We compare against LiDAR sig-nal processing strategies using their factory default settings: Dual-Peak [17, 32] and Multi-Peak [27], which retain the two and three strongest intensity peaks, respectively. All methods employed the same SLAM backend, GLIM [21] for fair comparison. 
+
+Results. Table 3 shows that our ghost removal significantly improved SLAM accuracy, reducing ATE by 66–84% and RTE by 67–85% compared to baseline peak selection meth-ods. The improvement was most pronounced near glass sur-faces, where cumulative localization errors from ghost re-flections were effectively suppressed. Fig. 5 illustrates suc-cessful ghost removal behind glass while maintaining accu-rate localization and consistent 3D map reconstruction. GT   
+
+> Multi-Peak Ours
+> GT Figure 5. Trajectory and mapping generated by SLAM using Multi-Peak processing (left) and our ghost removal method (right). Multi-Peak processing includes numerous ghost points in the re-constructed map, leading to trajectory drift. The proposed method yields a trajectory that more closely follows the ground-truth path (white) by effectively removing ghost artifacts.
+
+5.2.2. Evaluation on Object Detection 
+
+Ghost points often cause serious safety risks with false pos-itives in 3D object detection. In particular, mirrored ghosts of vehicles or pedestrians appearing behind glass surfaces can propagate through tracking pipelines, leading to in-correct trajectory predictions or behavioral estimations for robots and autonomous vehicles. Here, we evaluate whether the proposed ghost removal framework improves the detec-tion accuracy of 3D object detectors. 
+
+Experimental Settings. We collected a test dataset for 3D object detection using the same sensor configuration as the Ghost-FWL dataset. The data were captured in out-door and indoor environments containing glass surfaces, such as building entrances and glass-walled sidewalks, con-sisting of 102 frames and 239 object instances. We anno-tated bounding boxes for object instances, and labeled ghost points in the resulting point clouds. 
+
+Metrics. We evaluate ghost removal effectiveness by the Ghost False Positive (Ghost FP) Rate, the percentage of ghosts reflection incorrectly detected as pedestrians. Fol-lowing [22], we count a detection as a false positive when a bounding box overlaps with annotated ghost regions and is classified as a pedestrian. 
+
+Comparative Methods. We utilize the same LiDAR pro-cessing methods as §5.2.1. All methods employed the same 3D object detection model, PV-RCNN [40], pretrained on the KITTI dataset [14]. 
+
+Results. Table 4 presents the quantitative results. Com-pared to the baseline LiDAR processing, our method achieves a 50 × reduction in Ghost FP Rate (from 67.9% to 1.34%). Fig. 6 shows that ghosts of pedestrians appearing behind glass surfaces were effectively removed, enabling the detector to correctly identify only real objects. 
+
+> Table 4. Ghost-induced false positives in ghost detection.
+
+Method Ghost FP Rate [%] ( ↓)Dual-Peak [17, 32] 75.8 Multi-Peak [27] 67.9 Ours 1.34 Glass 
+
+> Ghost
+> Glass
+> Ours Multi-Peak
+> person
+> Figure 6. Qualitative evaluation of 3D object detection with Multi-Peak processing (left) and our ghost removal (right). Green bound-ing boxes indicate persons. With Multi-Peak, a ghost person is de-tected behind the glass wall, whereas our method suppresses this false detection.
+
+# 6. Conclusions and Future Work 
+
+This work introduces Ghost-FWL, the first large-scale an-notated dataset for full-waveform ghost detection. Span-ning 10 diverse scenes with over 24,000 annotated frames and 7.5 billion peak-level labels (100 × larger than prior work), Ghost-FWL provides annotations for each reflec-tion’s physical origin: Ghost, Glass, or Object. By ex-ploiting temporal intensity profiles invisible in standard point clouds, Ghost-FWL enables learning-based ghost re-moval that directly leverages multi-path reflection charac-teristics. Models trained on Ghost-FWL significantly im-prove LiDAR-based SLAM and 3D object detection, con-tributing to enhanced safety in robotics and autonomous driving. We publicly release the dataset, code, and bench-marks to foster further research in robust LiDAR percep-tion. Our peak-level annotations focus on static multi-viewpoint captures to ensure high labeling quality; con-tinuous mobile sequences are included for self-supervised pre-training but remain unlabeled. Extending annotations to these sequences would further benefit tracking and tem-poral modeling. Additionally, while our dataset emphasizes glass-induced ghosts in clear weather (the most common ur-ban scenario), investigating other reflective materials (e.g. water, polished metals) and adverse conditions (e.g. rain, fog) would enable more comprehensive multi-path under-standing. Acknowledgment. This research was supported in part by JST Next-generation Edge AI Semiconductor JPM-JES2515, JST CREST JPMJCR21D2, JPMJCR23M4, JST PRESTO JPMJPR22PA, JST ASPIRE JPMJAP2515, JSPS KAKENHI 24K02940, 24K22296, and 25H01159. 9Supplementary Material Contents 
+
+1. Introduction 12. Related Work 2
+
+2.1. Ghost Point Detection and Removal . . . . . 22.2. FWL Processing on Mobile LiDAR Platforms 32.3. LiDAR Datasets and Full-Waveform Data . . 32.4. Representation Learning with Self-Supervision 3
+
+3. Ghost-FWL Dataset 4
+
+3.1. Sensing System and Data Collection . . . . . 43.2. Sensing Scenario and Scene . . . . . . . . . 53.3. Annotation . . . . . . . . . . . . . . . . . . 5
+
+4. FWL-based Ghost Removal Framework 6
+
+4.1. Full Waveform LiDAR Masked Autoencoder 64.2. Ghost Detection and Removal . . . . . . . . 6
+
+5. Experiments and Results 6
+
+5.1. Ghost Denoising Evaluation . . . . . . . . . 75.2. Evaluation on Downstream Applications . . 75.2.1 . Evaluation on SLAM . . . . . . . . 75.2.2 . Evaluation on Object Detection . . . 8
+
+6. Conclusions and Future Work 8Supplementary Material 10 A. Overview of Supplementary Material 10 B. Ghost-FWL Dataset 10 C. Fundamentals of LiDAR and Full-Waveform Sig-nals 10 
+
+C.1. Annotation Strategy . . . . . . . . . . . . . 11 C.2. Annotation Pipeline . . . . . . . . . . . . . 11 C.3. Improving Annotation Quality via Waveform-Level Accumulation . . . . . . . 13 C.4. Annotation Processing for Training . . . . . 14 
+
+D. Implementation Details of the FWL-based Ghost Removal Framework 14 
+
+D.1. Full Waveform LiDAR Masked Autoencoder 14 D.2. Ghost Detection and Removal . . . . . . . . 15 
+
+E. Experiments and Results 16 
+
+E.1. Ghost Denoising Evaluation . . . . . . . . . 16 E.1.1. Ghost Classification Evaluation . . . 16 E.1.2. Sensitivity analysis for classification threshold . . . . . . . . . . . . . . 16 E.1.3. Ablation Study of FWL-MAE . . . . 17 E.1.4. Computational cost and inference speed . . . . . . . . . . . . . . . . 17 E.1.5. Efficacy for reflective materials . . . 18 E.1.6. Why Prior Ghost Removal Methods Fail on Mobile LiDARs . . . . . . 18 E.2. Evaluation on Downstream Applications . . 18 E.2.1. SLAM Experimental Scenes . . . . . 18 E.2.2. SLAM Ablation Studies . . . . . . . 18 E.2.3. Object Detection Test Dataset . . . . 19 
+
+# A. Overview of Supplementary Material 
+
+This supplementary material provides additional details and further experimental results that complement the content presented in the main paper. Please also refer to the sup-plementary video at https://keio-csg.github. io/Ghost-FWL/ , which presents the SLAM results of the comparative methods and our proposed method. For clarity, we use red to denote references corresponding to the main paper, and blue to denote those corresponding to these supplementary materials. 
+
+# B. Ghost-FWL Dataset 
+
+This section describes the details of the Ghost-FWL dataset. Fig. 7 shows an overview of all scenes in the Ghost-FWL dataset. Table 5 shows the number of frames for each scene. 
+
+# C. Fundamentals of LiDAR and Full-Waveform Signals 
+
+LiDAR measures the three-dimensional structure of the en-vironment by emitting laser pulses and computing the time-of-flight (ToF) of their returns. In standard commercial LiDAR systems, the raw received signal is internally pro-cessed to detect only the dominant return peaks, and the sensor outputs a set of 3D points, commonly referred to as a point cloud. This point-cloud representation is com-pact, easy to handle in downstream perception pipelines, and greatly reduces data bandwidth. However, this con-version discards most of the physical information originally present in the raw waveform, including material-dependent reflectance behavior, multi-path components, and the de-tailed temporal shape of each peak. In contrast, a Full-Waveform (FW) LiDAR records the complete temporal intensity profile of the returned signal for each beam direction. Because the full waveform pre-serves the full time evolution of the reflected light, it retains rich physical cues such as variations induced by material properties, surface geometry, incidence angle, and multi-path reflections through glass or other reflective structures including colored glass (Scene 008 glass in Fig. 7) and film-covered glass (Scene 002 glass in Fig. 7) surfaces. These temporal characteristics, suppressed or entirely lost in con-ventional point-cloud outputs, are crucial for analyzing and 10 Table 5. Ghost-FWL statistics by scene. 
+
+Scene Frames Location 001 2500 Indoor 002 2500 Indoor 003 2749 Indoor 004 1853 Indoor 005 2500 Outdoor 006 2445 Outdoor 007 2461 Outdoor 008 2300 Outdoor 009 2354 Outdoor 010 2750 Outdoor 
+
+TOTAL 24412 Indoor 4 / Outdoor 6 identifying ghost reflections, making FW LiDAR funda-mentally more informative for ghost detection and removal. 
+
+C.1. Annotation Strategy 
+
+Annotating FWL data that contain ghost reflections are fun-damentally challenging. Ghost returns are virtual reflec-tions that may not correspond to any physical surface in the scene; therefore, their spatial location, intensity, and temporal patterns vary depending on the geometry and re-flectance of glass or other reflective materials. As a result, no direct ground-truth reference exists for identifying where ghost peaks should appear. In addition, raw FWL data in-clude a large amount of noise originating from natural il-lumination such as sunlight, as well as weak background reflections. These noise peaks occur randomly along the temporal axis and cannot be separated from ghost peaks by simple filtering or thresholding, making conventional anno-tation approaches unreliable. To address these difficulties, we construct an annotation framework that jointly leverages a high-precision 3D map (GT) and accumulated FWL data. For each scene, we pre-pare (i) a high-accuracy 3D map, and (ii) multiple FWL frames obtained from the same environment. The FWL frames are first accumulated to obtain a high-SNR wave-form, which suppresses stochastic noise while enhancing stable reflection components, including both object returns and consistent multi-path signals associated with ghost re-flections. The accumulated waveform is then converted into a point cloud and compared with the GT map to determine whether each FWL peak corresponds to a real object sur-face, a glass region, a ghost reflection, or noise. Because ghost reflections typically appear at locations that deviate from the real-world geometry, the spatial discrepancy be-tween the accumulated FWL-derived point cloud and the GT map provides a reliable and discriminative cue for iden-tifying ghost peaks. Labels are first assigned in the point-cloud domain and then transferred back to the corresponding peaks in the ac-cumulated FWL data, yielding peak-level annotations suit-able for supervised learning. 
+
+C.2. Annotation Pipeline 
+
+1. GT Map Construction: A high-precision 3D map is constructed using a commercial LiDAR sensor (Livox Mid-360 [28]) together with the SLAM algorithm fastlio2 [47]. After generating the map, ghost points and noise points are removed, and two spatial regions are manually defined using labelCloud [36]: the glass region G, which indicates where glass surfaces are likely to exist, and the reflection region R, which denotes a larger zone extending radially behind the reflective sur-faces where multi-path reflections may occur. Because the alignment between the FWL-derived points and the GT map is performed manually, small alignment errors are unavoidable. To prevent these errors from negatively affecting the labeling process, R is intentionally defined to be larger than G.2. Alignment with Accumulated FWL Data: For each scene, 37–55 viewpoints are selected, and approximately 50 FWL frames are captured per viewpoint. Fig. 8 shows example of LiDAR positions and viewpoints. These frames are accumulated to obtain a high-SNR FWL sig-nal. Peak detection is then applied to the accumulated waveform, and the detected peaks are converted into a point cloud. The accumulated FWL point cloud is manu-ally aligned with the GT map to correct for discrepancies between their coordinate systems. 3. Label Assignment: Let M denote the set of GT map points. For each accumulated FWL point x, we compute its nearest-neighbor distance to the GT map as 
+
+d(x) = min  
+
+> y∈M
+
+∥x − y∥ (2) Using this distance and the region definitions, each point is classified as follows: • Glass :
+
+x ∈ G (3) • Object :
+
+d(x) < τ and x /∈ G (4) • Ghost :
+
+d(x) > τ and x ∈ R (5) • Noise: All remaining points that do not satisfy any of the above conditions. Here, τ denotes the Euclidean distance threshold. Once these labels are assigned in the point-cloud domain, they are transferred back to the corresponding peaks in the 11 Scene Annotation RGB 
+
+# Indoor 
+
+# Outdoor 
+
+> Scene Annotation RGB
+
+Scene 001 Scene 002 Scene 003 Scene 004 Scene 005 Scene 006 Scene 007 Scene 008 Scene 009 Scene 010 
+
+> LiDAR position LiDAR position
+
+Figure 7. All scenes in Ghost-FWL. Our dataset includes both indoor and outdoor scenes. Based on the dense 3D maps as shown in Scene, we annotated FWL data with semantic labels: Ghost (red), Object (green), Glass (blue), Noise . Gray regions are excluded from annotation. Red crosses indicate the LiDAR positions during data acquisition. The RGB images show the scenery of the capture locations. 
+
+accumulated FWL data, completing the peak-level an-notation procedure. The parameters used to construct the Ghost-FWL dataset are summarized in Tab. 6. 12 Table 6. Annotation parameters for each scene in the Ghost-FWL dataset. The threshold τ is the nearest-neighbor distance used to distinguish Object and Ghost points, and “# Glass Areas” denotes the number of manually annotated glass regions G.
+
+Scene Threshold τ # Glass Areas 001 0.5 8002 0.5 48 003 0.5 10 004 0.5 9005 0.5 15 006 0.5 5007 0.5 17 008 0.5 12 009 0.5 15 010 0.5 4RGB 
+
+Figure 8. Example of LiDAR position and perspective. 
+
+C.3. Improving Annotation Quality via Waveform-Level Accumulation 
+
+The raw full-waveform signal recorded by a LiDAR sensor inevitably contains a considerable amount of noise. Such noise appears as randomly distributed peaks along the tem-poral axis and is primarily caused by external illumination, including sunlight, as well as weak background reflections from the ground and surrounding surfaces. To suppress these stochastic components, modern LiDAR systems em-ploy an accumulation mechanism in which multiple laser pulses are emitted in the same direction and their corre-sponding waveforms are aggregated. Since true reflections from physical objects consistently appear at the same tem-poral position across pulses, while noise peaks vary ran-domly, accumulation enhances stable reflection components and averages out random noise. We leverage the same accumulation strategy to improve the reliability of our annotation pipeline. As shown in Fig. 9, for each viewpoint, 50 FWL frames captured from the same location are aggregated to generate a high-SNR waveform. This process amplifies not only direct reflec-tions from real objects but also consistent multi-path com-ponents responsible for ghost reflections, while effectively suppressing sporadic noise induced by sunlight or ground 
+
+Figure 9. Example of 1 frame FWL data(top) and 50 × accumula-tion FWL data (bottom). Histogram Bin 
+
+> Histogram Bin
+> object
+> glass
+> ghost
+> object
+> glass
+> ghost
+> Intensity  Intensity
+
+Figure 10. Example of raw annotation (top) and processed an-notation for training (bottom). The circles indicate the annotation points for each class: Object (green), Glass (blue) and Ghost (red). 
+
+scattering. The accumulated waveform is then converted into a point cloud, ensuring that only physically meaning-ful reflection peaks remain. This high-quality representa-tion provides a robust basis for distinguishing true objects from ghost reflections, enabling more reliable detection and highly accurate peak-level annotation of ghost returns. 13 Table 7. FWL-MAE Architecture. 
+
+Name Layer setting Output dimension 
+
+Patch Embedding 3D Conv B × Npatch × Dencoder 
+
+Flatten + Transpose Positional Encoding Sinusoidal Position Encoding (PE) B × Npatch × Dencoder 
+
+Masking Select Unmasked Tokens + PE B × Nunmasked × Dencoder 
+
+Encoder Transformer Blocks × 6 (pretraining) B × Nunmasked × Dencoder 
+
+LayerNorm (fine-tuning) B × Npatch × Dencoder 
+
+Concatenation Tokens Linear Projection [ Dencoder → Ddecoder ]
+
+B × Npatch × Ddecoder 
+
+Unmasked Features + PE Masked Tokens + PE Concat (Unmasked Nunmasked , Masked Nmasked )Peak Position Head Linear [ Ddecoder → K] B × Npatch × K
+
+Sigmoid × (T - 1) Peak Width Head Linear [ Ddecoder → K] B × Npatch × K
+
+Softplus Peak Height Head Linear [ Ddecoder → K] B × Npatch × K
+
+Softplus Decoder Transformer Blocks × 6 B × Nmask × (Hpatch × Wpatch × Tpatch )
+
+Linear [ Ddecoder → (Hpatch × Wpatch × Tpatch )]Classification Head Linear [ Dencoder → Dencoder  
+
+> 2
+
+] + ReLU + Dropout 
+
+B × C × T × H × WLinear [ Dencoder  
+
+> 2
+
+→ (Hpatch × Wpatch × Tpatch × C)]Reshape Patches → FWL data 
+
+C.4. Annotation Processing for Training 
+
+During training, both the input FWL data and the annota-tions must be down-sampled due to GPU memory limita-tions. However, peak annotations exist only at the single point at the exact peak of the histogram, so they can be lost during down-sampling along the T -axis when the sam-pling interval is large. Therefore, during training, we ex-pand each annotation around the original peak position by its full width at half maximum (FWHM). This expansion ensures that, the ground-truth peak annotation still covers the peak of the same waveform even after down-sampling. The comparison between raw and processed annotations for training is shown in Fig. 10. 
+
+# D. Implementation Details of the FWL-based Ghost Removal Framework 
+
+This section presents the implementation details of the FWL-based Ghost Removal Framework. Table 7 shows a detailed architecture of FWL-MAE. All training and pro-cessing were performed on a computer equipped with an Intel Xeon w5-3535X CPU and a single RTX 6000 Ada Generation GPU, running the Ubuntu 22.04 operating sys-tem. 
+
+D.1. Full Waveform LiDAR Masked Autoencoder 
+
+This subsection describes the implementation details of the self-supervised pretraining method, the Full-Waveform LiDAR Masked Autoencoder (FWL-MAE), which is de-signed to obtain latent representations of histograms from FWL data. 
+
+Model. The implementation of the Transformer-based baseline model is inspired by VideoMAE [44]. We first apply 3D convolutions to the FWL data to generate patch embeddings (B, N patch , D encoder ), where B is the batch size, 
+
+Npatch is the number of patches, and Dencoder is the encoder embedding dimension. For masking, we randomly sample spatial patches in the (x, y ) region and mask all temporal bins along the T axis within each selected patch. Only the unmasked patches are fed into a Transformer encoder composed of six Transformer blocks with six at-tention heads in each block. The Transformer Encoder out-puts feature vectors for the unmasked regions with shape 
+
+(B, N unmasked , D encoder ), where B is the batch size, Nunmasked 
+
+14 is the number of unmasked patches, and Dencoder is the en-coder embedding dimension. The Transformer decoder consists of six Transformer blocks with six attention heads in each block. It takes as input the feature vectors of the unmasked regions and the mask tokens (B, N patch , D decoder ). The decoder then recon-structs the FWL data corresponding to the masked patches. In the Peak Head, the peak position (p), amplitude (a), and width (w) of the FWL data are estimated simultane-ously. The ground-truth peak position, amplitude, and full width at half maximum (FWHM) are extracted directly from the input FWL data. Under the assumption that peaks farther from the LiDAR sensor are less reliable and less informative, the Peak Head estimates only the K peaks, where K is set to 4 in this paper. If fewer than K peaks exist in input FWL data, the missing ground-truth peak po-sition, amplitude, and width are padded with zeros. Since peak prediction is performed at the patch level, the ground-truth peak parameters for each patch are obtained by aver-aging the peak values within the corresponding spatial patch region. In our setting, the masking ratio of FWL data was set to 70% . The input FWL data size is 
+
+(H, W, T ) = (128 , 128 , 256) and the patch size is 
+
+(Hpatch , W patch , T patch ) = (16 , 16 , 256) . The embedding di-mension is Dencoder = 768 , D decoder = 384 .
+
+Preprocessing. The raw FWL data were reshaped to 
+
+(H, W, T ) = (128 , 128 , 256) before being fed into the model through the following preprocessing. First, the top and bottom 90 bins corresponding to reflections from the ceiling and floor and the front 25 bins containing noise from internal sensor reflections were removed. The remaining data were then uniformly down-sampled along the T axis and randomly cropped into H × W size. The preprocessed FWL data is then fed into the model. 
+
+Training. We performed pretraining with FWL-MAE us-ing 8,933 unlabeled frames captured in a mobile environ-ment. We used AdamW [29] as optimizer.The AdamW hyperparameters were set to β1 = 0 .9, β 2 = 0 .999 , ϵ =1 × 10 −8, weight decay of λ = 1 × 10 −2, and a learn-ing rate of α = 1 × 10 −3. The batch size was set to 32, and training was performed for 100 epochs. The weighting coefficients for the loss function LFWL-MAE are λp = 1 .0,
+
+λa = 1 .0, and λw = 0 .5.
+
+D.2. Ghost Detection and Removal 
+
+This subsection describes the method for peak-level clas-sification for ghost detection and removal. To detect and remove ghosts, our method takes the FWL data V ∈
+
+RH×W ×T as input and estimates the class probabilities 
+
+P ∈ RH×W ×T ×C for the categories Glass , Ghost , Object ,and Noise .
+
+Model. To extract informative features from the FWL data, we use the encoder pretrained with FWL-MAE and keep its weights frozen to obtain latent representations fθ (V ).A lightweight classification head composed of two linear layers is then applied to predict the class probabilities for all FWL data coordinates. 
+
+Preprocessing. The input size to the model and the pre-processing procedure are the same as those used during the pretraining with FWL-MAE. 
+
+Training. We used a data split of 13,853 for training, 2,994 for validation, and 1,427 for testing. The training and val-idation sets contain data captured in Scene 001, 003, 004, 005, 006, 008 and 010. The testing set contains data cap-tured in Scene 002, 007 and 009. Although the training and validation sets were captured in the same scenes, no over-lapping frames were used. The test set consists solely of unseen scenes that are not included in either the training or validation data. In this study, we used the above split, but it can be modified as needed. We used AdamW [29] as optimizer.The AdamW hyper-parameters were set to β1 = 0 .9, β 2 = 0 .999 , ϵ = 1 ×10 −8,weight decay of λ = 1 × 10 −2, and a learning rate of 
+
+α = 1 × 10 −3. The batch size was set to 32, and train-ing was performed for 100 epochs. 
+
+Loss function. We adopt the focal loss [24], which miti-gates the impact of class imbalance in multi-class classifi-cation. Our task poses a challenging classification problem involving highly imbalanced data, where minority classes such as Ghost coexist with the majority Noise class. The loss function is defined as follows: 
+
+LFocal = −
+
+> C
+
+X
+
+> c=1
+
+αc(1 − pc)γ log pc, (6) where C is the number of class, pc denotes the predicted probability for the ground-truth class c. αc is a weighting factor for each class (Glass, Ghost, Object, Noise), used to compensate for class imbalance, and γ is the focusing pa-rameter that controls the trade-off between easy and hard samples. The number of classes are set as C = 4 (Glass, Ghost, Object, and Noise). The parameters were set to 
+
+αglass = 0 .25 , αghost = 0 .7, αobject = 0 .05 , αnoise = 0 .0001 ,and γ = 2 .0.
+
+Inference. We describe the inference procedures for down-stream tasks such as SLAM and object detection, as well as for qualitative evaluation of classification. First, as in the training phase, the top and bottom 90 bins corresponding to reflections from the ceiling and floor and the front 25 bins containing noise from internal sensor re-flections were removed. During inference, we use FWL data with the same size 
+
+(H, W, T ) = (128 , 128 , 256) as those used during training. The raw data are down-sampled along the T -axis. Next, un-like in training where random cropping is applied, the FWL 15 data are cropped sequentially starting from the patch coor-dinate (x, y ) = (0 , 0) The FWL data are then processed sequentially using a sliding window applied to cropped re-gions that do not overlap. If the window extends beyond the valid range, the outside area is padded with zero. The inference results obtained sequentially through the sliding window process are then merged, and finally up-sampled to match the original input shape. During up-sampling, zeros are padded between values to prevent the number of pre-dicted classes from artificially increasing. During inference, the predicted class was determined as the one with the high-est probability if it exceeded 0.5; otherwise, it was assigned to Undefined .
+
+# E. Experiments and Results 
+
+This section summarizes additional experiments that could not be included in the main paper. 
+
+E.1. Ghost Denoising Evaluation 
+
+Detail of Metrics. We evaluate ghost detection at two lev-els: peak-level and point-level. For peak-level evaluation, we follow Scheuble et al. [38] and report recall, measuring the proportion of correctly detected ghost peaks among all ground-truth ghost peaks. In Recall, only the peaks within the FWL data are detected, and evaluation is performed on their positions. For point-level evaluation, we introduce the Ghost Re-moval Rate , which measures the proportion of ghost points successfully removed after converting predicted peaks to 3D point clouds. This metric is inspired by the snow re-moval rate in Charron et al. [4] and assesses practical de-noising effectiveness in downstream tasks. For each GT point, if no point in the denoised points was found within a radius r, the GT point was counted as removed. The Re-moval Rate is then defined as the ratio of removed GT points to the total number of GT points: Ghost Removal Rate = Nremoved 
+
+NGT 
+
+, (7) where Nremoved denotes the number of removed ghost points, and NGT is the total number of GT points. The ra-dius was set to r = 0 .001 in meters. 
+
+E.1.1. Ghost Classification Evaluation Metrics. We follow Scheuble et al. [38] and report recall, measuring the proportion of correctly detected ghost peaks among all ground-truth ghost peaks. 
+
+Comparative Methods. To investigate the effectiveness of the proposed FWL-MAE pretrained encoder, we compared five models: (1) the proposed model incorporating FWL-MAE ( Ours ), (2) the model without FWL-MAE ( Ours w/o FWL-MAE ), (3) the model pretrained using a general MAE designed for transient imaging ( MARMOT [39]), (4)  
+
+> Table 8. Comparison of ghost removal performance with other methods.
+
+Method Recall ( ↑)3D U-Net [8] 0.391 Lindell et al. [25] 0.641 MARMOT [39] 0.746 Ours w/o FWL-MAE 0.704 Ours 0.751 
+
+the model for transient imaging ( Lindell et al. [25]) and (5) the most commonly used 3D convolution-based model ( 3D U-Net [8] .For (1), the proposed method applied self-supervised pretraining using FWL-MAE and then finetuned the model on the Ghost-FWL dataset. For (2), the model was trained from scratch on the Ghost-FWL dataset without FWL-MAE, using random weight initialization. For (3), the same architecture was pretrained with MARMOT [39] , a gen-eral MAE design for transient imaging, and then finetuned on the Ghost-FWL dataset. For (4), Lindell et al. [25] is a 3D convolution-based depth estimation model takes tran-sient imaging as input. Although it can also utilize intensity image, we use only the transient input in our experiments. For (5), 3D U-Net [8] is employed as a commonly used 3D convolution-based method capable of handling 3D inputs. 
+
+Results. As shown in Table 8, the proposed Transformer-based model with FWL-MAE achieves superior perfor-mance in ghost-detection recall compared with models us-ing alternative pretraining strategies as well as existing 3D convolution-based approaches. These results demonstrate the effectiveness of incorporating FWL-MAE, which en-ables pretraining that more effectively captures the physical characteristics of FWL data. Fig. 11 shows the classification results of peak in the FWL data. The prediction results of 3D convolution-based models, 3D U-Net [8] and Lindell et al. [25], contain many regions where the class labels are incorrectly estimated. In contrast, the proposed Transformer-based models, pre-trained with MARMOT [39] or FWL-MAE, achieve more accurate classification. However, compared to the ground truth, they still produce a larger number of predictions la-beled as ghost. This occurs because noise peak positions are sometimes classified as ghost. Although misclassify-ing noise as ghost has limited impact on downstream tasks, further improvements in classification accuracy remain de-sirable. 
+
+E.1.2. Sensitivity analysis for classification threshold 
+
+We conducted a sensitivity analysis on the ghost detection threshold, resulting in recall values of 0.751, 0.702, and 0.622 at thresholds of 0.5, 0.6, and 0.7, respectively. The 16 Ground  Truth 3D U-Net  Lindell et al.  MARMOT  Ours Figure 11. Peak classification results. Red, green and blue indicates Ghost , Object and Glass , respectively. Table 9. Ablation study of FWL-MAE. 
+
+Train Data Method Recall ( ↑)100% Ours w/o FWL-MAE 0.704 Ours 0.751 (+ 0.047) 70% Ours w/o FWL-MAE 0.602 Ours 0.692 (+ 0.090) 50% Ours w/o FWL-MAE 0.403 Ours 0.603 (+ 0.200) threshold of 0.5 was adopted for our main paper as it yielded the best performance. 
+
+E.1.3. Ablation Study of FWL-MAE 
+
+We conducted quantitative experiments on classification with varying amounts of training data to demonstrate the ef-fectiveness of self-supervised pretraining with FWL-MAE. 
+
+Experimental Settings. When the amount of training data described in §D.2 is treated as 100%, we conducted addi-tional experiments by reducing the training data to about 70% and 50%. For the 70% set contains data captured in Scene 001, 003, 004, 005 and 006, and for the 50% set con-tains data captured in Scene 001, 004, 005, and 006. The amount of test data was kept unchanged. 
+
+Results. Table 9 shows the recall scores of the pro-                           
+
+> Table 10. Computational cost and inference time. FPS †de-notes the inference speed for model input size (H, W, T )=(128 ,128 ,256) .FPS ‡denotes the inference for full-frame size
+> (H, W, T ) = (332 ,400 ,256) .Method Params [M] FLOPs [G] FPS †FPS ‡
+> 3D U-Net [8] 90.3 7610 6.6 0.45 Lindell et al. [25] 1.8 4090 7.0 0.48 Ours 194.1 23.5 32.1 2.35
+
+posed method with FWL-MAE pretraining compared to the method without FWL-MAE, evaluated under different amounts of training data. As the amount of training data de-creases, the recall of the method without FWL-MAE drops substantially, while the proposed method maintains higher performance. Consequently, the performance gap between the two methods widens, highlighting the strong effective-ness of FWL-MAE pretraining, particularly in fewer data settings. 
+
+E.1.4. Computational cost and inference speed 
+
+Table 10 summarizes the computational costs of our method compared to existing 3D CNN-based methods evaluated in Sec. E.1.1. Our Transformer-based approach achieves higher computational efficiency than 3D CNN-based meth-ods. This efficiency stems from our strategy of dividing the input into spatial patches while treating the temporal dimen-sion as a single tube, thereby reducing the total number of 17 Intensity 
+
+> Histogram Bin
+> water
+> surface
+> metal
+> surface
+> Histogram Bin
+> detection result
+> glass
+> ghost
+> detection result
+> glass
+> ghost
+
+Figure 12. Our model’s ghost detection on non-glass surfaces 
+
+operations. In contrast, 3D CNNs involve computationally expensive convolutions across both spatial and temporal di-mensions, resulting in more operations and slower infer-ence. Although our method significantly improves through-put for the model input size (FPS †), the inference speed per frame (FPS ‡) remains limited. This is primarily be-cause our current framework requires iterative inference for each frame due to memory constraints and the high com-putational overhead of processing an entire frame at once. Therefore, real-time performance remains challenging. 
+
+E.1.5. Efficacy for reflective materials 
+
+We conduct additional qualitative experiments on reflective materials other than glass, including water and metal sur-faces, as shown in Fig. 12. Although our model is primarily trained on glass-induced ghosts, it also successfully detects ghosts arising from water and metal surfaces, suggesting that it captures material-invariant FWL characteristics of multi-path reflections. We further extend the Ghost-FWL dataset to include these additional surfaces. 
+
+E.1.6. Why Prior Ghost Removal Methods Fail on Mobile LiDARs 
+
+Conventional ghost removal methods [12, 52] rely heav-ily on geometric consistency, where ghost points are de-tected by comparing them with the corresponding real-object points. This assumption holds for stationary LiDAR systems with a full 360 ◦ field of view, because both the real object and its ghost reflection are simultaneously observed within the same scan. Consequently, prior approaches can exploit redundant geometric cues to detect and eliminate ghost structures. However, this assumption fundamentally breaks down in mobile LiDAR settings. Automotive Li-DAR sensors typically provide a narrow field of view of only 80 ◦–120 ◦ [17, 35], and the sensor continuously moves through the environment. As a result, the true object behind a glass surface often falls outside the field of view when the ghost is observed. This makes the simultaneous obser-vation of real and ghost points highly unlikely, rendering geometry-based ghost detection intrinsically infeasible for mobile LiDAR. Moreover, the sparsity of mobile LiDAR point clouds and the dynamic nature of real-world scenes further weaken geometric cues, preventing the accumula-tion of consistent multi-view observations required by prior methods. GT 
+
+> Multi-Peak
+> GT
+> Ours Dual-Peak
+> GT
+
+LiDAR 
+
+GT Trajectory 
+
+Figure 13. Trajectory and mapping results using Dual-Peak pro-cessing (left), Multi-Peak processing (center), and our ghost-removal method (right). The bottom image shows the scenery of the SLAM evaluation, recorded in a corridor enclosed by glass railings and doors. The scene is same to that used in the main pa-per Fig 5, with the RGB scene image and the visualization results for the Dual-Peak method additionally included. 
+
+E.2. Evaluation on Downstream Applications 
+
+E.2.1. SLAM Experimental Scenes 
+
+Fig. 13 presents additional photograph of the SLAM en-vironment together with the corresponding trajectory used in our experiment. The SLAM sequence was captured in an office corridor where strong glass reflections frequently produce ghost points, providing a challenging setting for evaluating the effectiveness of our ghost removal. 
+
+E.2.2. SLAM Ablation Studies 
+
+We compare against LiDAR signal processing strategies us-ing commercial LiDAR’s common factory default settings: Dual-Peak [17, 32] and Multi-Peak [27], which retain the two and three strongest intensity peaks, respectively. To further examine whether point cloud–based denoising can mitigate ghost artifacts, we conducted supplementary ab-lation experiments, separate from the main evaluations in this paper. In these experiments, each peak-selection strat-egy was combined with one of three preprocessing variants: no filtering (Raw), a Statistical Outlier Filter, or a Radius-based Outlier Filter. Both filtering modules are provided by Open3D [55]. For the Statistical Outlier Filter, we used a neighbor size of 20 and a standard deviation threshold of 2.0. For the Radius-based Outlier Filter, we set a minimum point count of 50 within a search radius of 0.5 m. We also applied Open3D’s voxel downsampling with a voxel size of 18 Table 11. SLAM performance ablation with different point-cloud processing methods. 
+
+Raw Statistical Outlier Filter Radius-based Outlier Filter Dual-Peak ATE [m] ( ↓) 1.248 ±0.947 0.639 ±0.573 0.503 ±0.593 Multi-Peak ATE [m] ( ↓) 2.489 ±1.432 1.232 ±0.928 0.887 ±1.079 Ours ATE [m] ( ↓) 0.294 ±0.244 0.248 ±0.171 0.328 ±0.303 
+
+Dual-Peak RTE [m] ( ↓) 1.221 ±0.928 0.608 ±0.529 0.471 ±0.555 Multi-Peak RTE [m] ( ↓) 2.513 ±1.440 1.280 ±0.901 0.832 ±1.015 Ours RTE [m] ( ↓) 0.288 ±0.237 0.243 ±0.157 0.319 ±0.291 
+
+Table 12. Details of the object-detection test dataset (PedScene). 
+
+Scene Indoor/ Outdoor Pedestrians Frames PedScene 001 Indoor 2 14 PedScene 002 Outdoor 3 31 PedScene 003 Indoor 3 32 PedScene 004 Indoor 1 25 
+
+TOTAL Indoor 3 / Outdoor 1 1 / 2 / 3 102 
+
+1.0 for all methods. All methods employed the same SLAM backend, GLIM [21], ensuring a fair comparison. We report the SLAM ablation results in Table 11. Al-though point-cloud–based denoising methods provide a modest improvement in SLAM accuracy, our waveform-based ghost removal delivers a larger and consistent accu-racy gain. When compared to the baseline methods com-bined with the Statistical Outlier Filter, our ghost removal further reduces ATE by 54–76% and RTE by 53–78%. Sim-ilarly, relative to the Radius-based Outlier Filter, ATE de-creases by 35–63% and RTE by 32–62%. These results demonstrate that conventional outlier filtering is insufficient for handling ghost artifacts, and that our waveform-driven ghost removal provides substantially more effective sup-pression, leading to the highest SLAM accuracy. 
+
+E.2.3. Object Detection Test Dataset 
+
+We summarize the details of the object-detection test dataset in Table 12. The dataset, referred to as PedScene , con-sists of four scenes recorded in indoor and outdoor envi-ronments containing glass surfaces, building entrances, and glass-walled sidewalks. Fig. 14 shows examples of these environments together with RGB images. 
+
+# References 
+
+[1] apollo. Intelligent Vehicle. https://www.apollo.auto/apollo-self-driving, 2025. 1 [2] Boston Dynamics. Spot - The Agile Mobile Robot. https://bostondynamics.com/products/spot/, 2025. 2 
+
+Figure 14. Example scenes from the PedScene dataset used for 3D object detection. The dataset includes both indoor and outdoor environments with glass surfaces, building entrances, and glass-walled sidewalks. [3] Holger Caesar, Varun Bankiti, Alex H Lang, Sourabh Vora, Venice Erin Liong, Qiang Xu, Anush Krishnan, Yu Pan, Gi-ancarlo Baldan, and Oscar Beijbom. nuScenes: A Mul-timodal Dataset for Autonomous Driving . In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 11621–11631, 2020. 2, 3 [4] Nicholas Charron, Stephen Phillips, and Steven L Waslan-der. De-noising of Lidar Point Clouds Corrupted by Snow-fall. In Conference on Computer and Robot Vision (CRV) ,pages 254–261, 2018. 7, 16 [5] Ting Chen, Simon Kornblith, Mohammad Norouzi, and Ge-offrey Hinton. A simple framework for contrastive learn-ing of visual representations. In International Conference on Machine Learning (ICML) , 2020. 3 [6] Xinlei Chen, Haoqi Fan, Ross Girshick, and Kaiming He. Improved Baselines with Momentum Contrastive Learning. 
+
+arXiv:2003.04297 , 2020. 3 [7] Xinlei Chen, Saining Xie, and Kaiming He. An Empiri-cal Study of Training Self-Supervised Vision Transformers. In IEEE/CVF International Conference on Computer Vision (ICCV) , pages 9620–9629, 2021. 3 [8] ¨Ozg¨ un C ¸ ic ¸ek, Ahmed Abdulkadir, Soeren S. Lienkamp, Thomas Brox, and Olaf Ronneberger. 3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation. In 
+
+Medical Image Computing and Computer-Assisted Interven-tion – MICCAI 2016 , pages 424–432, 2016. 16, 17 
+
+19 [9] Jean-Luc D´ eziel, Pierre Merriaux, Francis Tremblay, Dave Lessard, Dominique Plourde, Julien Stanguennec, Pierre Goulet, and Pierre Olivier. Pixset: An opportunity for 3d computer vision to go beyond point clouds with a full-waveform lidar dataset. In IEEE International Intelligent Transportation Systems Conference (ITSC) , pages 2987– 2993, 2021. 2, 3 [10] Alexey Dosovitskiy, German Ros, Felipe Codevilla, Antonio Lopez, and Vladlen Koltun. CARLA: An Open Urban Driv-ing Simulator. In Conference on Robot Learning (CoRL) ,pages 1–16, 2017. 3 [11] Autoware Foundation. Home Page. https://autoware.org, 2025. 1 [12] Rui Gao, Mengyu Li, Seung-Jun Yang, and Kyungeun Cho. Reflective Noise Filtering of Large-Scale Point Cloud Using Transformer. Remote Sensing , 14(3):577, 2022. 18 [13] Charles Gaydon, Michel Daab, and Floryne Roche. FRAC-TAL: An Ultra-Large-Scale Aerial Lidar Dataset for 3D Se-mantic Segmentation of Diverse Landscapes. arXiv preprint arXiv:2405.04634 , 2024. 3 [14] Andreas Geiger, Philip Lenz, Christoph Stiller, and Raquel Urtasun. Vision meets robotics: The KITTI dataset. The International Journal of Robotics Research , 32(11):1231– 1237, 2013. 2, 3, 8 [15] Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, and Ross Girshick. Momentum Contrast for Unsupervised Visual Rep-resentation Learning. In IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) , pages 9726– 9735, 2020. 3 [16] Kaiming He, Xinlei Chen, Saining Xie, Yanghao Li, Piotr Doll´ ar, and Ross Girshick. Masked Autoencoders Are Scal-able Vision Learners. In IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) , pages 15979– 15988, 2022. 2, 3, 6 [17] Hesai. AT128 Automotive-Grade 120° Long-Range Lidar -Hesai. https://www.hesaitech.com/product/at128, 2025. 2, 7, 8, 18 [18] Georg Hess, Johan Jaxing, Elias Svensson, David Hager-man, Christoffer Petersson, and Lennart Svensson. Masked Autoencoder for Self-Supervised Pre-training on Lidar Point Clouds. In IEEE/CVF Winter Conference on Applications of Computer Vision Workshops (WACVW) , pages 350–359, 2023. 4 [19] Teledyne Technologies Inc. Airborne Lidar Prod-ucts. https://www.teledyneoptech.com/products/airborne-lidar, 2025. 2 [20] Wenzel Jakob, S´ ebastien Speierer, Nicolas Roussel, Merlin Nimier-David, Delio Vicini, Tizian Zeltner, Baptiste Nicolet, Miguel Crespo, Vincent Leroy, and Ziyi Zhang. Mitsuba 3 renderer, 2022. https://mitsuba-renderer.org. 3 [21] Kenji Koide, Masashi Yokozuka, Shuji Oishi, and Atsuhiko Banno. GLIM: 3D range-inertial localization and mapping with GPU-accelerated scan matching factors. Robotics and Autonomous Systems , 179:104750, 2024. 7, 19 [22] Florian Kraus, Nicolas Scheiner, Werner Ritter, and Klaus Dietmayer. The Radar Ghost Dataset – An Evaluation of Ghost Objects in Automotive Radar Data. In IEEE/RSJ In-ternational Conference on Intelligent Robots and Systems (IROS) , pages 8570–8577, 2021. 8 [23] Oggyu Lee, Kyungdon Joo, and Jae-Young Sim. Learning-Based Reflection-Aware Virtual Point Removal for Large-Scale 3D Point Clouds. IEEE Robotics and Automation Let-ters , 8(12):8510–8517, 2023. 2, 3 [24] Tsung-Yi Lin, Priya Goyal, Ross Girshick, Kaiming He, and Piotr Dollar. Focal Loss for Dense Object Detection. In IEEE International Conference on Computer Vision (ICCV) , pages 2999–3007, 2017. 6, 15 [25] David B. Lindell, Matthew O’Toole, and Gordon Wetzstein. Single-photon 3D imaging with deep sensor fusion. ACM Trans. Graph. , 37(4), 2018. 16, 17 [26] Haotian Liu, Mu Cai, and Yong Jae Lee. Masked Dis-crimination for Self-supervised Learning on Point Clouds. In European Conference on Computer Vision (ECCV) , page 657–675, 2022. 4 [27] Livox. Avia. https://www.livoxtech.com/avia, 2025. 7, 8, 18 [28] Livox. Mid-360. https://www.livoxtech.com/mid-360, 2025. 5, 11 [29] Ilya Loshchilov and Frank Hutter. Decoupled Weight De-cay Regularization. In International Conference on Learning Representations (ICLR) , 2017. 15 [30] Cl´ ement Mallet and Fr´ ed´ eric Bretar. Full-waveform topo-graphic lidar: State-of-the-art. ISPRS Journal of photogram-metry and remote sensing , 64(1):1–16, 2009. 3 [31] Chen Min, Liang Xiao, Dawei Zhao, Yiming Nie, and Bin Dai. Occupancy-MAE: Self-Supervised Pre-Training Large-Scale LiDAR Point Clouds With Masked Occupancy Au-toencoders. IEEE Transactions on Intelligent Vehicles , 9(7): 5150–5162, 2024. 4 [32] Ouster Inc. OS1 Mid-Range High-Resolution Imaging Li-dar. https://data.ouster.io/downloads/datasheets/datasheet-rev7-v3p1-os1.pdf, 2025. 7, 8, 18 [33] Yatian Pang, Wenxiao Wang, Francis EH Tay, Wei Liu, Yonghong Tian, and Li Yuan. Masked Autoencoders for Point Cloud Self-supervised Learning. In European Con-ference on Computer Vision (ECCV) , pages 604–621, 2022. 4[34] Malcolm Reynolds, Jozef Doboˇ s, Leto Peel, Tim Weyrich, and Gabriel J Brostow. Capturing time-of-flight data with confidence. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 945–952, 2011. 3 [35] RoboSense Technology Co., Ltd. Robosense M3. https://www.robosense.ai/en/rslidar/M3, 2025. 2, 18 [36] Christoph Sager, Patrick Zschech, and Niklas Kuhl. label-Cloud: A lightweight labeling tool for domain-agnostic 3d object detection in point clouds. Computer-Aided Design and Applications , 19(6):1191–1206, 2022. 11 [37] Takami Sato, Junjie Shen, Ningfei Wang, Yunhan Jia, Xue Lin, and Qi Alfred Chen. Dirty Road Can Attack: Security of Deep Learning based Automated Lane Centering under Physical-World Attack. In 30th USENIX Security Sympo-sium (USENIX Security 21) , pages 3309–3326, 2021. 7 [38] Dominik Scheuble, Hanno Holzh¨ uter, Steven Peters, Mario Bijelic, and Felix Heide. Lidar Waveforms are Worth 40x128x33 Words. In IEEE/CVF International Conference 
+
+20 on Computer Vision (ICCV) , pages 28913–28924, 2025. 2, 3, 4, 7, 16 [39] Siyuan Shen, Ziheng Wang, Xingyue Peng, Suan Xia, Ruiqian Li, Shiying Li, and Jingyi Yu. MARMOT: Masked Autoencoder for Modeling Transient Imaging. arXiv preprint arXiv:2506.08470 , 2025. 2, 4, 6, 7, 16 [40] Shaoshuai Shi, Chaoxu Guo, Li Jiang, Zhe Wang, Jian-ping Shi, Xiaogang Wang, and Hongsheng Li. PV-RCNN: Point-Voxel Feature Set Abstraction for 3D Object Detec-tion. In IEEE/CVF Conference on Computer Vision and Pat-tern Recognition (CVPR) , pages 10529–10538, 2020. 8 [41] Pei Sun, Henrik Kretzschmar, Xerxes Dotiwalla, Aurelien Chouard, Vijaysai Patnaik, Paul Tsui, James Guo, Yin Zhou, Yuning Chai, Benjamin Caine, et al. Scalability in perception for autonomous driving: Waymo open dataset. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 2446–2454, 2020. 2, 3 [42] Ken Tanabe, Hiroshi Kubota, Akihide Sai, and Nobu Mat-sumoto. Inter-Frame Smart-Accumulation Technique for Long-Range and High-Pixel Resolution LiDAR. In IEEE Symposium in Low-Power and High-Speed Chips (COOL CHIPS) , pages 1–3, 2019. 3 [43] Xiaoyu Tian, Haoxi Ran, Yue Wang, and Hang Zhao. GeoMAE: Masked Geometric Target Prediction for Self-supervised Point Cloud Pre-Training. In IEEE/CVF Confer-ence on Computer Vision and Pattern Recognition (CVPR) ,pages 13570–13580, 2023. 4 [44] Zhan Tong, Yibing Song, Jue Wang, and Limin Wang. VideoMAE: masked autoencoders are data-efficient learn-ers for self-supervised video pre-training. In Interna-tional Conference on Neural Information Processing Sys-tems (NeurIPS) , 2022. 4, 14 [45] Unitree Robotics. Unitree G1. https://www.unitree.com/g1, 2025. 2 [46] Runsen Xu, Tai Wang, Wenwei Zhang, Runjian Chen, Jinkun Cao, Jiangmiao Pang, and Dahua Lin. MV-JAR: Masked Voxel Jigsaw and Reconstruction for LiDAR-Based Self-Supervised Pre-Training. In IEEE/CVF Conference on Com-puter Vision and Pattern Recognition (CVPR) , pages 13445– 13454, 2023. 4 [47] Wei Xu, Yixi Cai, Dongjiao He, Jiarong Lin, and Fu Zhang. FAST-LIO2: Fast Direct LiDAR-Inertial Odometry. IEEE Transactions on Robotics , 38(4):2053–2073, 2022. 11 [48] Honghui Yang, Tong He, Jiaheng Liu, Hua Chen, Boxi Wu, Binbin Lin, Xiaofei He, and Wanli Ouyang. GD-MAE: Generative Decoder for MAE Pre-Training on LiDAR Point Clouds. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 9403–9414, 2023. 4 [49] Kentaro Yoshioka, Hiroshi Kubota, Tomonori Fukushima, Satoshi Kondo, Tuan Thanh Ta, Hidenori Okuni, Kaori Watanabe, Masatoshi Hirono, Yoshinari Ojima, Katsuyuki Kimura, et al. A 20-ch TDC/ADC Hybrid Architecture Li-DAR SoC for 240x96 Pixel 200-m Range Imaging With Smart Accumulation Technique and Residue Quantizing SAR ADC. IEEE Journal of Solid-State Circuits , 53(11): 3026–3038, 2018. 3 [50] Xumin Yu, Lulu Tang, Yongming Rao, Tiejun Huang, Jie Zhou, and Jiwen Lu. Point-BERT: Pre-training 3D Point Cloud Transformers with Masked Point Modeling. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 19291–19300, 2022. 4 [51] Jae-Seong Yun and Jae-Young Sim. Reflection Removal for Large-Scale 3D Point Clouds. In IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) , pages 4597–4605, 2018. 2 [52] Jae-Seong Yun and Jae-Young Sim. Virtual Point Removal for Large-Scale 3D Point Clouds with Multiple Glass Planes . IEEE Transactions on Pattern Analysis and Machine Intel-ligence (TPAMI) , 43(2):729–744, 2019. 2, 3, 18 [53] Zichao Zhang and Davide Scaramuzza. A Tutorial on Quan-titative Trajectory Evaluation for Visual(-Inertial) Odometry. In IEEE/RSJ international conference on intelligent robots and systems (IROS) , pages 7244–7251, 2018. 7 [54] Xiting Zhao, Zhijie Yang, and S¨ oren Schwertfeger. Mapping with Reflection - Detection and Utilization of Reflection in 3D Lidar Scans. In IEEE International Symposium on Safety, Security, and Rescue Robotics (SSRR) , pages 27–33, 2020. 2 [55] Qian-Yi Zhou, Jaesik Park, and Vladlen Koltun. Open3D: A modern library for 3D data processing. arXiv preprint arXiv:1801.09847 , 2018. 18 [56] Chaorui Zou, Yaozhong Ou, Yan Zhu, Rui P Martins, Chi-Hang Chan, and Minglei Zhang. A 256x192-Pixel Direct Time-of-Flight LiDAR Receiver With a Current-Integrating-Based AFE Supporting 240-m-Range Imaging. IEEE Jour-nal of Solid-State Circuits , 2024. 3 
+
+21
